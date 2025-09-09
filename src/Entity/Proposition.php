@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PropositionRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PropositionRepository::class)]
@@ -22,6 +24,17 @@ class Proposition
     #[ORM\ManyToOne(inversedBy: 'propositions')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Category $category = null;
+
+    /**
+     * @var Collection<int, Commitment>
+     */
+    #[ORM\OneToMany(targetEntity: Commitment::class, mappedBy: 'proposition', orphanRemoval: true)]
+    private Collection $commitments;
+
+    public function __construct()
+    {
+        $this->commitments = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -60,6 +73,36 @@ class Proposition
     public function setCategory(?Category $category): static
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Commitment>
+     */
+    public function getCommitments(): Collection
+    {
+        return $this->commitments;
+    }
+
+    public function addCommitment(Commitment $commitment): static
+    {
+        if (!$this->commitments->contains($commitment)) {
+            $this->commitments->add($commitment);
+            $commitment->setProposition($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommitment(Commitment $commitment): static
+    {
+        if ($this->commitments->removeElement($commitment)) {
+            // set the owning side to null (unless already changed)
+            if ($commitment->getProposition() === $this) {
+                $commitment->setProposition(null);
+            }
+        }
 
         return $this;
     }
