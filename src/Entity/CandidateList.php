@@ -24,6 +24,9 @@ class CandidateList
     #[ORM\Column(length: 255)]
     private string $nameList;
 
+    #[ORM\Column(length: 255, unique: true)]
+    private ?string $slug = null;
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $email = null;
 
@@ -58,6 +61,7 @@ class CandidateList
     public function setFirstname(string $firstname): static
     {
         $this->firstname = $firstname;
+        $this->updateSlug();
 
         return $this;
     }
@@ -70,6 +74,7 @@ class CandidateList
     public function setLastname(string $lastname): static
     {
         $this->lastname = $lastname;
+        $this->updateSlug();
 
         return $this;
     }
@@ -82,6 +87,19 @@ class CandidateList
     public function setNameList(string $nameList): void
     {
         $this->nameList = $nameList;
+        $this->updateSlug();
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
+
+        return $this;
     }
 
     public function getEmail(): ?string
@@ -153,5 +171,36 @@ class CandidateList
     public function __toString(): string
     {
         return sprintf('%s %s (%s)', $this->firstname, $this->lastname, $this->nameList);
+    }
+
+    /**
+     * Updates the slug based on firstname and lastname
+     */
+    private function updateSlug(): void
+    {
+        if ($this->firstname && $this->lastname) {
+            $this->slug = $this->generateSlug($this->firstname . ' ' . $this->lastname. ' '. $this->nameList);
+        }
+    }
+
+    /**
+     * Generates a slug from the given text
+     */
+    private function generateSlug(string $text): string
+    {
+        // Convert to lowercase
+        $slug = strtolower($text);
+
+        // Replace accented characters
+        $slug = iconv('UTF-8', 'ASCII//TRANSLIT', $slug);
+
+        // Remove special characters and replace spaces with hyphens
+        $slug = preg_replace('/[^a-z0-9\s-]/', '', $slug);
+        $slug = preg_replace('/[\s-]+/', '-', $slug);
+
+        // Trim hyphens from start and end
+        $slug = trim($slug, '-');
+
+        return $slug;
     }
 }

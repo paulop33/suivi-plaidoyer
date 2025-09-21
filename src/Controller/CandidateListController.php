@@ -45,11 +45,23 @@ class CandidateListController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_candidate_list_show', requirements: ['id' => '\d+'])]
-    public function show(CandidateList $candidateList): Response
+    #[Route('/{id}/{slug}', name: 'app_candidate_list_show', requirements: ['id' => '\d+'])]
+    public function show(int $id, string $slug): Response
     {
-        // Utiliser la méthode optimisée du repository
-        $candidateList = $this->candidateListRepository->findOneWithCommitments($candidateList->getId());
+        // Find candidate list by id and verify slug
+        $candidateList = $this->candidateListRepository->findOneWithCommitments($id);
+
+        if (!$candidateList) {
+            throw $this->createNotFoundException('Liste candidate non trouvée');
+        }
+
+        // Redirect to correct URL if slug doesn't match
+        if ($candidateList->getSlug() !== $slug) {
+            return $this->redirectToRoute('app_candidate_list_show', [
+                'id' => $candidateList->getId(),
+                'slug' => $candidateList->getSlug()
+            ], 301);
+        }
 
         // Organiser les engagements par catégorie
         $commitmentsByCategory = $this->commitmentDataService->organizeCommitmentsByCategory($candidateList);
@@ -117,7 +129,7 @@ class CandidateListController extends AbstractController
                 ],
                 [
                     'label' => $candidateList->getNameList(),
-                    'url' => $this->generateUrl('app_candidate_list_show', ['slug' => $candidateList->getId()]),
+                    'url' => $this->generateUrl('app_candidate_list_show', ['id' => $candidateList->getId(), 'slug' => $candidateList->getSlug()]),
                     'icon' => 'fas fa-users'
                 ],
                 [

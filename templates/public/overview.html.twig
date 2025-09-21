@@ -268,7 +268,7 @@
                                                 {% set categoryData = cityData.categories[category.id] %}
                                                 {% if categoryData.count > 0 %}
                                                     {% for list in categoryData.lists %}
-                                                        <a href="{{ path('app_candidate_list_show', {id: list.id}) }}"
+                                                        <a href="{{ path('app_candidate_list_show', {id: list.id, slug: list.slug}) }}"
                                                            class="engagement-badge text-decoration-none"
                                                            title="{{ list.firstname }} {{ list.lastname }}">
                                                             {{ list.nameList|slice(0, 15) }}{% if list.nameList|length > 15 %}...{% endif %}

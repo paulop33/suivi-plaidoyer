@@ -69,6 +69,32 @@ class CommitmentDataService
             ];
         }
 
+        // Sort categories by position
+        uasort($commitmentsByCategory, function ($a, $b) {
+            $positionA = $a['category']->getPosition() ?? PHP_INT_MAX;
+            $positionB = $b['category']->getPosition() ?? PHP_INT_MAX;
+
+            if ($positionA === $positionB) {
+                return $a['category']->getId() <=> $b['category']->getId();
+            }
+
+            return $positionA <=> $positionB;
+        });
+
+        // Sort propositions within each category by position
+        foreach ($commitmentsByCategory as &$categoryData) {
+            usort($categoryData['propositions'], function ($a, $b) {
+                $positionA = $a['proposition']->getPosition() ?? PHP_INT_MAX;
+                $positionB = $b['proposition']->getPosition() ?? PHP_INT_MAX;
+
+                if ($positionA === $positionB) {
+                    return $a['proposition']->getId() <=> $b['proposition']->getId();
+                }
+
+                return $positionA <=> $positionB;
+            });
+        }
+
         return $commitmentsByCategory;
     }
 

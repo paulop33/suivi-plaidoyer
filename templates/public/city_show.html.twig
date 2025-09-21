@@ -247,7 +247,7 @@
                                     {% endif %}
 
                                     <div class="text-center mt-3 pt-3 border-top">
-                                        <a href="{{ path('app_candidate_list_show', {id: listInfo.candidateList.id}) }}"
+                                        <a href="{{ path('app_candidate_list_show', {id: listInfo.candidateList.id, slug: listInfo.candidateList.slug}) }}"
                                            class="btn btn-outline-success">
                                             <i class="fas fa-user-circle me-1"></i>
                                             Voir le profil de cette liste
