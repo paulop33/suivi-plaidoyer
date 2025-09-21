@@ -16,7 +16,60 @@ class PropositionRepository extends ServiceEntityRepository
         parent::__construct($registry, Proposition::class);
     }
 
-//    /**
+    /**
+     * Trouve toutes les propositions avec leurs engagements
+     * Optimisé pour éviter les requêtes N+1
+     */
+    public function findAllWithCommitments(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->leftJoin('p.commitments', 'cm')
+            ->leftJoin('cm.candidateList', 'cl')
+            ->leftJoin('cl.city', 'c')
+            ->leftJoin('p.category', 'cat')
+            ->addSelect('cm', 'cl', 'c', 'cat')
+            ->orderBy('cat.position', 'ASC')
+            ->addOrderBy('p.position', 'ASC')
+            ->addOrderBy('p.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Trouve une proposition avec tous ses engagements
+     */
+    public function findOneWithCommitments(int $id): ?Proposition
+    {
+        return $this->createQueryBuilder('p')
+            ->leftJoin('p.commitments', 'cm')
+            ->leftJoin('cm.candidateList', 'cl')
+            ->leftJoin('cl.city', 'c')
+            ->leftJoin('p.category', 'cat')
+            ->addSelect('cm', 'cl', 'c', 'cat')
+            ->where('p.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * Trouve les propositions les plus signées
+     */
+    public function findMostSignedPropositions(int $limit = 10): array
+    {
+        return $this->createQueryBuilder('p')
+            ->select('p', 'COUNT(cm.id) as totalSignatures')
+            ->leftJoin('p.commitments', 'cm')
+            ->leftJoin('p.category', 'cat')
+            ->addSelect('cat')
+            ->groupBy('p.id')
+            ->orderBy('totalSignatures', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    //    /**
 //     * @return Proposition[] Returns an array of Proposition objects
 //     */
 //    public function findByExampleField($value): array

@@ -18,6 +18,9 @@ class City
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    #[ORM\Column(length: 255, unique: true)]
+    private ?string $slug = null;
+
     /**
      * @var Collection<int, CandidateList>
      */
@@ -56,8 +59,40 @@ class City
     public function setName(string $name): static
     {
         $this->name = $name;
+        // Auto-generate slug when name is set
+        $this->slug = $this->generateSlug($name);
 
         return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    private function generateSlug(string $text): string
+    {
+        // Convert to lowercase
+        $slug = strtolower($text);
+
+        // Replace accented characters
+        $slug = iconv('UTF-8', 'ASCII//TRANSLIT', $slug);
+
+        // Remove special characters and replace spaces with hyphens
+        $slug = preg_replace('/[^a-z0-9\s-]/', '', $slug);
+        $slug = preg_replace('/[\s-]+/', '-', $slug);
+
+        // Trim hyphens from start and end
+        $slug = trim($slug, '-');
+
+        return $slug;
     }
 
     /**

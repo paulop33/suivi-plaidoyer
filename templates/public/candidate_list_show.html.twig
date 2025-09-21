@@ -1,0 +1,320 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ candidateList.nameList }} - {{ candidateList.city.name }} - Suivi Plaidoyer{% endblock %}
+
+{% block stylesheets %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .candidate-header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 3rem 0;
+        }
+        .profile-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-top: -3rem;
+            position: relative;
+            z-index: 10;
+        }
+        .category-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+        }
+        .category-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        .category-header {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+            border-radius: 15px 15px 0 0;
+            padding: 1.5rem;
+        }
+        .proposition-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #28a745;
+            transition: all 0.3s ease;
+        }
+        .proposition-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        .candidateList-info {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+        }
+        .breadcrumb-custom {
+            background: transparent;
+            padding: 0;
+        }
+        .breadcrumb-custom .breadcrumb-item + .breadcrumb-item::before {
+            content: "›";
+            color: #6c757d;
+        }
+        .stats-mini {
+            background: white;
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .avatar-placeholder {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <!-- Header Section -->
+    <section class="candidate-header">
+        <div class="container">
+            <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb breadcrumb-custom">
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('app_home') }}" class="text-white-50">
+                            <i class="fas fa-home me-1"></i>Accueil
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('app_cities_index') }}" class="text-white-50">
+                            Communes
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('app_city_show', {slug: candidateList.city.slug}) }}" class="text-white-50">
+                            {{ candidateList.city.name }}
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active text-white" aria-current="page">
+                        {{ candidateList.nameList }}
+                    </li>
+                </ol>
+            </nav>
+
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="avatar-placeholder me-3">
+                            {{ candidateList.firstname|slice(0,1)|upper }}{{ candidateList.lastname|slice(0,1)|upper }}
+                        </div>
+                        <div>
+                            <h1 class="display-5 fw-bold mb-1">{{ candidateList.nameList }}</h1>
+                            <p class="lead mb-0">{{ candidateList.firstname }} {{ candidateList.lastname }}</p>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-4">
+                        <div class="text-center">
+{#                            <div class="h3 mb-1">{{ totalCommitments }}</div>#}
+                            <small class="opacity-75">Engagements</small>
+                        </div>
+                        <div class="text-center">
+                            <div class="h3 mb-1">{{ commitmentsByCategory|length }}</div>
+                            <small class="opacity-75">Catégories</small>
+                        </div>
+                        <div class="text-center">
+                            <div class="h3 mb-1">{{ candidateList.city.name }}</div>
+                            <small class="opacity-75">Commune</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <i class="fas fa-user-tie fa-8x opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Profile Card Section -->
+    <section class="py-0">
+        <div class="container">
+            <div class="profile-card">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h4 class="fw-bold mb-3">
+                            <i class="fas fa-info-circle text-primary me-2"></i>
+                            Informations de la liste
+                        </h4>
+                        <div class="row">
+                            <div class="col-sm-6 mb-3">
+                                <strong class="text-muted">Nom de la liste :</strong><br>
+                                <span class="fs-5">{{ candidateList.nameList }}</span>
+                            </div>
+                            <div class="col-sm-6 mb-3">
+                                <strong class="text-muted">Commune :</strong><br>
+                                <a href="{{ path('app_city_show', {slug: candidateList.city.slug}) }}" class="fs-5 text-decoration-none">
+                                    <i class="fas fa-map-marker-alt me-1"></i>{{ candidateList.city.name }}
+                                </a>
+                            </div>
+                            <div class="col-sm-6 mb-3">
+                                <strong class="text-muted">Tête de liste :</strong><br>
+                                <span class="fs-5">{{ candidateList.firstname }} {{ candidateList.lastname }}</span>
+                            </div>
+                            <div class="col-sm-6 mb-3">
+                                <strong class="text-muted">Engagements totaux :</strong><br>
+{#                                <span class="fs-5 text-success fw-bold">{{ totalCommitments }}</span>#}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="candidateList-info">
+                            <h6 class="fw-bold mb-3">
+                                <i class="fas fa-address-card me-1"></i>CandidateList
+                            </h6>
+                            {% if candidateList.email %}
+                                <p class="mb-2">
+                                    <i class="fas fa-envelope text-primary me-2"></i>
+                                    <a href="mailto:{{ candidateList.email }}" class="text-decoration-none">
+                                        {{ candidateList.email }}
+                                    </a>
+                                </p>
+                            {% endif %}
+                            {% if candidateList.phone %}
+                                <p class="mb-2">
+                                    <i class="fas fa-phone text-success me-2"></i>
+                                    <a href="tel:{{ candidateList.phone }}" class="text-decoration-none">
+                                        {{ candidateList.phone }}
+                                    </a>
+                                </p>
+                            {% endif %}
+                            {% if not candidateList.email and not candidateList.phone %}
+                                <p class="text-muted mb-0">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Aucune information de liste disponible
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Commitments Section -->
+    <section class="py-5">
+        <div class="container">
+            {% if commitmentsByCategory is empty %}
+                <div class="text-center py-5">
+                    <i class="fas fa-handshake fa-4x text-muted mb-3"></i>
+                    <h3 class="text-muted">Aucun engagement</h3>
+                    <p class="text-muted">Cette liste n'a pris aucun engagement pour le moment.</p>
+                    <a href="{{ path('app_city_show', {id: candidateList.city.id, slug: candidateList.city.slug}) }}" class="btn btn-primary">
+                        <i class="fas fa-arrow-left me-2"></i>Retour à {{ candidateList.city.name }}
+                    </a>
+                </div>
+            {% else %}
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h2 class="fw-bold">
+                            <i class="fas fa-handshake text-success me-2"></i>
+                            Engagements par catégorie
+                        </h2>
+                    </div>
+                </div>
+
+                <div class="row">
+                    {% for categoryName, categoryData in commitmentsByCategory %}
+                        <div class="col-lg-6 col-xl-4">
+                            <div class="category-card h-100">
+                                <div class="category-header">
+                                    <h5 class="fw-bold mb-1">
+                                        <i class="fas fa-tag me-2"></i>
+                                        {{ categoryName }}
+                                    </h5>
+                                    <small class="opacity-75">
+                                        {{ categoryData.propositions|length }} proposition{{ categoryData.propositions|length > 1 ? 's' : '' }}
+                                    </small>
+                                </div>
+
+                                <div class="card-body">
+                                    {% for propositionData in categoryData.propositions %}
+                                        <div class="proposition-item">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div class="flex-grow-1">
+                                                    <h6 class="fw-bold mb-1">{{ propositionData.proposition.title }}</h6>
+                                                    {% if propositionData.commitment.commentCandidateList %}
+                                                        <p class="text-muted small mb-2">
+                                                            <i class="fas fa-quote-left me-1"></i>
+                                                            {{ propositionData.commitment.commentCandidateList|slice(0, 100) }}{% if propositionData.commitment.commentCandidateList|length > 100 %}...{% endif %}
+                                                        </p>
+                                                    {% endif %}
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-calendar me-1"></i>
+                                                        {{ propositionData.commitment.creationDate|date('d/m/Y') }}
+                                                    </small>
+                                                    {% if propositionData.proposition.bareme %}
+                                                        <span class="badge bg-warning text-dark ms-2">
+                                                            {{ propositionData.proposition.bareme }} pts
+                                                        </span>
+                                                    {% endif %}
+                                                </div>
+                                                <a href="{{ path('app_proposition_show', {id: propositionData.proposition.id}) }}"
+                                                   class="btn btn-outline-primary btn-sm">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+
+                                    <div class="text-center mt-3 pt-3 border-top">
+                                        <a href="{{ path('app_category_show', {id: categoryData.category.id, slug: categoryData.category.slug}) }}"
+                                           class="btn btn-outline-secondary btn-sm">
+                                            <i class="fas fa-list me-1"></i>
+                                            Voir toutes les propositions de {{ categoryName }}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Navigation Section -->
+    <section class="py-4 bg-light">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <a href="{{ path('app_city_show', {slug: candidateList.city.slug}) }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Retour à {{ candidateList.city.name }}
+                    </a>
+                </div>
+                <div class="col-md-6 text-end">
+                    <div class="btn-group">
+                        <a href="{{ path('app_cities_index') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-city me-1"></i>Communes
+                        </a>
+                        <a href="{{ path('app_overview') }}" class="btn btn-outline-info">
+                            <i class="fas fa-chart-bar me-1"></i>Vue d'ensemble
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

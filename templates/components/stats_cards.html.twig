@@ -1,0 +1,268 @@
+{# Reusable stats cards component #}
+{% set stats = stats|default([]) %}
+{% set cardClass = cardClass|default('col-md-3 col-sm-6') %}
+{% set animated = animated|default(true) %}
+
+<div class="stats-cards-container">
+    <div class="row g-4">
+        {% for stat in stats %}
+            <div class="{{ cardClass }}">
+                <div class="stats-card h-100 {{ animated ? 'animate-on-scroll' : '' }}">
+                    <div class="stats-card-inner">
+                        {% if stat.icon is defined %}
+                            <div class="stats-icon">
+                                <i class="{{ stat.icon }} {{ stat.iconClass|default('text-primary') }}"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="stats-content">
+                            <div class="stats-value {{ stat.valueClass|default('') }}" 
+                                 {% if animated %}data-count="{{ stat.value }}"{% endif %}>
+                                {% if not animated %}{{ stat.value }}{% else %}0{% endif %}
+                            </div>
+                            
+                            <div class="stats-label">{{ stat.label }}</div>
+                            
+                            {% if stat.description is defined %}
+                                <div class="stats-description">{{ stat.description }}</div>
+                            {% endif %}
+                            
+                            {% if stat.trend is defined %}
+                                <div class="stats-trend">
+                                    <i class="fas fa-{{ stat.trend.direction == 'up' ? 'arrow-up text-success' : (stat.trend.direction == 'down' ? 'arrow-down text-danger' : 'minus text-muted') }}"></i>
+                                    <span class="{{ stat.trend.direction == 'up' ? 'text-success' : (stat.trend.direction == 'down' ? 'text-danger' : 'text-muted') }}">
+                                        {{ stat.trend.value }}{{ stat.trend.unit|default('%') }}
+                                    </span>
+                                    {% if stat.trend.period is defined %}
+                                        <small class="text-muted">{{ stat.trend.period }}</small>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                            
+                            {% if stat.progress is defined %}
+                                <div class="stats-progress mt-2">
+                                    <div class="progress progress-sm">
+                                        <div class="progress-bar {{ stat.progress.class|default('bg-primary') }}" 
+                                             style="width: {{ stat.progress.value }}%"
+                                             role="progressbar"></div>
+                                    </div>
+                                    <small class="text-muted">{{ stat.progress.label|default(stat.progress.value ~ '%') }}</small>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        {% if stat.action is defined %}
+                            <div class="stats-action">
+                                <a href="{{ stat.action.url }}" 
+                                   class="btn btn-sm {{ stat.action.class|default('btn-outline-primary') }}">
+                                    {% if stat.action.icon is defined %}
+                                        <i class="{{ stat.action.icon }} me-1"></i>
+                                    {% endif %}
+                                    {{ stat.action.label }}
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+.stats-cards-container {
+    margin: 2rem 0;
+}
+
+.stats-card {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+}
+
+.stats-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+.stats-card-inner {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.stats-icon {
+    margin-bottom: 1rem;
+}
+
+.stats-icon i {
+    font-size: 3rem;
+    opacity: 0.8;
+}
+
+.stats-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    line-height: 1;
+}
+
+.stats-label {
+    font-size: 1rem;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.stats-description {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-bottom: 1rem;
+}
+
+.stats-trend {
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+}
+
+.stats-progress .progress {
+    height: 6px;
+    border-radius: 3px;
+    background-color: #e9ecef;
+    margin-bottom: 0.25rem;
+}
+
+.stats-progress .progress-bar {
+    border-radius: 3px;
+}
+
+.stats-action {
+    margin-top: 1rem;
+}
+
+.stats-action .btn {
+    border-radius: 20px;
+    padding: 0.375rem 1rem;
+}
+
+/* Animation classes */
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease;
+}
+
+.animate-on-scroll.animated {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .stats-card {
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .stats-value {
+        font-size: 2rem;
+    }
+    
+    .stats-icon i {
+        font-size: 2.5rem;
+    }
+}
+
+/* Color variants */
+.stats-card.stats-primary::before {
+    background: linear-gradient(90deg, #007bff 0%, #0056b3 100%);
+}
+
+.stats-card.stats-success::before {
+    background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+}
+
+.stats-card.stats-warning::before {
+    background: linear-gradient(90deg, #ffc107 0%, #fd7e14 100%);
+}
+
+.stats-card.stats-danger::before {
+    background: linear-gradient(90deg, #dc3545 0%, #c82333 100%);
+}
+
+.stats-card.stats-info::before {
+    background: linear-gradient(90deg, #17a2b8 0%, #138496 100%);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate numbers on scroll
+    const animateNumbers = () => {
+        const statsValues = document.querySelectorAll('.stats-value[data-count]');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = entry.target;
+                    const finalValue = parseInt(target.dataset.count);
+                    const duration = 2000; // 2 seconds
+                    const increment = finalValue / (duration / 16); // 60fps
+                    let current = 0;
+                    
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= finalValue) {
+                            current = finalValue;
+                            clearInterval(timer);
+                        }
+                        target.textContent = Math.floor(current).toLocaleString('fr-FR');
+                    }, 16);
+                    
+                    observer.unobserve(target);
+                }
+            });
+        }, { threshold: 0.5 });
+        
+        statsValues.forEach(value => observer.observe(value));
+    };
+    
+    // Animate cards on scroll
+    const animateCards = () => {
+        const cards = document.querySelectorAll('.animate-on-scroll');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('animated');
+                    }, index * 100); // Stagger animation
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        cards.forEach(card => observer.observe(card));
+    };
+    
+    // Initialize animations
+    animateNumbers();
+    animateCards();
+});
+</script>

@@ -5,7 +5,7 @@ namespace App\Command;
 use App\Entity\CandidateList;
 use App\Entity\City;
 use App\Repository\CityRepository;
-use App\Repository\ContactRepository;
+use App\Repository\CandidateListRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -24,7 +24,7 @@ class ImportCandidateListCommand extends Command
     public function __construct(
         private EntityManagerInterface $entityManager,
         private CityRepository $cityRepository,
-        private ContactRepository $candidateListRepository
+        private CandidateListRepository $candidateListRepository
     ) {
         parent::__construct();
     }
@@ -66,7 +66,7 @@ class ImportCandidateListCommand extends Command
         }
 
         $csvData = $this->readCsvFile($filePath);
-        
+
         if (empty($csvData)) {
             $io->error('No data found in CSV file');
             return Command::FAILURE;
@@ -83,13 +83,13 @@ class ImportCandidateListCommand extends Command
         foreach ($csvData as $rowIndex => $row) {
             try {
                 $result = $this->processRow($row, $dryRun);
-                
+
                 if ($result === 'imported') {
                     $imported++;
                 } elseif ($result === 'skipped') {
                     $skipped++;
                 }
-                
+
                 $io->progressAdvance();
             } catch (\Exception $e) {
                 $errors++;
@@ -118,14 +118,14 @@ class ImportCandidateListCommand extends Command
     {
         $data = [];
         $handle = fopen($filePath, 'r');
-        
+
         if ($handle === false) {
             throw new \RuntimeException('Cannot open CSV file');
         }
 
         // Read header
         $header = fgetcsv($handle);
-        
+
         if ($header === false) {
             fclose($handle);
             throw new \RuntimeException('Cannot read CSV header');
@@ -156,7 +156,7 @@ class ImportCandidateListCommand extends Command
 
         // Find or create city
         $city = $this->findOrCreateCity($cityName, $dryRun);
-        
+
         if (!$city) {
             throw new \RuntimeException(sprintf('Cannot create city: %s', $cityName));
         }
@@ -184,7 +184,7 @@ class ImportCandidateListCommand extends Command
         if (!empty($row['Email candidat'] ?? '')) {
             $candidate->setEmail(trim($row['Email candidat']));
         }
-        
+
         if (!empty($row['Téléphone candidat'] ?? '')) {
             $candidate->setPhone(trim($row['Téléphone candidat']));
         }
@@ -199,11 +199,11 @@ class ImportCandidateListCommand extends Command
     private function findOrCreateCity(string $cityName, bool $dryRun): ?City
     {
         $city = $this->cityRepository->findOneBy(['name' => $cityName]);
-        
+
         if (!$city) {
             $city = new City();
             $city->setName($cityName);
-            
+
             if (!$dryRun) {
                 $this->entityManager->persist($city);
             }

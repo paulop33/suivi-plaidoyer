@@ -1,0 +1,247 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Suivi Plaidoyer - Accueil{% endblock %}
+
+{% block stylesheets %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4rem 0;
+        }
+        .stats-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+        .category-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+        }
+        .category-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        .progress-custom {
+            height: 8px;
+            border-radius: 10px;
+        }
+        .badge-custom {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-4">Suivi des Engagements de Plaidoyer</h1>
+                    <p class="lead mb-4">
+                        Découvrez les propositions portées par les associations et les engagements pris par les listes candidates
+                        dans les 28 communes de Bordeaux Métropole.
+                    </p>
+                    <div class="d-flex gap-3">
+                        <a href="#categories" class="btn btn-light btn-lg">
+                            <i class="fas fa-list me-2"></i>Voir les propositions
+                        </a>
+                        <a href="{{ path('app_cities_index') }}" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-city me-2"></i>Voir les communes
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <i class="fas fa-handshake fa-10x opacity-75"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="stats-card text-center">
+                        <i class="fas fa-city fa-3x text-primary mb-3"></i>
+                        <h3 class="fw-bold text-primary">{{ globalStats.totalCities }}</h3>
+                        <p class="text-muted mb-0">Communes</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card text-center">
+                        <i class="fas fa-users fa-3x text-success mb-3"></i>
+                        <h3 class="fw-bold text-success">{{ globalStats.totalLists }}</h3>
+                        <p class="text-muted mb-0">Listes candidates</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card text-center">
+                        <i class="fas fa-lightbulb fa-3x text-warning mb-3"></i>
+                        <h3 class="fw-bold text-warning">{{ globalStats.totalPropositions }}</h3>
+                        <p class="text-muted mb-0">Propositions</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card text-center">
+                        <i class="fas fa-check-circle fa-3x text-info mb-3"></i>
+                        <h3 class="fw-bold text-info">{{ globalStats.totalCommitments }}</h3>
+                        <p class="text-muted mb-0">Engagements</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="py-5" id="categories">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-12 text-center">
+                    <h2 class="display-5 fw-bold mb-3">Catégories de Propositions</h2>
+                    <p class="lead text-muted">
+                        Explorez les différentes thématiques et découvrez les engagements des listes candidates
+                    </p>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                {% for category in categories %}
+                    {% set stats = categoryStats[category.id] %}
+                    {% set engagementRate = stats.totalPropositions > 0 ? (stats.totalCommitments / stats.totalPropositions * 100) : 0 %}
+
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card category-image-card h-100 border-0 shadow-sm">
+                            <!-- Image Section -->
+                            <div class="category-image-container">
+                                {% if category.image %}
+                                    <img src="{{ category.image }}"
+                                         alt="{{ category.name }}"
+                                         class="card-img-top category-image">
+                                {% else %}
+                                    <div class="category-placeholder-image d-flex align-items-center justify-content-center">
+                                        <i class="fas fa-tag fa-3x text-muted"></i>
+                                    </div>
+                                {% endif %}
+                                <div class="category-overlay">
+                                    <div class="category-content">
+                                        <h5 class="category-title fw-bold mb-2">{{ category.name }}</h5>
+                                        {% if category.description %}
+                                            <p class="category-description mb-0">
+                                                {{ category.description|slice(0, 80) }}{% if category.description|length > 80 %}...{% endif %}
+                                            </p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Statistics Section -->
+                            <div class="card-body">
+                                <div class="row g-3 mb-3">
+                                    <div class="col-4">
+                                        <div class="text-center">
+                                            <div class="h5 text-primary mb-1">{{ stats.totalPropositions }}</div>
+                                            <small class="text-muted">Propositions</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="text-center">
+                                            <div class="h5 text-success mb-1">{{ stats.uniqueLists }}</div>
+                                            <small class="text-muted">Listes engagées</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="text-center">
+                                            <div class="h5 text-success mb-1">{{ stats.totalCommitments }}</div>
+                                            <small class="text-muted">Engagements</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-end">
+                                    <a href="{{ path('app_category_show', {id: category.id, slug: category.slug}) }}"
+                                       class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-arrow-right me-1"></i>Voir détails
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Actions Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-4">
+                    <h3 class="fw-bold">Accès rapide</h3>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card border-0 h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-search fa-3x text-primary mb-3"></i>
+                            <h5 class="card-title">Explorer par commune</h5>
+                            <p class="card-text text-muted">
+                                Découvrez les listes candidates et leurs engagements dans chaque commune
+                            </p>
+                            <a href="{{ path('app_cities_index') }}" class="btn btn-primary">
+                                Voir les communes
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-chart-bar fa-3x text-success mb-3"></i>
+                            <h5 class="card-title">Vue d'ensemble</h5>
+                            <p class="card-text text-muted">
+                                Consultez un tableau de bord complet des engagements par commune et catégorie
+                            </p>
+                            <a href="{{ path('app_overview') }}" class="btn btn-success">
+                                Voir le tableau de bord
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-download fa-3x text-info mb-3"></i>
+                            <h5 class="card-title">Données ouvertes</h5>
+                            <p class="card-text text-muted">
+                                Accédez aux données brutes pour vos propres analyses
+                            </p>
+                            <a href="#" class="btn btn-info">
+                                Télécharger
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

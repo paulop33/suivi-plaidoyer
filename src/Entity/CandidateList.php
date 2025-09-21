@@ -2,10 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\ContactRepository;
+use App\Repository\CandidateListRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: ContactRepository::class)]
+#[ORM\Entity(repositoryClass: CandidateListRepository::class)]
 class CandidateList
 {
     #[ORM\Id]
@@ -31,6 +33,17 @@ class CandidateList
     #[ORM\ManyToOne(inversedBy: 'contacts')]
     #[ORM\JoinColumn(nullable: false)]
     private ?City $city = null;
+
+    /**
+     * @var Collection<int, Commitment>
+     */
+    #[ORM\OneToMany(targetEntity: Commitment::class, mappedBy: 'candidateList', orphanRemoval: true)]
+    private Collection $commitments;
+
+    public function __construct()
+    {
+        $this->commitments = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -103,6 +116,36 @@ class CandidateList
     public function setCity(?City $city): static
     {
         $this->city = $city;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Commitment>
+     */
+    public function getCommitments(): Collection
+    {
+        return $this->commitments;
+    }
+
+    public function addCommitment(Commitment $commitment): static
+    {
+        if (!$this->commitments->contains($commitment)) {
+            $this->commitments->add($commitment);
+            $commitment->setCandidateList($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommitment(Commitment $commitment): static
+    {
+        if ($this->commitments->removeElement($commitment)) {
+            // set the owning side to null (unless already changed)
+            if ($commitment->getCandidateList() === $this) {
+                $commitment->setCandidateList(null);
+            }
+        }
 
         return $this;
     }

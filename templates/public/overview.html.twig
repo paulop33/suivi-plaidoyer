@@ -1,0 +1,381 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Vue d'ensemble - Suivi Plaidoyer{% endblock %}
+
+{% block stylesheets %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .overview-header {
+            background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
+            color: white;
+            padding: 3rem 0;
+        }
+        .overview-table {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .table-header {
+            background: linear-gradient(45deg, #6f42c1, #e83e8c);
+            color: white;
+            padding: 1rem;
+        }
+        .city-row {
+            border-bottom: 1px solid #dee2e6;
+            transition: background-color 0.3s ease;
+        }
+        .city-row:hover {
+            background-color: #f8f9fa;
+        }
+        .city-name {
+            font-weight: bold;
+            color: #495057;
+            min-width: 150px;
+        }
+        .category-cell {
+            text-align: center;
+            padding: 0.5rem;
+            min-width: 120px;
+            position: relative;
+        }
+        .engagement-badge {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            border-radius: 15px;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            margin: 0.1rem;
+            display: inline-block;
+        }
+        .no-engagement {
+            color: #6c757d;
+            font-style: italic;
+        }
+        .category-header {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            background: #f8f9fa;
+            font-weight: bold;
+            color: #495057;
+            padding: 1rem 0.5rem;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .breadcrumb-custom {
+            background: transparent;
+            padding: 0;
+        }
+        .breadcrumb-custom .breadcrumb-item + .breadcrumb-item::before {
+            content: "›";
+            color: #6c757d;
+        }
+        .filters-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .legend {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+        .table-responsive {
+            border-radius: 15px;
+        }
+        .sticky-column {
+            position: sticky;
+            left: 0;
+            background: white;
+            z-index: 10;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <!-- Header Section -->
+    <section class="overview-header">
+        <div class="container">
+            <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb breadcrumb-custom">
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('app_home') }}" class="text-white-50">
+                            <i class="fas fa-home me-1"></i>Accueil
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active text-white" aria-current="page">
+                        Vue d'ensemble
+                    </li>
+                </ol>
+            </nav>
+
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-3">Vue d'ensemble des engagements</h1>
+                    <p class="lead mb-4">
+                        Tableau de bord complet montrant les engagements de chaque liste par commune et par catégorie.
+                    </p>
+                    <div class="d-flex gap-4">
+                        <div class="text-center">
+                            <div class="h3 mb-1">{{ overviewData|length }}</div>
+                            <small class="opacity-75">Communes</small>
+                        </div>
+                        <div class="text-center">
+                            <div class="h3 mb-1">{{ categories|length }}</div>
+                            <small class="opacity-75">Catégories</small>
+                        </div>
+                        <div class="text-center">
+                            <div class="h3 mb-1">
+                                {% set totalEngagedLists = 0 %}
+                                {% for cityData in overviewData %}
+                                    {% for categoryId, categoryData in cityData.categories %}
+                                        {% set totalEngagedLists = totalEngagedLists + categoryData.count %}
+                                    {% endfor %}
+                                {% endfor %}
+                                {{ totalEngagedLists }}
+                            </div>
+                            <small class="opacity-75">Engagements</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <i class="fas fa-chart-bar fa-8x opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filters Section -->
+    <section class="py-4">
+        <div class="container">
+            <div class="filters-section">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h5 class="fw-bold mb-3">
+                            <i class="fas fa-filter text-primary me-2"></i>
+                            Filtres et recherche
+                        </h5>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="text" class="form-control" id="citySearch"
+                                   placeholder="Rechercher une commune...">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-bold mb-2">Affichage :</h6>
+                        <div class="btn-group" role="group">
+                            <input type="radio" class="btn-check" name="viewMode" id="viewAll" checked>
+                            <label class="btn btn-outline-primary" for="viewAll">Tout afficher</label>
+
+                            <input type="radio" class="btn-check" name="viewMode" id="viewWithEngagements">
+                            <label class="btn btn-outline-primary" for="viewWithEngagements">Avec engagements</label>
+
+                            <input type="radio" class="btn-check" name="viewMode" id="viewWithoutEngagements">
+                            <label class="btn btn-outline-primary" for="viewWithoutEngagements">Sans engagement</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Legend -->
+            <div class="legend">
+                <h6 class="fw-bold mb-2">
+                    <i class="fas fa-info-circle text-info me-1"></i>
+                    Légende
+                </h6>
+                <div class="row">
+                    <div class="col-md-4">
+                        <span class="engagement-badge">Nom de liste</span>
+                        <small class="text-muted ms-2">Liste ayant pris des engagements</small>
+                    </div>
+                    <div class="col-md-4">
+                        <span class="no-engagement">Aucun engagement</span>
+                        <small class="text-muted ms-2">Aucune liste engagée</small>
+                    </div>
+                    <div class="col-md-4">
+                        <small class="text-muted">
+                            <i class="fas fa-mouse-pointer me-1"></i>
+                            Cliquez sur une commune pour voir les détails
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Overview Table Section -->
+    <section class="py-4">
+        <div class="container-fluid">
+            {% if overviewData is empty %}
+                <div class="text-center py-5">
+                    <i class="fas fa-table fa-4x text-muted mb-3"></i>
+                    <h3 class="text-muted">Aucune donnée disponible</h3>
+                    <p class="text-muted">Les données apparaîtront ici une fois les communes et engagements ajoutés.</p>
+                </div>
+            {% else %}
+                <div class="overview-table">
+                    <div class="table-header">
+                        <h4 class="fw-bold mb-0">
+                            <i class="fas fa-table me-2"></i>
+                            Matrice des engagements par commune et catégorie
+                        </h4>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="sticky-column city-name">
+                                        <i class="fas fa-city me-1"></i>Commune
+                                    </th>
+                                    {% for category in categories %}
+                                        <th class="category-header">
+                                            {{ category.name }}
+                                        </th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody id="overviewTableBody">
+                                {% for cityData in overviewData %}
+                                    {% set hasAnyEngagement = false %}
+                                    {% for categoryId, categoryData in cityData.categories %}
+                                        {% if categoryData.count > 0 %}
+                                            {% set hasAnyEngagement = true %}
+                                        {% endif %}
+                                    {% endfor %}
+
+                                    <tr class="city-row"
+                                        data-city-name="{{ cityData.city.name|lower }}"
+                                        data-has-engagements="{{ hasAnyEngagement ? 'true' : 'false' }}">
+                                        <td class="sticky-column city-name">
+                                            <a href="{{ path('app_city_show', {slug: cityData.city.slug}) }}"
+                                               class="text-decoration-none">
+                                                <i class="fas fa-map-marker-alt me-1"></i>
+                                                {{ cityData.city.name }}
+                                            </a>
+                                        </td>
+                                        {% for category in categories %}
+                                            <td class="category-cell">
+                                                {% set categoryData = cityData.categories[category.id] %}
+                                                {% if categoryData.count > 0 %}
+                                                    {% for list in categoryData.lists %}
+                                                        <a href="{{ path('app_candidate_list_show', {id: list.id}) }}"
+                                                           class="engagement-badge text-decoration-none"
+                                                           title="{{ list.firstname }} {{ list.lastname }}">
+                                                            {{ list.nameList|slice(0, 15) }}{% if list.nameList|length > 15 %}...{% endif %}
+                                                        </a>
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <span class="no-engagement">-</span>
+                                                {% endif %}
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- No results message (hidden by default) -->
+                <div id="noResults" class="text-center py-5" style="display: none;">
+                    <i class="fas fa-search fa-4x text-muted mb-3"></i>
+                    <h3 class="text-muted">Aucune commune trouvée</h3>
+                    <p class="text-muted">Essayez de modifier vos critères de recherche.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Navigation Section -->
+    <section class="py-4 bg-light">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <a href="{{ path('app_home') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Retour à l'accueil
+                    </a>
+                </div>
+                <div class="col-md-6 text-end">
+                    <div class="btn-group">
+                        <a href="{{ path('app_cities_index') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-city me-1"></i>Communes
+                        </a>
+                        <a href="#" class="btn btn-outline-success">
+                            <i class="fas fa-download me-1"></i>Exporter
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('citySearch');
+            const viewModeInputs = document.querySelectorAll('input[name="viewMode"]');
+            const cityRows = document.querySelectorAll('.city-row');
+            const noResults = document.getElementById('noResults');
+            const tableBody = document.getElementById('overviewTableBody');
+
+            function filterTable() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const viewMode = document.querySelector('input[name="viewMode"]:checked').id;
+                let visibleCount = 0;
+
+                cityRows.forEach(row => {
+                    const cityName = row.dataset.cityName;
+                    const hasEngagements = row.dataset.hasEngagements === 'true';
+
+                    let showRow = true;
+
+                    // Apply search filter
+                    if (searchTerm && !cityName.includes(searchTerm)) {
+                        showRow = false;
+                    }
+
+                    // Apply view mode filter
+                    if (viewMode === 'viewWithEngagements' && !hasEngagements) {
+                        showRow = false;
+                    } else if (viewMode === 'viewWithoutEngagements' && hasEngagements) {
+                        showRow = false;
+                    }
+
+                    if (showRow) {
+                        row.style.display = '';
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                // Show/hide no results message and table
+                if (visibleCount === 0) {
+                    noResults.style.display = 'block';
+                    tableBody.parentElement.parentElement.style.display = 'none';
+                } else {
+                    noResults.style.display = 'none';
+                    tableBody.parentElement.parentElement.style.display = 'block';
+                }
+            }
+
+            // Event listeners
+            searchInput.addEventListener('input', filterTable);
+            viewModeInputs.forEach(input => {
+                input.addEventListener('change', filterTable);
+            });
+        });
+    </script>
+{% endblock %}

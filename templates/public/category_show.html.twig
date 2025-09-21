@@ -1,0 +1,182 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ category.name }} - Suivi Plaidoyer{% endblock %}
+
+{% block stylesheets %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .category-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 0;
+        }
+        .proposition-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+        }
+        .proposition-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        .signature-badge {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.8rem;
+            margin: 0.2rem;
+        }
+        .city-group {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .breadcrumb-custom {
+            background: transparent;
+            padding: 0;
+        }
+        .breadcrumb-custom .breadcrumb-item + .breadcrumb-item::before {
+            content: "›";
+            color: #6c757d;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <!-- Header Section -->
+    <section class="category-header">
+        <div class="container">
+            <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb breadcrumb-custom">
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('app_home') }}" class="text-white-50">
+                            <i class="fas fa-home me-1"></i>Accueil
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active text-white" aria-current="page">
+                        {{ category.name }}
+                    </li>
+                </ol>
+            </nav>
+
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-3">{{ category.name }}</h1>
+                    {% if category.description %}
+                        <p class="lead mb-4 opacity-90">{{ category.description }}</p>
+                    {% endif %}
+                    <div class="d-flex gap-4 mb-3">
+                        <div class="text-center">
+                            <div class="h3 mb-1">{{ propositionData|length }}</div>
+                            <small class="opacity-75">Propositions</small>
+                        </div>
+                        <div class="text-center">
+                            <div class="h3 mb-1">
+                                {% set totalSignatures = 0 %}
+                                {% for data in propositionData %}
+                                    {% set totalSignatures = totalSignatures + data.totalSignatures %}
+                                {% endfor %}
+                                {{ totalSignatures }}
+                            </div>
+                            <small class="opacity-75">Signatures totales</small>
+                        </div>
+                        {% if category.bareme %}
+                            <div class="text-center">
+                                <div class="h3 mb-1">{{ category.bareme }}</div>
+                                <small class="opacity-75">Points</small>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <i class="fas fa-list-alt fa-8x opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Propositions Section -->
+    <section class="py-5">
+        <div class="container">
+            {% if propositionData is empty %}
+                <div class="text-center py-5">
+                    <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
+                    <h3 class="text-muted">Aucune proposition dans cette catégorie</h3>
+                    <p class="text-muted">Les propositions apparaîtront ici une fois ajoutées.</p>
+                    <a href="{{ path('app_home') }}" class="btn btn-primary">
+                        <i class="fas fa-arrow-left me-2"></i>Retour à l'accueil
+                    </a>
+                </div>
+            {% else %}
+                <div class="row">
+                {% for data in propositionData %}
+                    <div class="col-lg-6 col-xl-4 mb-4">
+                    <div class="proposition-card">
+                        <div class="card">
+                            {% if data.proposition.image %}
+                                <img src="{{ data.proposition.image }}"
+                                     alt="{{ data.proposition.title }}"
+                                     class="card-img-top"
+                                     style="height: 200px; object-fit: cover;">
+                            {% endif %}
+                            <div class="card-header bg-white border-0 pb-0">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h4 class="card-title fw-bold mb-2">{{ data.proposition.title }}</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                                    <a href="{{ path('app_proposition_show', {id: data.proposition.id}) }}"
+                                       class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-eye me-1"></i>Voir les détails
+                                    </a>
+
+                                    <span class="badge bg-primary fs-6">
+                                        {{ data.totalSignatures }} signature{{ data.totalSignatures > 1 ? 's' : '' }}
+                                        {% if data.citiesWithSignatures|length > 0 %}
+                                            <small>
+                                            dans {{ data.citiesWithSignatures|length }} commune{{ data.citiesWithSignatures|length > 1 ? 's' : '' }}
+                                        </small>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Navigation Section -->
+    <section class="py-4 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <a href="{{ path('app_home') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Retour à l'accueil
+                    </a>
+                </div>
+                <div class="col-md-6 text-end">
+                    <a href="{{ path('app_cities_index') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-city me-2"></i>Voir par commune
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

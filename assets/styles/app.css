@@ -1,3 +1,299 @@
+/* Custom styles for Suivi Plaidoyer */
+
+/* Global styles */
+:root {
+    --bs-primary-rgb: rgb(0, 174, 239) !important;
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --success-gradient: linear-gradient(45deg, #28a745, #20c997);
+    --info-gradient: linear-gradient(45deg, #007bff, #0056b3);
+    --warning-gradient: linear-gradient(45deg, #ffc107, #fd7e14);
+    --danger-gradient: linear-gradient(45deg, #dc3545, #c82333);
+    --card-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    --card-shadow-hover: 0 10px 30px rgba(0,0,0,0.15);
+    --border-radius: 15px;
+    --transition: all 0.3s ease;
+}
+
 body {
-    background-color: skyblue;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f8f9fa;
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Custom card styles */
+.card-custom {
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    transition: var(--transition);
+}
+
+.card-custom:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--card-shadow-hover);
+}
+
+/* Gradient backgrounds */
+.bg-gradient-primary {
+    background: var(--primary-gradient);
+}
+
+.bg-gradient-success {
+    background: var(--success-gradient);
+}
+
+.bg-gradient-info {
+    background: var(--info-gradient);
+}
+
+.bg-gradient-warning {
+    background: var(--warning-gradient);
+}
+
+.bg-gradient-danger {
+    background: var(--danger-gradient);
+}
+
+/* Custom buttons */
+.btn-gradient-primary {
+    background: var(--primary-gradient);
+    border: none;
+    color: white;
+    transition: var(--transition);
+}
+
+.btn-gradient-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    color: white;
+}
+
+.btn-gradient-success {
+    background: var(--success-gradient);
+    border: none;
+    color: white;
+    transition: var(--transition);
+}
+
+.btn-gradient-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+    color: white;
+}
+
+/* Loading animations */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Fade in animation */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Custom progress bars */
+.progress-custom {
+    height: 8px;
+    border-radius: 10px;
+    background-color: #e9ecef;
+}
+
+.progress-custom .progress-bar {
+    border-radius: 10px;
+}
+
+/* Custom badges */
+.badge-custom {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+    .display-4 {
+        font-size: 2.5rem;
+    }
+
+    .display-5 {
+        font-size: 2rem;
+    }
+
+    .hero-section {
+        padding: 2rem 0 !important;
+    }
+
+    .stats-card {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Print styles */
+@media print {
+    .navbar,
+    .btn,
+    footer {
+        display: none !important;
+    }
+
+    .container-fluid {
+        width: 100% !important;
+        max-width: none !important;
+    }
+}
+
+/* Accessibility improvements */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Focus styles */
+.btn:focus,
+.form-control:focus,
+.nav-link:focus {
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    outline: none;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Dropdown hover functionality */
+.navbar-nav .dropdown:hover .dropdown-menu {
+    display: block;
+    margin-top: 0;
+}
+
+.navbar-nav .dropdown .dropdown-menu {
+    margin-top: 0;
+    border: none;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    padding: 0.5rem 0;
+}
+
+.navbar-nav .dropdown .dropdown-item {
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease;
+}
+
+.navbar-nav .dropdown .dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: #495057;
+    transform: translateX(5px);
+}
+
+/* Category Image Cards */
+.category-image-card {
+    transition: var(--transition);
+    overflow: hidden;
+    border-radius: var(--border-radius);
+}
+
+.category-image-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--card-shadow-hover);
+}
+
+.category-image-container {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+}
+
+.category-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition);
+}
+
+.category-placeholder-image {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.category-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    padding: 1.5rem 1rem 1rem;
+    transform: translateY(10px);
+    transition: var(--transition);
+}
+
+.category-image-card:hover .category-overlay {
+    transform: translateY(0);
+}
+
+.category-image-card:hover .category-image {
+    transform: scale(1.05);
+}
+
+.category-title {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.category-description {
+    font-size: 0.85rem;
+    line-height: 1.3;
+}
+
+/* Statistics section styling */
+.category-image-card .card-body {
+    padding: 1.25rem;
+}
+
+.category-image-card .h5 {
+    font-size: 1.5rem;
+    font-weight: 700;
 }

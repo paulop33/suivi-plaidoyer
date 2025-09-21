@@ -1,0 +1,191 @@
+{# Enhanced breadcrumb component #}
+{% set breadcrumbItems = breadcrumbItems|default([]) %}
+
+<nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+    <div class="d-flex justify-content-between align-items-center">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item">
+                <a href="{{ path('app_home') }}" class="text-decoration-none">
+                    <i class="fas fa-home me-1"></i>
+                    <span class="d-none d-sm-inline">Accueil</span>
+                </a>
+            </li>
+
+            {% for item in breadcrumbItems %}
+                {% if loop.last %}
+                    <li class="breadcrumb-item active" aria-current="page">
+                        {% if item.icon is defined %}
+                            <i class="{{ item.icon }} me-1"></i>
+                        {% endif %}
+                        {{ item.label }}
+                    </li>
+                {% else %}
+                    <li class="breadcrumb-item">
+                        <a href="{{ item.url }}" class="text-decoration-none">
+                            {% if item.icon is defined %}
+                                <i class="{{ item.icon }} me-1"></i>
+                            {% endif %}
+                            <span class="d-none d-sm-inline">{{ item.label }}</span>
+                            <span class="d-sm-none">{{ item.shortLabel|default(item.label|slice(0, 10)) }}</span>
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ol>
+
+        <!-- Quick actions -->
+        <div class="breadcrumb-actions d-flex gap-2">
+            {% if quickActions is defined %}
+                {% for action in quickActions %}
+                    <a href="{{ action.url }}"
+                       class="btn btn-sm {{ action.class|default('btn-outline-secondary') }}"
+                       {% if action.tooltip is defined %}title="{{ action.tooltip }}"{% endif %}>
+                        {% if action.icon is defined %}
+                            <i class="{{ action.icon }} me-1"></i>
+                        {% endif %}
+                        <span class="d-none d-md-inline">{{ action.label }}</span>
+                    </a>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Share button -->
+            <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    <i class="fas fa-share-alt"></i>
+                    <span class="d-none d-md-inline ms-1">Partager</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><h6 class="dropdown-header">Partager cette page</h6></li>
+                    <li>
+                        <a class="dropdown-item" href="#" onclick="copyToClipboard(window.location.href)">
+                            <i class="fas fa-link me-2"></i>Copier le lien
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="#" onclick="shareOnSocial('twitter')">
+                            <i class="fab fa-twitter me-2"></i>Twitter
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="#" onclick="shareOnSocial('facebook')">
+                            <i class="fab fa-facebook me-2"></i>Facebook
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="#" onclick="shareOnSocial('linkedin')">
+                            <i class="fab fa-linkedin me-2"></i>LinkedIn
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item" href="#" onclick="printPage()">
+                            <i class="fas fa-print me-2"></i>Imprimer
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<style>
+.breadcrumb-nav {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.breadcrumb {
+    background: transparent;
+    margin-bottom: 0;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    content: "›";
+    color: #6c757d;
+    font-weight: bold;
+}
+
+.breadcrumb-item.active {
+    color: #495057;
+    font-weight: 600;
+}
+
+.breadcrumb-actions .btn {
+    border-radius: 20px;
+}
+
+@media (max-width: 576px) {
+    .breadcrumb-nav {
+        padding: 0.5rem;
+    }
+
+    .breadcrumb-actions {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .breadcrumb-actions .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+}
+</style>
+
+<script>
+// Utility functions for breadcrumb actions
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(function() {
+        if (window.SuiviPlaidoyer) {
+            window.SuiviPlaidoyer.showNotification('Lien copié dans le presse-papiers !', 'success');
+        } else {
+            alert('Lien copié dans le presse-papiers !');
+        }
+    }).catch(function(err) {
+        console.error('Erreur lors de la copie : ', err);
+        if (window.SuiviPlaidoyer) {
+            window.SuiviPlaidoyer.showNotification('Erreur lors de la copie du lien', 'error');
+        }
+    });
+}
+
+function shareOnSocial(platform) {
+    const url = encodeURIComponent(window.location.href);
+    const title = encodeURIComponent(document.title);
+
+    let shareUrl = '';
+
+    switch(platform) {
+        case 'twitter':
+            shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${title}`;
+            break;
+        case 'facebook':
+            shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+            break;
+        case 'linkedin':
+            shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+            break;
+    }
+
+    if (shareUrl) {
+        window.open(shareUrl, '_blank', 'width=600,height=400');
+    }
+}
+
+function printPage() {
+    window.print();
+}
+
+// Initialize tooltips for breadcrumb actions
+document.addEventListener('DOMContentLoaded', function() {
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('.breadcrumb-actions [title]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>

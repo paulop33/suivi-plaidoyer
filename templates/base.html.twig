@@ -1,17 +1,277 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}Suivi Plaidoyer{% endblock %}</title>
+        <meta name="description" content="Suivi des engagements de plaidoyer des listes candidates dans les communes de Bordeaux Métropole">
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>🤝</text></svg>">
+
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Dropdown hover functionality */
+        .navbar-nav .dropdown:hover .dropdown-menu {
+            display: block;
+            margin-top: 0;
+        }
+
+        .navbar-nav .dropdown .dropdown-menu {
+            margin-top: 0;
+            border: none;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            padding: 0.5rem 0;
+            max-height: 400px;
+            overflow-y: auto;
+            min-width: 250px;
+        }
+
+        .navbar-nav .dropdown .dropdown-item {
+            padding: 0.5rem 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .navbar-nav .dropdown .dropdown-item:hover {
+            background-color: #f8f9fa;
+            color: #495057;
+            transform: translateX(5px);
+        }
+
+        /* Style pour les éléments "Toutes les..." */
+        .navbar-nav .dropdown .dropdown-item:first-child {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .navbar-nav .dropdown .dropdown-item:first-child:hover {
+            background-color: #e9ecef;
+        }
+
+        /* Style pour les séparateurs */
+        .navbar-nav .dropdown .dropdown-divider {
+            margin: 0.5rem 0;
+            border-color: #e9ecef;
+        }
+
+        /* Scrollbar pour les dropdowns */
+        .navbar-nav .dropdown .dropdown-menu::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .navbar-nav .dropdown .dropdown-menu::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .navbar-nav .dropdown .dropdown-menu::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        .navbar-nav .dropdown .dropdown-menu::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* Amélioration visuelle des dropdowns */
+        .dropdown-menu {
+            animation: fadeInDown 0.2s ease-in-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+
         {% block stylesheets %}
         {% endblock %}
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
+        <!-- Custom styles are loaded via app.js importmap -->
     </head>
     <body>
-        {% block body %}{% endblock %}
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+            <div class="container">
+                <a class="navbar-brand fw-bold" href="{{ path('app_home') }}">
+                    <i class="fas fa-handshake me-2"></i>
+                    Suivi Plaidoyer
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('app_home') }}">
+                                <i class="fas fa-home me-1"></i>Accueil
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-list me-1"></i>Propositions
+                            </a>
+                            <ul class="dropdown-menu">
+                                {% for category in get_all_categories() %}
+                                    <li><a class="dropdown-item" href="{{ path('app_category_show', {id: category.id, slug: category.slug}) }}">
+                                        {{ category.name }}
+                                    </a></li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-city me-1"></i>Communes
+                            </a>
+                            <ul class="dropdown-menu">
+                                {% for city in get_all_cities() %}
+                                    <li><a class="dropdown-item" href="{{ path('app_city_show', {slug: city.slug}) }}">
+                                        <i class="fas fa-map-marker-alt me-2"></i>{{ city.name }}
+                                    </a></li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-chart-bar me-1"></i>Analyses
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ path('app_overview') }}">
+                                    <i class="fas fa-chart-bar me-2"></i>Vue d'ensemble
+                                </a></li>
+                                <li><a class="dropdown-item" href="{{ path('app_global_stats') }}">
+                                    <i class="fas fa-chart-pie me-2"></i>Statistiques globales
+                                </a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin">
+                                <i class="fas fa-cog me-1"></i>Administration
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main>
+            {% block body %}{% endblock %}
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-dark text-light py-4 mt-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5 class="fw-bold">Suivi Plaidoyer</h5>
+                        <p class="mb-0">Plateforme de suivi des engagements des listes candidates dans Bordeaux Métropole.</p>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <p class="mb-0">
+                            <small class="text-muted">
+                                Développé avec <i class="fas fa-heart text-danger"></i> pour la transparence démocratique
+                            </small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+        {% block javascripts %}
+            {{ importmap('app') }}
+        {% endblock %}
+
+        <script>
+        // Ensure Bootstrap dropdowns work properly
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize all dropdowns
+            var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+            var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+                return new bootstrap.Dropdown(dropdownToggleEl);
+            });
+
+            // Initialize all tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+
+            // Initialize all popovers
+            var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+            var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+                return new bootstrap.Popover(popoverTriggerEl);
+            });
+
+            // Enhanced dropdown hover functionality for navbar
+            const navDropdowns = document.querySelectorAll('.navbar-nav .dropdown');
+
+            navDropdowns.forEach(function(dropdown) {
+                const dropdownToggle = dropdown.querySelector('.dropdown-toggle');
+                const dropdownMenu = dropdown.querySelector('.dropdown-menu');
+
+                if (dropdownToggle && dropdownMenu) {
+                    // Show dropdown on hover
+                    dropdown.addEventListener('mouseenter', function() {
+                        dropdownMenu.classList.add('show');
+                        dropdownToggle.setAttribute('aria-expanded', 'true');
+                    });
+
+                    // Hide dropdown when leaving
+                    dropdown.addEventListener('mouseleave', function() {
+                        dropdownMenu.classList.remove('show');
+                        dropdownToggle.setAttribute('aria-expanded', 'false');
+                    });
+
+                    // Keep click functionality for mobile
+                    dropdownToggle.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const isShown = dropdownMenu.classList.contains('show');
+
+                        // Close all other dropdowns
+                        navDropdowns.forEach(function(otherDropdown) {
+                            if (otherDropdown !== dropdown) {
+                                otherDropdown.querySelector('.dropdown-menu').classList.remove('show');
+                                otherDropdown.querySelector('.dropdown-toggle').setAttribute('aria-expanded', 'false');
+                            }
+                        });
+
+                        // Toggle current dropdown
+                        if (isShown) {
+                            dropdownMenu.classList.remove('show');
+                            dropdownToggle.setAttribute('aria-expanded', 'false');
+                        } else {
+                            dropdownMenu.classList.add('show');
+                            dropdownToggle.setAttribute('aria-expanded', 'true');
+                        }
+                    });
+                }
+            });
+
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.navbar-nav .dropdown')) {
+                    navDropdowns.forEach(function(dropdown) {
+                        dropdown.querySelector('.dropdown-menu').classList.remove('show');
+                        dropdown.querySelector('.dropdown-toggle').setAttribute('aria-expanded', 'false');
+                    });
+                }
+            });
+        });
+        </script>
     </body>
 </html>

@@ -1,0 +1,228 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Listes candidates les plus actives - Suivi Plaidoyer{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-4">
+    {% include 'components/breadcrumb.html.twig' %}
+
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h2 mb-0">
+                    <i class="fas fa-users text-primary me-2"></i>
+                    Listes candidates les plus actives
+                </h1>
+                <div class="d-flex gap-2">
+                    <a href="{{ path('app_home') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-home me-1"></i>Accueil
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include 'components/search_bar.html.twig' with {
+        'searchType': 'lists'
+    } %}
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-trophy me-2"></i>
+                        Classement par nombre d'engagements
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    {% if topLists is not empty %}
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th width="60">#</th>
+                                        <th>Liste</th>
+                                        <th>Commune</th>
+                                        <th width="120">Engagements</th>
+                                        <th width="120">Catégories</th>
+                                        <th width="100">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in topLists %}
+                                        {% set candidateList = item.candidateList %}
+                                        {% set stats = item.stats %}
+                                        <tr class="list-item"
+                                            data-list-name="{{ candidateList.nameList|lower }}"
+                                            data-city-name="{{ candidateList.city.name|lower }}"
+                                            data-commitments="{{ stats.totalCommitments }}">
+                                            <td>
+                                                <div class="rank-badge">
+                                                    {% if loop.index <= 3 %}
+                                                        <i class="fas fa-medal text-{{ loop.index == 1 ? 'warning' : (loop.index == 2 ? 'secondary' : 'dark') }}"></i>
+                                                    {% else %}
+                                                        <span class="badge bg-light text-dark">{{ loop.index }}</span>
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="list-avatar me-3">
+                                                        <i class="fas fa-users text-primary"></i>
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-bold">{{ candidateList.nameList }}</div>
+                                                        {% if candidateList.email %}
+                                                            <small class="text-muted">{{ candidateList.email }}</small>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <a href="{{ path('app_city_show', {id: candidateList.city.slug}) }}"
+                                                   class="text-decoration-none">
+                                                    <i class="fas fa-map-marker-alt text-muted me-1"></i>
+                                                    {{ candidateList.city.name }}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-success fs-6">
+                                                    {{ stats.totalCommitments }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-info fs-6">
+                                                    {{ stats.categoriesCount }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <a href="{{ path('app_candidate_list_show', {id: candidateList.id}) }}"
+                                                       class="btn btn-outline-primary btn-sm"
+                                                       title="Voir le profil">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <a href="{{ path('app_candidate_list_stats', {id: candidateList.id}) }}"
+                                                       class="btn btn-outline-secondary btn-sm"
+                                                       title="Voir les statistiques">
+                                                        <i class="fas fa-chart-bar"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-users text-muted" style="font-size: 3rem;"></i>
+                            <h5 class="mt-3 text-muted">Aucune liste candidate trouvée</h5>
+                            <p class="text-muted">Il n'y a pas encore de listes avec des engagements.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="noResults" class="alert alert-warning text-center mt-4" style="display: none;">
+        <i class="fas fa-search me-2"></i>
+        Aucune liste ne correspond à vos critères de recherche.
+    </div>
+</div>
+
+<style>
+.rank-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+}
+
+.list-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(13, 110, 253, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+.badge.fs-6 {
+    font-size: 0.875rem !important;
+}
+
+@media (max-width: 768px) {
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+
+    .btn-group-sm .btn {
+        padding: 0.25rem 0.5rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Écouter les changements de filtres de recherche
+    document.addEventListener('searchFiltersChanged', function(event) {
+        const filters = event.detail;
+        filterLists(filters);
+    });
+
+    function filterLists(filters) {
+        const listItems = document.querySelectorAll('.list-item');
+        const noResults = document.getElementById('noResults');
+        let visibleCount = 0;
+
+        listItems.forEach(item => {
+            const listName = item.dataset.listName || '';
+            const cityName = item.dataset.cityName || '';
+            const commitments = parseInt(item.dataset.commitments) || 0;
+
+            let showItem = true;
+
+            // Apply search filter
+            if (filters.search) {
+                const searchTerm = filters.search.toLowerCase();
+                if (!listName.includes(searchTerm) && !cityName.includes(searchTerm)) {
+                    showItem = false;
+                }
+            }
+
+            // Apply status filter
+            if (filters.status === 'with-engagements' && commitments === 0) {
+                showItem = false;
+            } else if (filters.status === 'without-engagements' && commitments > 0) {
+                showItem = false;
+            }
+
+            if (showItem) {
+                item.style.display = 'table-row';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        // Show/hide no results message
+        if (noResults) {
+            if (visibleCount === 0) {
+                noResults.style.display = 'block';
+            } else {
+                noResults.style.display = 'none';
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

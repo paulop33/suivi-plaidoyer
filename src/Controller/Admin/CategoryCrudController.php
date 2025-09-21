@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 
 class CategoryCrudController extends AbstractCrudController
@@ -20,8 +21,12 @@ class CategoryCrudController extends AbstractCrudController
     {
         return [
             IdField::new('id')->hideOnForm(),
-            TextField::new('name', 'Name'),
-            IntegerField::new('bareme', 'Bareme'),
+            TextField::new('name', 'Nom'),
+            TextareaField::new('description', 'Description'),
+            TextField::new('image', 'URL de l\'image'),
+            IntegerField::new('bareme', 'Barème'),
+            IntegerField::new('position', 'Ordre d\'affichage')
+                ->setHelp('Ordre d\'affichage des catégories (plus petit = affiché en premier)'),
             AssociationField::new('propositions', 'Propositions')
                 ->hideOnForm()
                 ->formatValue(function ($value, $entity) {

@@ -1,0 +1,275 @@
+{# Global search component #}
+<div class="search-component bg-white rounded-3 shadow-sm p-3 mb-4">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-text bg-primary text-white">
+                    <i class="fas fa-search"></i>
+                </span>
+                <input type="text"
+                       class="form-control"
+                       id="globalSearch"
+                       placeholder="Rechercher une commune, une liste, une proposition..."
+                       data-search-type="{{ searchType|default('global') }}">
+                <button class="btn btn-outline-secondary dropdown-toggle"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    <i class="fas fa-filter me-1"></i>Filtres
+                </button>
+                <ul class="dropdown-menu">
+                    <li><h6 class="dropdown-header">Type de recherche</h6></li>
+                    <li><a class="dropdown-item" href="#" data-search-filter="all">
+                        <i class="fas fa-globe me-2"></i>Tout
+                    </a></li>
+                    <li><a class="dropdown-item" href="#" data-search-filter="cities">
+                        <i class="fas fa-city me-2"></i>Communes
+                    </a></li>
+                    <li><a class="dropdown-item" href="#" data-search-filter="lists">
+                        <i class="fas fa-users me-2"></i>Listes
+                    </a></li>
+                    <li><a class="dropdown-item" href="#" data-search-filter="propositions">
+                        <i class="fas fa-lightbulb me-2"></i>Propositions
+                    </a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><h6 class="dropdown-header">Statut</h6></li>
+                    <li><a class="dropdown-item" href="#" data-status-filter="with-engagements">
+                        <i class="fas fa-check-circle text-success me-2"></i>Avec engagements
+                    </a></li>
+                    <li><a class="dropdown-item" href="#" data-status-filter="without-engagements">
+                        <i class="fas fa-clock text-warning me-2"></i>Sans engagement
+                    </a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="d-flex justify-content-end gap-2">
+                <div class="btn-group" role="group">
+                    <input type="radio" class="btn-check" name="viewMode" id="gridView" checked>
+                    <label class="btn btn-outline-primary" for="gridView">
+                        <i class="fas fa-th"></i>
+                    </label>
+
+                    <input type="radio" class="btn-check" name="viewMode" id="listView">
+                    <label class="btn btn-outline-primary" for="listView">
+                        <i class="fas fa-list"></i>
+                    </label>
+
+                    <input type="radio" class="btn-check" name="viewMode" id="tableView">
+                    <label class="btn btn-outline-primary" for="tableView">
+                        <i class="fas fa-table"></i>
+                    </label>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                        <i class="fas fa-sort me-1"></i>Trier
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" data-sort="name-asc">
+                            <i class="fas fa-sort-alpha-down me-2"></i>Nom (A-Z)
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" data-sort="name-desc">
+                            <i class="fas fa-sort-alpha-up me-2"></i>Nom (Z-A)
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" data-sort="engagements-desc">
+                            <i class="fas fa-sort-numeric-down me-2"></i>Plus d'engagements
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" data-sort="engagements-asc">
+                            <i class="fas fa-sort-numeric-up me-2"></i>Moins d'engagements
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active filters display -->
+    <div id="activeFilters" class="mt-3" style="display: none;">
+        <div class="d-flex align-items-center gap-2">
+            <small class="text-muted">Filtres actifs :</small>
+            <div id="filterTags" class="d-flex gap-1"></div>
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="clearFilters">
+                <i class="fas fa-times me-1"></i>Effacer tout
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchComponent = {
+        searchInput: document.getElementById('globalSearch'),
+        activeFilters: document.getElementById('activeFilters'),
+        filterTags: document.getElementById('filterTags'),
+        clearFiltersBtn: document.getElementById('clearFilters'),
+        filters: {
+            search: '',
+            type: 'all',
+            status: 'all',
+            sort: 'name-asc'
+        },
+
+        init() {
+            this.bindEvents();
+        },
+
+        bindEvents() {
+            // Search input
+            if (this.searchInput) {
+                this.searchInput.addEventListener('input', (e) => {
+                    this.filters.search = e.target.value;
+                    this.updateFilters();
+                    this.performSearch();
+                });
+            }
+
+            // Filter dropdowns
+            document.querySelectorAll('[data-search-filter]').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.filters.type = e.target.dataset.searchFilter;
+                    this.updateFilters();
+                    this.performSearch();
+                });
+            });
+
+            document.querySelectorAll('[data-status-filter]').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.filters.status = e.target.dataset.statusFilter;
+                    this.updateFilters();
+                    this.performSearch();
+                });
+            });
+
+            document.querySelectorAll('[data-sort]').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.filters.sort = e.target.dataset.sort;
+                    this.updateFilters();
+                    this.performSearch();
+                });
+            });
+
+            // Clear filters
+            if (this.clearFiltersBtn) {
+                this.clearFiltersBtn.addEventListener('click', () => {
+                    this.clearAllFilters();
+                });
+            }
+        },
+
+        updateFilters() {
+            this.filterTags.innerHTML = '';
+            let hasActiveFilters = false;
+
+            // Add filter tags
+            if (this.filters.search) {
+                this.addFilterTag('Recherche', this.filters.search, 'search');
+                hasActiveFilters = true;
+            }
+
+            if (this.filters.type !== 'all') {
+                this.addFilterTag('Type', this.getFilterLabel('type', this.filters.type), 'type');
+                hasActiveFilters = true;
+            }
+
+            if (this.filters.status !== 'all') {
+                this.addFilterTag('Statut', this.getFilterLabel('status', this.filters.status), 'status');
+                hasActiveFilters = true;
+            }
+
+            if (this.filters.sort !== 'name-asc') {
+                this.addFilterTag('Tri', this.getFilterLabel('sort', this.filters.sort), 'sort');
+                hasActiveFilters = true;
+            }
+
+            // Show/hide active filters section
+            if (this.activeFilters) {
+                this.activeFilters.style.display = hasActiveFilters ? 'block' : 'none';
+            }
+        },
+
+        addFilterTag(label, value, type) {
+            const tag = document.createElement('span');
+            tag.className = 'badge bg-primary';
+            tag.innerHTML = `
+                ${label}: ${value}
+                <button type="button" class="btn-close btn-close-white ms-1" data-filter-type="${type}"></button>
+            `;
+
+            tag.querySelector('.btn-close').addEventListener('click', () => {
+                this.removeFilter(type);
+            });
+
+            this.filterTags.appendChild(tag);
+        },
+
+        removeFilter(type) {
+            switch(type) {
+                case 'search':
+                    this.filters.search = '';
+                    if (this.searchInput) this.searchInput.value = '';
+                    break;
+                case 'type':
+                    this.filters.type = 'all';
+                    break;
+                case 'status':
+                    this.filters.status = 'all';
+                    break;
+                case 'sort':
+                    this.filters.sort = 'name-asc';
+                    break;
+            }
+            this.updateFilters();
+            this.performSearch();
+        },
+
+        clearAllFilters() {
+            this.filters = {
+                search: '',
+                type: 'all',
+                status: 'all',
+                sort: 'name-asc'
+            };
+            if (this.searchInput) this.searchInput.value = '';
+            this.updateFilters();
+            this.performSearch();
+        },
+
+        getFilterLabel(type, value) {
+            const labels = {
+                type: {
+                    'all': 'Tout',
+                    'cities': 'Communes',
+                    'lists': 'Listes',
+                    'propositions': 'Propositions'
+                },
+                status: {
+                    'all': 'Tous',
+                    'with-engagements': 'Avec engagements',
+                    'without-engagements': 'Sans engagement'
+                },
+                sort: {
+                    'name-asc': 'Nom (A-Z)',
+                    'name-desc': 'Nom (Z-A)',
+                    'engagements-desc': 'Plus d\'engagements',
+                    'engagements-asc': 'Moins d\'engagements'
+                }
+            };
+            return labels[type][value] || value;
+        },
+
+        performSearch() {
+            // Emit custom event for other components to listen to
+            const event = new CustomEvent('searchFiltersChanged', {
+                detail: this.filters
+            });
+            document.dispatchEvent(event);
+        }
+    };
+
+    searchComponent.init();
+});
+</script>

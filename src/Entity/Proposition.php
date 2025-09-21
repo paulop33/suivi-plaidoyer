@@ -25,6 +25,12 @@ class Proposition
     #[ORM\Column(nullable: true)]
     private ?int $bareme = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $image = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $position = null;
+
     #[ORM\ManyToOne(inversedBy: 'propositions')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Category $category = null;
@@ -119,6 +125,30 @@ class Proposition
     public function setDescription(?string $description = null): void
     {
         $this->description = $description;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): static
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    public function getPosition(): ?int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(?int $position): static
+    {
+        $this->position = $position;
+
+        return $this;
     }
 
     public function __toString(): string

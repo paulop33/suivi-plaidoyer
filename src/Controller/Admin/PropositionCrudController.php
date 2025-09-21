@@ -24,7 +24,10 @@ class PropositionCrudController extends AbstractCrudController
             IdField::new('id')->hideOnForm(),
             TextareaField::new('title', 'Titre'),
             TextareaField::new('description', 'Description')->hideOnIndex(),
+            TextField::new('image', 'URL de l\'image')->hideOnIndex(),
             IntegerField::new('bareme', 'Bareme'),
+            IntegerField::new('ordre', 'Ordre d\'affichage')
+                ->setHelp('Ordre d\'affichage des propositions dans la catégorie (plus petit = affiché en premier)'),
             AssociationField::new('category', 'Catégorie'),
         ];
     }

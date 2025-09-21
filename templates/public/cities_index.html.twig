@@ -1,0 +1,312 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Communes - Suivi Plaidoyer{% endblock %}
+
+{% block stylesheets %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .cities-header {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            padding: 3rem 0;
+        }
+        .city-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        .city-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        .city-card-header {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+            padding: 1.5rem;
+        }
+        .stats-row {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
+        .search-box {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .filter-buttons {
+            margin-bottom: 2rem;
+        }
+        .breadcrumb-custom {
+            background: transparent;
+            padding: 0;
+        }
+        .breadcrumb-custom .breadcrumb-item + .breadcrumb-item::before {
+            content: "›";
+            color: #6c757d;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <!-- Header Section -->
+    <section class="cities-header">
+        <div class="container">
+            <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb breadcrumb-custom">
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('app_home') }}" class="text-white-50">
+                            <i class="fas fa-home me-1"></i>Accueil
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active text-white" aria-current="page">
+                        Communes
+                    </li>
+                </ol>
+            </nav>
+
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-3">Communes de Bordeaux Métropole</h1>
+                    <p class="lead mb-4">
+                        Découvrez les listes candidates et leurs engagements dans chacune des 28 communes de la métropole.
+                    </p>
+                    <div class="d-flex gap-4">
+                        <div class="text-center">
+                            <div class="h3 mb-1">{{ cityData|length }}</div>
+                            <small class="opacity-75">Communes</small>
+                        </div>
+                        <div class="text-center">
+                            <div class="h3 mb-1">
+                                {% set totalLists = 0 %}
+                                {% for data in cityData %}
+                                    {% set totalLists = totalLists + data.totalLists %}
+                                {% endfor %}
+                                {{ totalLists }}
+                            </div>
+                            <small class="opacity-75">Listes candidates</small>
+                        </div>
+                        <div class="text-center">
+                            <div class="h3 mb-1">
+                                {% set totalCommitments = 0 %}
+                                {% for data in cityData %}
+                                    {% set totalCommitments = totalCommitments + data.totalCommitments %}
+                                {% endfor %}
+                                {{ totalCommitments }}
+                            </div>
+                            <small class="opacity-75">Engagements</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <i class="fas fa-city fa-8x opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search and Filter Section -->
+    <section class="py-4">
+        <div class="container">
+            <div class="search-box">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="text" class="form-control" id="citySearch"
+                                   placeholder="Rechercher une commune...">
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-primary active" data-filter="all">
+                                Toutes
+                            </button>
+                            <button type="button" class="btn btn-outline-primary" data-filter="with-commitments">
+                                Avec engagements
+                            </button>
+                            <button type="button" class="btn btn-outline-primary" data-filter="no-commitments">
+                                Sans engagement
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cities Grid Section -->
+    <section class="py-4">
+        <div class="container">
+            {% if cityData is empty %}
+                <div class="text-center py-5">
+                    <i class="fas fa-city fa-4x text-muted mb-3"></i>
+                    <h3 class="text-muted">Aucune commune trouvée</h3>
+                    <p class="text-muted">Les communes apparaîtront ici une fois ajoutées.</p>
+                </div>
+            {% else %}
+                <div class="row" id="citiesGrid">
+                    {% for data in cityData %}
+                        <div class="col-lg-6 col-xl-4 city-item"
+                             data-city-name="{{ data.city.name|lower }}"
+                             data-has-commitments="{{ data.totalCommitments > 0 ? 'true' : 'false' }}">
+                            <div class="city-card h-100">
+                                <div class="city-card-header">
+                                    <h5 class="fw-bold mb-1">
+                                        <i class="fas fa-map-marker-alt me-2"></i>
+                                        {{ data.city.name }}
+                                    </h5>
+                                    <small class="opacity-75">Commune de Bordeaux Métropole</small>
+                                </div>
+
+                                <div class="card-body">
+                                    <div class="stats-row">
+                                        <div class="row text-center">
+                                            <div class="col-6">
+                                                <div class="h4 text-primary mb-1">{{ data.totalLists }}</div>
+                                                <small class="text-muted">Liste{{ data.totalLists > 1 ? 's' : '' }}</small>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="h4 text-success mb-1">{{ data.totalCommitments }}</div>
+                                                <small class="text-muted">Engagement{{ data.totalCommitments > 1 ? 's' : '' }}</small>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {% if data.totalCommitments > 0 %}
+                                        <div class="mb-3">
+                                            {% set engagementRate = data.totalLists > 0 ? (data.totalCommitments / data.totalLists * 100) : 0 %}
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <small class="text-muted">Taux d'engagement</small>
+                                                <small class="fw-bold">{{ engagementRate|number_format(1) }}%</small>
+                                            </div>
+                                            <div class="progress" style="height: 6px;">
+                                                <div class="progress-bar bg-success"
+                                                     style="width: {{ engagementRate }}%"
+                                                     role="progressbar"></div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        {% if data.totalCommitments > 0 %}
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-check me-1"></i>Engagements actifs
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">
+                                                <i class="fas fa-clock me-1"></i>En attente
+                                            </span>
+                                        {% endif %}
+
+                                        <a href="{{ path('app_city_show', {slug: data.city.slug}) }}"
+                                           class="btn btn-primary btn-sm">
+                                            <i class="fas fa-arrow-right me-1"></i>Voir détails
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- No results message (hidden by default) -->
+                <div id="noResults" class="text-center py-5" style="display: none;">
+                    <i class="fas fa-search fa-4x text-muted mb-3"></i>
+                    <h3 class="text-muted">Aucune commune trouvée</h3>
+                    <p class="text-muted">Essayez de modifier vos critères de recherche.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Quick Actions Section -->
+    <section class="py-4 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <a href="{{ path('app_home') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Retour à l'accueil
+                    </a>
+                </div>
+                <div class="col-md-6 text-end">
+                    <a href="{{ path('app_overview') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-chart-bar me-2"></i>Vue d'ensemble
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('citySearch');
+            const filterButtons = document.querySelectorAll('[data-filter]');
+            const cityItems = document.querySelectorAll('.city-item');
+            const noResults = document.getElementById('noResults');
+
+            function filterCities() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const activeFilter = document.querySelector('[data-filter].active').dataset.filter;
+                let visibleCount = 0;
+
+                cityItems.forEach(item => {
+                    const cityName = item.dataset.cityName;
+                    const hasCommitments = item.dataset.hasCommitments === 'true';
+
+                    let showItem = true;
+
+                    // Apply search filter
+                    if (searchTerm && !cityName.includes(searchTerm)) {
+                        showItem = false;
+                    }
+
+                    // Apply commitment filter
+                    if (activeFilter === 'with-commitments' && !hasCommitments) {
+                        showItem = false;
+                    } else if (activeFilter === 'no-commitments' && hasCommitments) {
+                        showItem = false;
+                    }
+
+                    if (showItem) {
+                        item.style.display = 'block';
+                        visibleCount++;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                // Show/hide no results message
+                if (visibleCount === 0) {
+                    noResults.style.display = 'block';
+                } else {
+                    noResults.style.display = 'none';
+                }
+            }
+
+            // Search input event
+            searchInput.addEventListener('input', filterCities);
+
+            // Filter button events
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    filterCities();
+                });
+            });
+        });
+    </script>
+{% endblock %}

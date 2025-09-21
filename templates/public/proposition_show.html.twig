@@ -1,0 +1,244 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ proposition.title }} - Suivi Plaidoyer{% endblock %}
+
+{% block stylesheets %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .proposition-header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 3rem 0;
+        }
+        .commitment-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+        .commitment-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .city-header {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .list-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-left: 4px solid #28a745;
+        }
+        .breadcrumb-custom {
+            background: transparent;
+            padding: 0;
+        }
+        .breadcrumb-custom .breadcrumb-item + .breadcrumb-item::before {
+            content: "›";
+            color: #6c757d;
+        }
+        .description-box {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-left: 5px solid #28a745;
+        }
+        .stats-mini {
+            background: white;
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <!-- Header Section -->
+    <section class="proposition-header">
+        <div class="container">
+            <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb breadcrumb-custom">
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('app_home') }}" class="text-white-50">
+                            <i class="fas fa-home me-1"></i>Accueil
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('app_category_show', {id: proposition.category.id, slug: proposition.category.slug}) }}" class="text-white-50">
+                            {{ proposition.category.name }}
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active text-white" aria-current="page">
+                        Proposition
+                    </li>
+                </ol>
+            </nav>
+
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <div class="mb-3">
+                        <span class="badge bg-light text-dark fs-6">{{ proposition.category.name }}</span>
+                        {% if proposition.bareme %}
+                            <span class="badge bg-warning text-dark fs-6 ms-2">{{ proposition.bareme }} points</span>
+                        {% endif %}
+                    </div>
+                    <h1 class="display-5 fw-bold mb-3">{{ proposition.title }}</h1>
+                    <div class="d-flex gap-4">
+                        <div class="text-center">
+                            <div class="h3 mb-1">{{ totalCommitments }}</div>
+                            <small class="opacity-75">Engagements</small>
+                        </div>
+                        <div class="text-center">
+                            <div class="h3 mb-1">{{ commitmentsByCity|length }}</div>
+                            <small class="opacity-75">Communes</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <i class="fas fa-lightbulb fa-8x opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Description Section -->
+    {% if proposition.description %}
+        <section class="py-4">
+            <div class="container">
+                <div class="description-box">
+                    <h4 class="fw-bold mb-3">
+                        <i class="fas fa-info-circle text-success me-2"></i>
+                        Description de la proposition
+                    </h4>
+                    <p class="mb-0 fs-5 lh-lg">{{ proposition.description|nl2br }}</p>
+                </div>
+            </div>
+        </section>
+    {% endif %}
+
+    <!-- Commitments Section -->
+    <section class="py-5">
+        <div class="container">
+            {% if commitmentsByCity is empty %}
+                <div class="text-center py-5">
+                    <i class="fas fa-exclamation-triangle fa-4x text-warning mb-3"></i>
+                    <h3 class="text-muted">Aucun engagement pour cette proposition</h3>
+                    <p class="text-muted">Aucune liste candidate n'a encore pris d'engagement sur cette proposition.</p>
+                    <a href="{{ path('app_category_show', {id: proposition.category.id, slug: proposition.category.slug}) }}" class="btn btn-primary">
+                        <i class="fas fa-arrow-left me-2"></i>Retour à la catégorie
+                    </a>
+                </div>
+            {% else %}
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h2 class="fw-bold mb-4">
+                            <i class="fas fa-handshake text-success me-2"></i>
+                            Listes engagées par commune
+                        </h2>
+                    </div>
+                </div>
+
+                <div class="row">
+                    {% for cityName, cityData in commitmentsByCity %}
+                        <div class="col-lg-6 col-xl-4 mb-4">
+                            <div class="commitment-card h-100">
+                                <div class="city-header">
+                                    <h5 class="mb-1 fw-bold">
+                                        <i class="fas fa-map-marker-alt me-2"></i>
+                                        {{ cityName }}
+                                    </h5>
+                                    <small class="opacity-75">
+                                        {{ cityData.lists|length }} liste{{ cityData.lists|length > 1 ? 's' : '' }} engagée{{ cityData.lists|length > 1 ? 's' : '' }}
+                                    </small>
+                                </div>
+
+                                <div class="card-body">
+                                    {% for listData in cityData.lists %}
+                                        <div class="list-item">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div class="flex-grow-1">
+                                                    <h6 class="fw-bold mb-1">{{ listData.candidateList.nameList }}</h6>
+                                                    <p class="text-muted mb-2 small">
+                                                        {{ listData.candidateList.firstname }} {{ listData.candidateList.lastname }}
+                                                    </p>
+
+                                                    {% if listData.commitment.commentCandidateList %}
+                                                        <div class="mt-2">
+                                                            <small class="text-muted">
+                                                                <i class="fas fa-quote-left me-1"></i>
+                                                                {{ listData.commitment.commentCandidateList|slice(0, 100) }}{% if listData.commitment.commentCandidateList|length > 100 %}...{% endif %}
+                                                            </small>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                                <a href="{{ path('app_candidate_list_show', {id: listData.candidateList.id}) }}"
+                                                   class="btn btn-outline-primary btn-sm">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            </div>
+
+                                            <div class="mt-2 pt-2 border-top">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-calendar me-1"></i>
+                                                    Engagé le {{ listData.commitment.creationDate|date('d/m/Y') }}
+                                                </small>
+                                                {% if listData.commitment.updateDate != listData.commitment.creationDate %}
+                                                    <small class="text-muted ms-2">
+                                                        <i class="fas fa-edit me-1"></i>
+                                                        Modifié le {{ listData.commitment.updateDate|date('d/m/Y') }}
+                                                    </small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+
+                                    <div class="text-center mt-3">
+                                        <a href="{{ path('app_city_show', {slug: cityData.city.slug}) }}"
+                                           class="btn btn-outline-secondary btn-sm">
+                                            <i class="fas fa-city me-1"></i>
+                                            Voir toutes les listes de {{ cityName }}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Navigation Section -->
+    <section class="py-4 bg-light">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <a href="{{ path('app_category_show', {id: proposition.category.id, slug: proposition.category.slug}) }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Retour à {{ proposition.category.name }}
+                    </a>
+                </div>
+                <div class="col-md-6 text-end">
+                    <div class="btn-group">
+                        <a href="{{ path('app_cities_index') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-city me-1"></i>Communes
+                        </a>
+                        <a href="{{ path('app_overview') }}" class="btn btn-outline-info">
+                            <i class="fas fa-chart-bar me-1"></i>Vue d'ensemble
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

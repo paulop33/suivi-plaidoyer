@@ -18,8 +18,20 @@ class Category
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    #[ORM\Column(length: 255, unique: true)]
+    private ?string $slug = null;
+
     #[ORM\Column(nullable: true)]
     private ?int $bareme = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $description = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $image = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $position = null;
 
     /**
      * @var Collection<int, Proposition>
@@ -45,6 +57,20 @@ class Category
     public function setName(string $name): static
     {
         $this->name = $name;
+        // Auto-generate slug when name is set
+        $this->slug = $this->generateSlug($name);
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
 
         return $this;
     }
@@ -57,6 +83,42 @@ class Category
     public function setBareme(?int $bareme): static
     {
         $this->bareme = $bareme;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): static
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    public function getPosition(): ?int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(?int $position): static
+    {
+        $this->position = $position;
 
         return $this;
     }
@@ -74,6 +136,11 @@ class Category
         if (!$this->propositions->contains($proposition)) {
             $this->propositions->add($proposition);
             $proposition->setCategory($this);
+
+            // Auto-assign order if not set
+            if ($proposition->getPosition() === null) {
+                $proposition->setPosition($this->getNextPropositionOrder());
+            }
         }
 
         return $this;
@@ -91,9 +158,40 @@ class Category
         return $this;
     }
 
+    private function generateSlug(string $text): string
+    {
+        // Convert to lowercase
+        $slug = strtolower($text);
+
+        // Replace accented characters
+        $slug = iconv('UTF-8', 'ASCII//TRANSLIT', $slug);
+
+        // Remove special characters and replace spaces with hyphens
+        $slug = preg_replace('/[^a-z0-9\s-]/', '', $slug);
+        $slug = preg_replace('/[\s-]+/', '-', $slug);
+
+        // Trim hyphens from start and end
+        $slug = trim($slug, '-');
+
+        return $slug;
+    }
+
+    /**
+     * Obtient le prochain ordre disponible pour une nouvelle proposition
+     */
+    public function getNextPropositionOrder(): int
+    {
+        $maxOrder = 0;
+        foreach ($this->propositions as $proposition) {
+            if ($proposition->getPosition() !== null && $proposition->getPosition() > $maxOrder) {
+                $maxOrder = $proposition->getPosition();
+            }
+        }
+        return $maxOrder + 1;
+    }
+
     public function __toString(): string
     {
         return $this->getName();
     }
-
 }

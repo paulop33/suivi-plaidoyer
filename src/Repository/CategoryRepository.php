@@ -16,6 +16,45 @@ class CategoryRepository extends ServiceEntityRepository
         parent::__construct($registry, Category::class);
     }
 
+    /**
+     * Trouve toutes les catégories avec leurs propositions et engagements
+     * Optimisé pour éviter les requêtes N+1
+     */
+    public function findAllWithPropositionsAndCommitments(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->leftJoin('c.propositions', 'p')
+            ->leftJoin('p.commitments', 'cm')
+            ->leftJoin('cm.candidateList', 'cl')
+            ->leftJoin('cl.city', 'city')
+            ->addSelect('p', 'cm', 'cl', 'city')
+            ->orderBy('c.position', 'ASC')
+            ->addOrderBy('c.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Trouve une catégorie par id et slug avec toutes ses données liées
+     */
+    public function findOneByIdAndSlug(int $id, string $slug): ?Category
+    {
+        return $this->createQueryBuilder('c')
+            ->leftJoin('c.propositions', 'p')
+            ->leftJoin('p.commitments', 'cm')
+            ->leftJoin('cm.candidateList', 'cl')
+            ->leftJoin('cl.city', 'city')
+            ->addSelect('p', 'cm', 'cl', 'city')
+            ->where('c.id = :id')
+            ->andWhere('c.slug = :slug')
+            ->setParameter('id', $id)
+            ->setParameter('slug', $slug)
+            ->orderBy('p.position', 'ASC')
+            ->addOrderBy('p.id', 'ASC')
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     //    /**
     //     * @return Category[] Returns an array of Category objects
     //     */
