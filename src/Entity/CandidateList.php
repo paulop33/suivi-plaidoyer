@@ -6,7 +6,7 @@ use App\Repository\ContactRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ContactRepository::class)]
-class Contact
+class CandidateList
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -14,10 +14,13 @@ class Contact
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $firstname = null;
+    private string $firstname;
 
     #[ORM\Column(length: 255)]
-    private ?string $lastname = null;
+    private string $lastname;
+
+    #[ORM\Column(length: 255)]
+    private string $nameList;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $email = null;
@@ -58,6 +61,16 @@ class Contact
         return $this;
     }
 
+    public function getNameList(): string
+    {
+        return $this->nameList;
+    }
+
+    public function setNameList(string $nameList): void
+    {
+        $this->nameList = $nameList;
+    }
+
     public function getEmail(): ?string
     {
         return $this->email;
@@ -92,5 +105,10 @@ class Contact
         $this->city = $city;
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return sprintf('%s %s (%s)', $this->firstname, $this->lastname, $this->nameList);
     }
 }

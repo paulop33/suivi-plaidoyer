@@ -76,44 +76,34 @@ class AppFixtures extends Fixture
     {
         $mammaAssociations = [
             [
-                'name' => 'MAMMA Bordeaux Centre',
-                'color' => '#FF6B6B',
+                'name' => 'Vélo-Cité',
+                'color' => '#00aeef',
                 'image' => 'https://via.placeholder.com/150/FF6B6B/FFFFFF?text=MAMMA+BC'
             ],
             [
-                'name' => 'MAMMA Rive Droite',
-                'color' => '#4ECDC4',
+                'name' => 'Léon à Vélo',
+                'color' => '#0200b0',
                 'image' => 'https://via.placeholder.com/150/4ECDC4/FFFFFF?text=MAMMA+RD'
             ],
             [
-                'name' => 'MAMMA Rive Gauche',
-                'color' => '#45B7D1',
+                'name' => 'Cycles et Manivelles',
+                'color' => '#b12214',
                 'image' => 'https://via.placeholder.com/150/45B7D1/FFFFFF?text=MAMMA+RG'
             ],
             [
-                'name' => 'MAMMA Pessac-Gradignan',
-                'color' => '#96CEB4',
+                'name' => 'EtuRecup',
+                'color' => '#0b825e',
                 'image' => 'https://via.placeholder.com/150/96CEB4/FFFFFF?text=MAMMA+PG'
             ],
             [
-                'name' => 'MAMMA Mérignac',
-                'color' => '#FFEAA7',
+                'name' => 'Le Garage Moderne',
+                'color' => '#000000',
                 'image' => 'https://via.placeholder.com/150/FFEAA7/000000?text=MAMMA+M'
             ],
             [
-                'name' => 'MAMMA Blanquefort-Parempuyre',
-                'color' => '#DDA0DD',
+                'name' => 'La recyclerie Sportive',
+                'color' => '#c1d133',
                 'image' => 'https://via.placeholder.com/150/DDA0DD/FFFFFF?text=MAMMA+BP'
-            ],
-            [
-                'name' => 'MAMMA Eysines-Le Haillan',
-                'color' => '#98D8C8',
-                'image' => 'https://via.placeholder.com/150/98D8C8/FFFFFF?text=MAMMA+EH'
-            ],
-            [
-                'name' => 'MAMMA Saint-Médard',
-                'color' => '#F7DC6F',
-                'image' => 'https://via.placeholder.com/150/F7DC6F/000000?text=MAMMA+SM'
             ]
         ];
 
@@ -134,36 +124,82 @@ class AppFixtures extends Fixture
     {
         $categoriesData = [
             [
-                'name' => 'Mobilité',
+                'name' => 'Circuler dans la Métropole',
                 'bareme' => 100,
                 'propositions' => [
-                    ['name' => 'Développer les pistes cyclables', 'bareme' => 20],
-                    ['name' => 'Améliorer les transports en commun', 'bareme' => 25],
-                    ['name' => 'Créer des zones piétonnes', 'bareme' => 15],
-                    ['name' => 'Installer des bornes de recharge électrique', 'bareme' => 20],
-                    ['name' => 'Développer le covoiturage', 'bareme' => 20]
+                    ['name' => 'Poursuivre le développement du ReVE en respectant l’ambition et les standards votés en 2021.', 'bareme' => 20],
+                    ['name' => 'Accélérer le déploiement du ReVE pour tenir l’échéance de livraison fixé à 2030', 'bareme' => 25],
+                    ['name' => 'Connecter les quartiers au ReVE ou aux grandes pistes de la métropole avec des aménagements cyclables', 'bareme' => 15],
+                    ['name' => 'Soutenir la mise en place et la communication pour une métropole à 30km/h', 'bareme' => 20],
+                    ['name' => 'Expérimenter et généraliser le M12 tridirectionnel au grand format', 'bareme' => 20],
+                    ['name' => 'Transformer le service des modes actifs de Bordeaux Métropole en une direction générale et renforcer ces effectifs', 'bareme' => 20],
+                    ['name' => 'Créer et mettre en place une charte de chantier pour prendre en compte les cyclistes lors des travaux de voirie', 'bareme' => 20],
                 ]
             ],
             [
-                'name' => 'Environnement',
+                'name' => 'Circuler dans mon Quartier',
                 'bareme' => 100,
                 'propositions' => [
-                    ['name' => 'Créer des espaces verts', 'bareme' => 30],
-                    ['name' => 'Installer des composteurs collectifs', 'bareme' => 15],
-                    ['name' => 'Développer l\'agriculture urbaine', 'bareme' => 25],
-                    ['name' => 'Réduire la pollution lumineuse', 'bareme' => 15],
-                    ['name' => 'Protéger la biodiversité', 'bareme' => 15]
+                    ['name' => 'Privilégier dans l’ordre piéton.nes, vélos, transport en commun', 'bareme' => 30],
+                    ['name' => 'repenser les plans de circulation de chaque quartier en limitant le transit motorisé', 'bareme' => 15],
+                    ['name' => 'connecter les quartiers au ReVE ou aux grandes pistes de la métropole avec des aménagements cyclables tels que des vélorues.', 'bareme' => 25],
+                    ['name' => 'Marquer les entrées de quartier en généralisant les trottoirs et pistes traversants', 'bareme' => 15],
+                    ['name' => 'Réduire le stationnement en voirie', 'bareme' => 15],
+                    ['name' => 'Éviter les couloirs partagés Bus/vélo', 'bareme' => 15]
                 ]
             ],
             [
-                'name' => 'Social et Solidarité',
+                'name' => 'Les piétons',
                 'bareme' => 100,
                 'propositions' => [
-                    ['name' => 'Créer des centres sociaux', 'bareme' => 25],
-                    ['name' => 'Développer l\'aide alimentaire', 'bareme' => 20],
-                    ['name' => 'Soutenir les personnes âgées', 'bareme' => 25],
-                    ['name' => 'Accompagner les familles', 'bareme' => 15],
-                    ['name' => 'Favoriser l\'insertion professionnelle', 'bareme' => 15]
+                    ['name' => 'Développer des cœurs de quartier piéton ainsi qu’une trame piétonne', 'bareme' => 25],
+                    ['name' => 'Proposer une alternative cyclable aux principaux axes piétons', 'bareme' => 20],
+                    ['name' => 'Généraliser les trottoirs traversants', 'bareme' => 25],
+                    ['name' => 'Réaliser des trottoirs plats', 'bareme' => 15],
+                ]
+            ],
+            [
+                'name' => 'Les écoles',
+                'bareme' => 100,
+                'propositions' => [
+                    ['name' => 'Mettre en place le Savoir Rouler À Vélo (SRAV) jusqu’au niveau 3', 'bareme' => 25],
+                    ['name' => 'Transformer les rues des écoles en lieux de vie (permanents) sans voiture', 'bareme' => 20],
+                    ['name' => 'Inciter et faciliter le déplacements des enfants à vélo ou à pieds', 'bareme' => 25],
+                ]
+            ],
+            [
+                'name' => 'Intermodalité et stationnements',
+                'bareme' => 100,
+                'propositions' => [
+                    ['name' => 'Proposer des stationnements sécurisés, simple d’accès, et quantitatif adaptés à chaque gare', 'bareme' => 25],
+                    ['name' => 'Développer des parkings sécurisés type Metstation dans les secteurs de stationnement tendus et les pôle d’intérêt majeur', 'bareme' => 20],
+                    ['name' => 'Proposer une offre simplifié et unique permettant l’accès à l’ensemble des Metstation de la métropole,', 'bareme' => 25],
+                    ['name' => 'Multiplier le nombre de Vélobox dans les quartiers.', 'bareme' => 15],
+                ]
+            ],
+            [
+                'name' => 'Guide aménagements Sécurité et confort',
+                'bareme' => 100,
+                'propositions' => [
+                    ['name' => 'Uniformiser de la couleur des aménagements cyclables', 'bareme' => 25],
+                    ['name' => 'Ne plus utiliser le stabilisé et le béton pour les trottoirs et pistes cyclables', 'bareme' => 20],
+                    ['name' => 'Généraliser la création de trottoirs et pistes traversantes', 'bareme' => 25],
+                    ['name' => 'Aménager des trottoirs plats sans “bateaux”', 'bareme' => 15],
+                    ['name' => 'Réaliser tous les aménagements cyclables sans bordures', 'bareme' => 15],
+                    ['name' => 'Généraliser les arrêt de bus flottant', 'bareme' => 15],
+                    ['name' => 'Créer une zone tampon pour mettre à distance du stationnement les bandes/pistes cyclable pour éviter le risque d’emportiérage', 'bareme' => 15],
+                    ['name' => 'Sécuriser les sas vélo avec un système de double feu', 'bareme' => 15],
+                    ['name' => 'Réaliser tous les giratoires sur le principe des rond point hollandais.', 'bareme' => 15],
+                ]
+            ],
+            [
+                'name' => 'Elaborer un Plan vélo',
+                'bareme' => 100,
+                'propositions' => [
+                    ['name' => 'Elaborer un plan vélo à l’échelle de ma commune', 'bareme' => 25],
+                    ['name' => 'Respecter la loi LOM (L228-2 du code de l’environnement)', 'bareme' => 20],
+                    ['name' => 'Communiquer favorablement et régulièrement sur le vélo', 'bareme' => 25],
+                    ['name' => 'Organiser des rencontres', 'bareme' => 15],
                 ]
             ]
         ];
@@ -176,7 +212,7 @@ class AppFixtures extends Fixture
 
             foreach ($categoryData['propositions'] as $propositionData) {
                 $proposition = new Proposition();
-                $proposition->setName($propositionData['name']);
+                $proposition->setTitle($propositionData['name']);
                 $proposition->setBareme($propositionData['bareme']);
                 $proposition->setCategory($category);
                 $manager->persist($proposition);

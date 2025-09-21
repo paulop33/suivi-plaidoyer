@@ -19,9 +19,9 @@ class City
     private ?string $name = null;
 
     /**
-     * @var Collection<int, Contact>
+     * @var Collection<int, CandidateList>
      */
-    #[ORM\OneToMany(targetEntity: Contact::class, mappedBy: 'city', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: CandidateList::class, mappedBy: 'city', orphanRemoval: true)]
     private Collection $contacts;
 
     /**
@@ -61,14 +61,14 @@ class City
     }
 
     /**
-     * @return Collection<int, Contact>
+     * @return Collection<int, CandidateList>
      */
     public function getContacts(): Collection
     {
         return $this->contacts;
     }
 
-    public function addContact(Contact $contact): static
+    public function addContact(CandidateList $contact): static
     {
         if (!$this->contacts->contains($contact)) {
             $this->contacts->add($contact);
@@ -78,7 +78,7 @@ class City
         return $this;
     }
 
-    public function removeContact(Contact $contact): static
+    public function removeContact(CandidateList $contact): static
     {
         if ($this->contacts->removeElement($contact)) {
             // set the owning side to null (unless already changed)
@@ -102,7 +102,7 @@ class City
     {
         if (!$this->commitments->contains($commitment)) {
             $this->commitments->add($commitment);
-            $commitment->setCity($this);
+            $commitment->setCandidateList($this);
         }
 
         return $this;
@@ -112,8 +112,8 @@ class City
     {
         if ($this->commitments->removeElement($commitment)) {
             // set the owning side to null (unless already changed)
-            if ($commitment->getCity() === $this) {
-                $commitment->setCity(null);
+            if ($commitment->getCandidateList() === $this) {
+                $commitment->setCandidateList(null);
             }
         }
 
@@ -142,5 +142,10 @@ class City
         $this->referentesAssociations->removeElement($referenteAssociation);
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->getName();
     }
 }

@@ -1,0 +1,12 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content %}
+    <h1>Ajout en masse de produits</h1>
+
+    <form method="post">
+        <label for="names">Liste des noms (un par ligne) :</label><br>
+        <textarea id="names" name="names" rows="10" cols="50"></textarea><br><br>
+
+        <button type="submit" class="btn btn-success">Ajouter</button>
+    </form>
+{% endblock %}

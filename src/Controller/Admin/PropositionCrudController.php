@@ -6,6 +6,7 @@ use App\Entity\Proposition;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 
@@ -18,11 +19,13 @@ class PropositionCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        parent::configureFields($pageName);
         return [
             IdField::new('id')->hideOnForm(),
-            TextField::new('name', 'Name'),
+            TextareaField::new('title', 'Titre'),
+            TextareaField::new('description', 'Description')->hideOnIndex(),
             IntegerField::new('bareme', 'Bareme'),
-            AssociationField::new('category', 'Category'),
+            AssociationField::new('category', 'Catégorie'),
         ];
     }
 }

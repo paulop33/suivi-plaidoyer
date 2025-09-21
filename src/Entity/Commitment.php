@@ -16,7 +16,7 @@ class Commitment
 
     #[ORM\ManyToOne(inversedBy: 'commitments')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?City $city = null;
+    private ?CandidateList $candidateList = null;
 
     #[ORM\ManyToOne(inversedBy: 'commitments')]
     #[ORM\JoinColumn(nullable: false)]
@@ -29,24 +29,30 @@ class Commitment
     private ?\DateTime $updateDate = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $commentCity = null;
+    private ?string $commentCandidateList = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $commentAssociation = null;
+
+    public function __construct()
+    {
+        $this->creationDate = new \DateTime();
+        $this->updateDate = new \DateTime();
+    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getCity(): ?City
+    public function getCandidateList(): ?CandidateList
     {
-        return $this->city;
+        return $this->candidateList;
     }
 
-    public function setCity(?City $city): static
+    public function setCandidateList(CandidateList $candidateList): static
     {
-        $this->city = $city;
+        $this->candidateList = $candidateList;
 
         return $this;
     }
@@ -56,7 +62,7 @@ class Commitment
         return $this->proposition;
     }
 
-    public function setProposition(?Proposition $proposition): static
+    public function setProposition(Proposition $proposition): static
     {
         $this->proposition = $proposition;
 
@@ -87,14 +93,14 @@ class Commitment
         return $this;
     }
 
-    public function getCommentCity(): ?string
+    public function getCommentCandidateList(): ?string
     {
-        return $this->commentCity;
+        return $this->commentCandidateList;
     }
 
-    public function setCommentCity(?string $commentCity): static
+    public function setCommentCandidateList(?string $commentCandidateList): static
     {
-        $this->commentCity = $commentCity;
+        $this->commentCandidateList = $commentCandidateList;
 
         return $this;
     }

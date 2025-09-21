@@ -6,7 +6,7 @@ use App\Entity\Association;
 use App\Entity\Category;
 use App\Entity\City;
 use App\Entity\Commitment;
-use App\Entity\Contact;
+use App\Entity\CandidateList;
 use App\Entity\Proposition;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -68,7 +68,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Catégories', 'fas fa-tags', Category::class);
         yield MenuItem::linkToCrud('Propositions', 'fas fa-list', Proposition::class);
         yield MenuItem::linkToCrud('Villes', 'fas fa-city', City::class);
-        yield MenuItem::linkToCrud('Contacts', 'fas fa-users', Contact::class);
-        yield MenuItem::linkToCrud('Commitments', 'fas fa-check', Commitment::class);
+        yield MenuItem::linkToCrud('Listes', 'fas fa-list', CandidateList::class);
+        yield MenuItem::linkToCrud('Engagements', 'fas fa-check', Commitment::class);
     }
 }
