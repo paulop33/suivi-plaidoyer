@@ -41,9 +41,19 @@
                             </div>
 
                             <div class="row mb-3">
-                                <div class="col-md-12">
+                                <div class="col-md-8">
                                     <h5><i class="fas fa-list me-2"></i>Définir le statut pour chaque proposition</h5>
                                     <p class="text-muted small">Choisissez le statut de chaque proposition. La zone de commentaire s'ouvrira automatiquement pour les propositions acceptées ou refusées.</p>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <div class="btn-group" role="group" aria-label="Actions rapides">
+                                        <button type="button" class="btn btn-success btn-sm" id="acceptAllBtn">
+                                            <i class="fas fa-check-double me-1"></i>Tout accepter
+                                        </button>
+                                        <button type="button" class="btn btn-danger btn-sm" id="refuseAllBtn">
+                                            <i class="fas fa-times-circle me-1"></i>Tout refuser
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -207,6 +217,36 @@
 
                     updateStatusCounter();
                 });
+            });
+
+            // Gestion des boutons "Tout accepter" et "Tout refuser"
+            const acceptAllBtn = document.getElementById('acceptAllBtn');
+            const refuseAllBtn = document.getElementById('refuseAllBtn');
+
+            acceptAllBtn.addEventListener('click', function() {
+                if (confirm('Êtes-vous sûr de vouloir accepter toutes les propositions ?')) {
+                    const acceptedRadios = document.querySelectorAll('input[type="radio"][value="accepted"]');
+                    acceptedRadios.forEach(radio => {
+                        radio.checked = true;
+                        // Déclencher l'événement change pour afficher les zones de commentaire
+                        const event = new Event('change', { bubbles: true });
+                        radio.dispatchEvent(event);
+                    });
+                    updateStatusCounter();
+                }
+            });
+
+            refuseAllBtn.addEventListener('click', function() {
+                if (confirm('Êtes-vous sûr de vouloir refuser toutes les propositions ?')) {
+                    const refusedRadios = document.querySelectorAll('input[type="radio"][value="refused"]');
+                    refusedRadios.forEach(radio => {
+                        radio.checked = true;
+                        // Déclencher l'événement change pour afficher les zones de commentaire
+                        const event = new Event('change', { bubbles: true });
+                        radio.dispatchEvent(event);
+                    });
+                    updateStatusCounter();
+                }
             });
 
             // Compteur de caractères pour les commentaires de proposition
