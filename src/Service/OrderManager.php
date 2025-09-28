@@ -59,7 +59,7 @@ class OrderManager
      */
     public function getMaxPropositionOrderInCategory(?Category $category): int
     {
-        if (!$category) {
+        if (!$category || !$category->getId()) {
             return 0;
         }
 

@@ -1,0 +1,110 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title %}Mon Profil{% endblock %}
+
+{% block main %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-user me-2"></i>
+                        Informations personnelles
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Prénom</label>
+                                <p class="form-control-plaintext">{{ user.firstname }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Nom</label>
+                                <p class="form-control-plaintext">{{ user.lastname }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Email</label>
+                        <p class="form-control-plaintext">{{ user.email }}</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Rôles</label>
+                        <div>
+                            {% for role in user.roles %}
+                                {% if role == 'ROLE_SUPER_ADMIN' %}
+                                    <span class="badge bg-danger me-1">
+                                        <i class="fas fa-crown me-1"></i>
+                                        Super Administrateur
+                                    </span>
+                                {% elseif role == 'ROLE_ASSOCIATION' %}
+                                    <span class="badge bg-primary me-1">
+                                        <i class="fas fa-users me-1"></i>
+                                        Association
+                                    </span>
+                                {% elseif role == 'ROLE_USER' %}
+                                    <span class="badge bg-secondary me-1">
+                                        <i class="fas fa-user me-1"></i>
+                                        Utilisateur
+                                    </span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    {% if user.association %}
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Association</label>
+                            <div class="d-flex align-items-center">
+                                {% if user.association.color %}
+                                    <div class="me-2" style="width: 20px; height: 20px; background-color: {{ user.association.color }}; border-radius: 3px;"></div>
+                                {% endif %}
+                                <span>{{ user.association.name }}</span>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Statut</label>
+                        <p class="form-control-plaintext">
+                            {% if user.isActive %}
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check me-1"></i>
+                                    Actif
+                                </span>
+                            {% else %}
+                                <span class="badge bg-danger">
+                                    <i class="fas fa-times me-1"></i>
+                                    Inactif
+                                </span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ path('admin') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            Retour au dashboard
+                        </a>
+
+                        {% if is_granted('ROLE_SUPER_ADMIN') %}
+                            <a href="{{ path('admin_users_edit', {id: user.id}) }}"
+                               class="btn btn-primary">
+                                <i class="fas fa-edit me-2"></i>
+                                Modifier mon profil
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

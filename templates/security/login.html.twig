@@ -1,0 +1,129 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion - Suivi Plaidoyer{% endblock %}
+
+{% block body %}
+<div class="container-fluid vh-100">
+    <div class="row h-100">
+        <div class="col-md-6 d-flex align-items-center justify-content-center bg-light">
+            <div class="text-center">
+                <h1 class="display-4 text-primary mb-4">
+                    <i class="fas fa-chart-line me-3"></i>
+                    Suivi Plaidoyer
+                </h1>
+                <p class="lead text-muted">
+                    Plateforme de suivi des engagements politiques
+                </p>
+                <div class="mt-4">
+                    <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                    <p class="text-muted">
+                        Connectez-vous pour accéder à l'administration
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 d-flex align-items-center justify-content-center">
+            <div class="w-100" style="max-width: 400px;">
+                <div class="card shadow-lg border-0">
+                    <div class="card-body p-5">
+                        <h2 class="card-title text-center mb-4">
+                            <i class="fas fa-sign-in-alt me-2"></i>
+                            Connexion
+                        </h2>
+
+                        {% if error %}
+                            <div class="alert alert-danger" role="alert">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                {{ error.messageKey|trans(error.messageData, 'security') }}
+                            </div>
+                        {% endif %}
+
+                        <form method="post">
+                            <div class="mb-3">
+                                <label for="inputEmail" class="form-label">
+                                    <i class="fas fa-envelope me-2"></i>
+                                    Email
+                                </label>
+                                <input type="email"
+                                       value="{{ last_username }}"
+                                       name="_username"
+                                       id="inputEmail"
+                                       class="form-control form-control-lg"
+                                       autocomplete="email"
+                                       required
+                                       autofocus>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="inputPassword" class="form-label">
+                                    <i class="fas fa-lock me-2"></i>
+                                    Mot de passe
+                                </label>
+                                <input type="password"
+                                       name="_password"
+                                       id="inputPassword"
+                                       class="form-control form-control-lg"
+                                       autocomplete="current-password"
+                                       required>
+                            </div>
+
+                            <div class="mb-3 form-check">
+                                <input type="checkbox"
+                                       name="_remember_me"
+                                       class="form-check-input"
+                                       id="remember_me">
+                                <label class="form-check-label" for="remember_me">
+                                    Se souvenir de moi
+                                </label>
+                            </div>
+
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                            <div class="d-grid">
+                                <button class="btn btn-primary btn-lg" type="submit">
+                                    <i class="fas fa-sign-in-alt me-2"></i>
+                                    Se connecter
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <a href="{{ path('app_home') }}" class="text-decoration-none">
+                        <i class="fas fa-arrow-left me-2"></i>
+                        Retour au site public
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .vh-100 {
+            min-height: 100vh;
+        }
+
+        .card {
+            border-radius: 15px;
+        }
+
+        .form-control-lg {
+            border-radius: 10px;
+        }
+
+        .btn-lg {
+            border-radius: 10px;
+            padding: 12px 24px;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
+{% endblock %}

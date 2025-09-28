@@ -21,9 +21,8 @@ class OrderAssignmentListener
     ) {
     }
 
-    public function prePersist(LifecycleEventArgs $args): void
+    public function prePersist($entity, LifecycleEventArgs $args): void
     {
-        $entity = $args->getObject();
 
         if ($entity instanceof Category) {
             $this->orderManager->assignCategoryOrder($entity);

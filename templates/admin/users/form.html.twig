@@ -1,0 +1,83 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content_header_wrapper %}
+    <section class="content-header">
+        <div class="content-header-left">
+            <h1 class="content-title">{{ title }}</h1>
+        </div>
+        <div class="content-header-right">
+            <a href="{{ path('admin_users_list') }}" class="btn btn-secondary">
+                <i class="fa fa-arrow-left"></i> Retour à la liste
+            </a>
+        </div>
+    </section>
+{% endblock %}
+
+{% block main %}
+<div class="content-wrapper">
+                    {% for message in app.flashes('error') %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+
+                    {{ form_start(form, {'attr': {'class': 'row g-3'}}) }}
+
+                    <div class="col-md-6">
+                        {{ form_row(form.firstname, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+
+                    <div class="col-md-6">
+                        {{ form_row(form.lastname, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+
+                    <div class="col-12">
+                        {{ form_row(form.email, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+
+                    <div class="col-12">
+                        {{ form_row(form.password, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">{{ form.roles.vars.label }}</label>
+                        <div class="form-check-group">
+                            {{ form_widget(form.roles, {'attr': {'class': 'form-check-input'}}) }}
+                        </div>
+                        {{ form_errors(form.roles) }}
+                    </div>
+
+                    <div class="col-md-6">
+                        {{ form_row(form.association, {'attr': {'class': 'form-select'}}) }}
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-check">
+                            {{ form_widget(form.isActive, {'attr': {'class': 'form-check-input'}}) }}
+                            {{ form_label(form.isActive, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                        </div>
+                        {{ form_errors(form.isActive) }}
+                    </div>
+
+                    <div class="col-12">
+                        <div class="d-flex gap-2">
+                            {{ form_widget(form.submit) }}
+                            <a href="{{ path('admin_users_list') }}" class="btn btn-secondary">Annuler</a>
+                        </div>
+                    </div>
+
+                    {{ form_end(form) }}
+</div>
+
+<style>
+.form-check-group .form-check {
+    margin-bottom: 0.5rem;
+}
+.form-check-group .form-check-input {
+    margin-right: 0.5rem;
+}
+</style>
+{% endblock %}
