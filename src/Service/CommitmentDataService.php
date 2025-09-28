@@ -6,6 +6,7 @@ use App\Entity\Category;
 use App\Entity\City;
 use App\Entity\CandidateList;
 use App\Entity\Proposition;
+use App\Enum\CommitmentStatus;
 use Doctrine\ORM\EntityManagerInterface;
 
 class CommitmentDataService
@@ -161,6 +162,32 @@ class CommitmentDataService
     }
 
     /**
+     * Compte uniquement les engagements acceptés dans une liste d'engagements
+     */
+    public function countAcceptedCommitments(array $commitmentData): int
+    {
+        $acceptedCount = 0;
+        foreach ($commitmentData as $data) {
+            $commitment = $data['commitment'];
+            if ($commitment->isAccepted()) {
+                $acceptedCount++;
+            }
+        }
+        return $acceptedCount;
+    }
+
+    /**
+     * Filtre les engagements pour ne garder que ceux acceptés
+     */
+    public function filterAcceptedCommitments(array $commitmentData): array
+    {
+        return array_filter($commitmentData, function ($data) {
+            $commitment = $data['commitment'];
+            return $commitment->isAccepted();
+        });
+    }
+
+    /**
      * Organise toutes les propositions avec les listes d'une commune qui les ont signées
      */
     public function organizeCityPropositionData(City $city): array
@@ -198,11 +225,15 @@ class CommitmentDataService
                 }
             }
 
+            // Compter uniquement les engagements acceptés
+            $acceptedSignatures = $this->countAcceptedCommitments($signedListsFromCity);
+
             $propositionsByCategory[$categoryName]['propositions'][] = [
                 'proposition' => $proposition,
                 'signedLists' => $signedListsFromCity,
-                'totalSignatures' => count($signedListsFromCity),
-                'totalSignaturesGlobal' => $proposition->getCommitments()->count()
+                'totalSignatures' => $acceptedSignatures,
+                'totalSignaturesGlobal' => $proposition->getCommitments()->count(),
+                'totalAllCommitments' => count($signedListsFromCity) // Garde l'ancien comptage pour référence
             ];
         }
 
