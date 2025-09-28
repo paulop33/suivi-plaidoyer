@@ -178,7 +178,7 @@ class CandidateList
      */
     private function updateSlug(): void
     {
-        if ($this->firstname && $this->lastname) {
+        if (isset($this->firstname) && isset($this->lastname) && isset($this->nameList)) {
             $this->slug = $this->generateSlug($this->firstname . ' ' . $this->lastname. ' '. $this->nameList);
         }
     }
