@@ -38,7 +38,7 @@ class CommitmentCrudController extends AbstractCrudController
         return [
             AssociationField::new('candidateList', 'Liste'),
             AssociationField::new('proposition', 'Proposition'),
-            TextareaField::new('commentCandidateList', 'Commentaire de la liste'),
+            TextareaField::new('commentCandidateList', 'Commentaire spécifique'),
         ];
     }
 

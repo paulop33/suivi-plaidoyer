@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\CandidateListRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CandidateListRepository::class)]
@@ -36,6 +37,9 @@ class CandidateList
     #[ORM\ManyToOne(inversedBy: 'contacts')]
     #[ORM\JoinColumn(nullable: false)]
     private ?City $city = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $globalComment = null;
 
     /**
      * @var Collection<int, Commitment>
@@ -164,6 +168,18 @@ class CandidateList
                 $commitment->setCandidateList(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getGlobalComment(): ?string
+    {
+        return $this->globalComment;
+    }
+
+    public function setGlobalComment(?string $globalComment): static
+    {
+        $this->globalComment = $globalComment;
 
         return $this;
     }

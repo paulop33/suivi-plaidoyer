@@ -73,6 +73,10 @@ class CandidateListCrudControllerTest extends WebTestCase
         $this->assertSelectorExists('form#batchCommitmentForm');
         $this->assertSelectorExists('textarea#global_comment');
         $this->assertSelectorExists('input[name="propositions[]"]');
+
+        // Vérifier la présence des nouveaux éléments pour les commentaires par proposition
+        $this->assertSelectorExists('.toggle-comment-btn');
+        $this->assertSelectorExists('.proposition-comment-area');
     }
 
     public function testBatchCommitmentControllerExists(): void
@@ -95,6 +99,67 @@ class CandidateListCrudControllerTest extends WebTestCase
         $this->assertStringContainsString('batchCommitmentForm', $content);
         $this->assertStringContainsString('global_comment', $content);
         $this->assertStringContainsString('propositions[]', $content);
+        $this->assertStringContainsString('proposition_comments', $content);
+        $this->assertStringContainsString('toggle-comment-btn', $content);
+    }
+
+    public function testBatchCommitmentWithPropositionComments(): void
+    {
+        $client = static::createClient();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+
+        // Créer les données de test
+        $city = new City();
+        $city->setName('Test City');
+        $entityManager->persist($city);
+
+        $candidateList = new CandidateList();
+        $candidateList->setFirstname('John');
+        $candidateList->setLastname('Doe');
+        $candidateList->setNameList('Test List');
+        $candidateList->setCity($city);
+        $entityManager->persist($candidateList);
+
+        $category = new Category();
+        $category->setName('Test Category');
+        $entityManager->persist($category);
+
+        $proposition = new Proposition();
+        $proposition->setTitle('Test Proposition');
+        $proposition->setCategory($category);
+        $entityManager->persist($proposition);
+
+        $entityManager->flush();
+
+        // Tester la soumission avec commentaires par proposition
+        $client->request('POST', '/admin', [
+            'crudControllerFqcn' => 'App\\Controller\\Admin\\CandidateListCrudController',
+            'crudAction' => 'batchCommitment',
+            'entityId' => $candidateList->getId(),
+        ], [], [], [
+            'CONTENT_TYPE' => 'application/x-www-form-urlencoded',
+        ], http_build_query([
+            'propositions' => [$proposition->getId()],
+            'global_comment' => 'Commentaire global de test',
+            'proposition_comments' => [
+                $proposition->getId() => 'Commentaire spécifique pour cette proposition'
+            ]
+        ]));
+
+        $this->assertResponseRedirects();
+
+        // Vérifier que l'engagement a été créé avec les deux commentaires
+        $commitment = $entityManager->getRepository(Commitment::class)->findOneBy([
+            'candidateList' => $candidateList,
+            'proposition' => $proposition
+        ]);
+
+        $this->assertNotNull($commitment);
+        $this->assertEquals('Commentaire spécifique pour cette proposition', $commitment->getCommentCandidateList());
+
+        // Vérifier que le commentaire global a été sauvegardé sur la liste
+        $entityManager->refresh($candidateList);
+        $this->assertEquals('Commentaire global de test', $candidateList->getGlobalComment());
     }
 
     protected function tearDown(): void

@@ -23,7 +23,7 @@
                                 <div class="col-md-12">
                                     <label for="global_comment" class="form-label">
                                         <i class="fas fa-comment me-1"></i>
-                                        Commentaire global (optionnel)
+                                        Commentaire global de la liste (optionnel)
                                     </label>
                                     <textarea
                                         class="form-control"
@@ -31,11 +31,11 @@
                                         name="global_comment"
                                         rows="3"
                                         maxlength="1000"
-                                        placeholder="Ce commentaire sera appliqué à tous les engagements sélectionnés..."
-                                    ></textarea>
+                                        placeholder="Ce commentaire sera associé à la liste candidate..."
+                                    >{{ candidateList.globalComment ?? '' }}</textarea>
                                     <div class="form-text">
-                                        Ce commentaire sera ajouté à tous les engagements que vous sélectionnez ci-dessous.
-                                        <span id="charCount" class="text-muted">(0/1000 caractères)</span>
+                                        Ce commentaire est associé à la liste candidate et non aux propositions individuelles.
+                                        <span id="charCount" class="text-muted">({{ candidateList.globalComment ? candidateList.globalComment|length : 0 }}/1000 caractères)</span>
                                     </div>
                                 </div>
                             </div>
@@ -87,25 +87,52 @@
                                                         </div>
                                                     {% endif %}
                                                 </div>
-                                                <div class="ms-3">
-                                                    {% if existingCommitments[proposition.id] is defined %}
-                                                        <span class="badge bg-success">
-                                                            <i class="fas fa-check me-1"></i>Déjà engagé
-                                                        </span>
-                                                        {% if existingCommitments[proposition.id].commentCandidateList %}
-                                                            <div class="small text-muted mt-1">
-                                                                <i class="fas fa-comment me-1"></i>
-                                                                {{ existingCommitments[proposition.id].commentCandidateList|slice(0, 50) }}{% if existingCommitments[proposition.id].commentCandidateList|length > 50 %}...{% endif %}
-                                                            </div>
+                                                <div class="ms-3 d-flex flex-column align-items-end">
+                                                    <div class="mb-2">
+                                                        {% if existingCommitments[proposition.id] is defined %}
+                                                            <span class="badge bg-success">
+                                                                <i class="fas fa-check me-1"></i>Déjà engagé
+                                                            </span>
+                                                            {% if existingCommitments[proposition.id].commentCandidateList %}
+                                                                <div class="small text-muted mt-1">
+                                                                    <i class="fas fa-sticky-note me-1"></i>Avec commentaire
+                                                                </div>
+                                                            {% endif %}
+                                                        {% else %}
+                                                            <span class="badge bg-secondary">
+                                                                <i class="fas fa-plus me-1"></i>Nouveau
+                                                            </span>
                                                         {% endif %}
-                                                    {% else %}
-                                                        <span class="badge bg-secondary">
-                                                            <i class="fas fa-plus me-1"></i>Nouveau
-                                                        </span>
-                                                    {% endif %}
+                                                    </div>
+                                                    <button type="button" class="btn btn-outline-info btn-sm toggle-comment-btn" data-proposition-id="{{ proposition.id }}">
+                                                        <i class="fas fa-comment-plus me-1"></i>Commentaire
+                                                    </button>
                                                 </div>
                                             </div>
                                         </label>
+
+                                        <!-- Zone de commentaire spécifique à la proposition (masquée par défaut) -->
+                                        <div class="proposition-comment-area mt-3" id="comment-area-{{ proposition.id }}" style="display: none;">
+                                            <div class="border-top pt-3">
+                                                <label for="proposition_comment_{{ proposition.id }}" class="form-label small">
+                                                    <i class="fas fa-sticky-note me-1"></i>
+                                                    Commentaire spécifique à cette proposition
+                                                </label>
+                                                <textarea
+                                                    class="form-control form-control-sm proposition-comment"
+                                                    id="proposition_comment_{{ proposition.id }}"
+                                                    name="proposition_comments[{{ proposition.id }}]"
+                                                    rows="2"
+                                                    maxlength="1000"
+                                                    placeholder="Commentaire spécifique pour cette proposition..."
+                                                >{% if existingCommitments[proposition.id] is defined and existingCommitments[proposition.id].commentCandidateList %}{{ existingCommitments[proposition.id].commentCandidateList }}{% endif %}</textarea>
+                                                <div class="form-text small">
+                                                    <span class="comment-char-count" data-proposition-id="{{ proposition.id }}">
+                                                        ({% if existingCommitments[proposition.id] is defined and existingCommitments[proposition.id].commentCandidateList %}{{ existingCommitments[proposition.id].commentCandidateList|length }}{% else %}0{% endif %}/1000 caractères)
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 {% endfor %}
                                 {% if currentCategory is not null %}
@@ -180,12 +207,76 @@
 
             globalComment.addEventListener('input', updateCharCount);
 
+            // Gestion des boutons de commentaire par proposition
+            const toggleCommentBtns = document.querySelectorAll('.toggle-comment-btn');
+            const propositionComments = document.querySelectorAll('.proposition-comment');
+
+            toggleCommentBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const propositionId = this.getAttribute('data-proposition-id');
+                    const commentArea = document.getElementById(`comment-area-${propositionId}`);
+                    const icon = this.querySelector('i');
+
+                    if (commentArea.style.display === 'none') {
+                        commentArea.style.display = 'block';
+                        icon.className = 'fas fa-comment-minus me-1';
+                        this.innerHTML = '<i class="fas fa-comment-minus me-1"></i>Masquer';
+                        this.classList.remove('btn-outline-info');
+                        this.classList.add('btn-outline-warning');
+                    } else {
+                        commentArea.style.display = 'none';
+                        icon.className = 'fas fa-comment-plus me-1';
+                        this.innerHTML = '<i class="fas fa-comment-plus me-1"></i>Commentaire';
+                        this.classList.remove('btn-outline-warning');
+                        this.classList.add('btn-outline-info');
+                    }
+                });
+            });
+
+            // Compteur de caractères pour les commentaires par proposition
+            function updatePropositionCharCount(propositionId) {
+                const textarea = document.getElementById(`proposition_comment_${propositionId}`);
+                const charCountSpan = document.querySelector(`.comment-char-count[data-proposition-id="${propositionId}"]`);
+
+                if (textarea && charCountSpan) {
+                    const length = textarea.value.length;
+                    charCountSpan.textContent = `(${length}/1000 caractères)`;
+                    charCountSpan.className = length > 900 ? 'text-warning' : length > 1000 ? 'text-danger' : 'text-muted';
+                }
+            }
+
+            propositionComments.forEach(textarea => {
+                const propositionId = textarea.id.replace('proposition_comment_', '');
+                textarea.addEventListener('input', function() {
+                    updatePropositionCharCount(propositionId);
+                });
+                // Initialiser le compteur
+                updatePropositionCharCount(propositionId);
+            });
+
             // Confirmation avant soumission
             form.addEventListener('submit', function(e) {
                 const checkedCount = document.querySelectorAll('.proposition-checkbox:checked').length;
                 if (checkedCount === 0) {
                     e.preventDefault();
                     alert('Veuillez sélectionner au moins une proposition.');
+                    return;
+                }
+
+                // Vérifier la longueur des commentaires par proposition
+                let hasLongComment = false;
+                propositionComments.forEach(textarea => {
+                    if (textarea.value.length > 1000) {
+                        hasLongComment = true;
+                    }
+                });
+
+                if (hasLongComment) {
+                    e.preventDefault();
+                    alert('Un ou plusieurs commentaires dépassent la limite de 1000 caractères.');
                     return;
                 }
 
@@ -223,6 +314,25 @@
 
         .badge {
             font-size: 0.75em;
+        }
+
+        .proposition-comment-area {
+            background-color: #f8f9fa;
+            border-radius: 0.375rem;
+            margin-top: 0.75rem;
+        }
+
+        .toggle-comment-btn {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+        }
+
+        .proposition-comment {
+            font-size: 0.875rem;
+        }
+
+        .comment-char-count {
+            font-size: 0.75rem;
         }
     </style>
 {% endblock %}

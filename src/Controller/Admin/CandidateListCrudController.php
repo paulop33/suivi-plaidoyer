@@ -15,6 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
@@ -41,12 +42,12 @@ class CandidateListCrudController extends AbstractCrudController
             ->linkToCrudAction('batchCommitment')
             ->setIcon('fa fa-check-double')
             ->displayAsButton()
-            ->setCssClass('btn btn-success')
-            ->displayIf(fn ($entity) => $entity instanceof CandidateList);
+            ->setCssClass('btn btn-success');
 
         return $actions
             ->add(Crud::PAGE_DETAIL, $batchCommitment)
-            ->add(Crud::PAGE_INDEX, $batchCommitment);
+            ->add(Crud::PAGE_INDEX, $batchCommitment)
+            ;
     }
 
     public function configureFields(string $pageName): iterable
@@ -58,6 +59,7 @@ class CandidateListCrudController extends AbstractCrudController
             EmailField::new('email'),
             TextField::new('phone', 'Téléphone'),
             AssociationField::new('city', 'Ville'),
+            TextareaField::new('globalComment', 'Commentaire global'),
         ];
     }
 
@@ -102,10 +104,11 @@ class CandidateListCrudController extends AbstractCrudController
     {
         $selectedPropositions = $request->request->all('propositions') ?? [];
         $globalComment = trim($request->request->get('global_comment', ''));
+        $propositionComments = $request->request->all('proposition_comments') ?? [];
 
-        // Validation
-        if (empty($selectedPropositions)) {
-            $this->addFlash('error', 'Veuillez sélectionner au moins une proposition.');
+        // Validation de la longueur du commentaire global
+        if (strlen($globalComment) > 1000) {
+            $this->addFlash('error', 'Le commentaire global ne peut pas dépasser 1000 caractères.');
             return $this->redirect($this->adminUrlGenerator
                 ->setController(self::class)
                 ->setAction('batchCommitment')
@@ -113,23 +116,39 @@ class CandidateListCrudController extends AbstractCrudController
                 ->generateUrl());
         }
 
-        // Validation de la longueur du commentaire
-        if (strlen($globalComment) > 1000) {
-            $this->addFlash('error', 'Le commentaire ne peut pas dépasser 1000 caractères.');
-            return $this->redirect($this->adminUrlGenerator
-                ->setController(self::class)
-                ->setAction('batchCommitment')
-                ->setEntityId($candidateList->getId())
-                ->generateUrl());
+        // Validation de la longueur des commentaires par proposition
+        foreach ($propositionComments as $propositionId => $comment) {
+            if (strlen(trim($comment)) > 1000) {
+                $this->addFlash('error', 'Le commentaire pour la proposition ne peut pas dépasser 1000 caractères.');
+                return $this->redirect($this->adminUrlGenerator
+                    ->setController(self::class)
+                    ->setAction('batchCommitment')
+                    ->setEntityId($candidateList->getId())
+                    ->generateUrl());
+            }
         }
 
         $createdCount = 0;
         $updatedCount = 0;
+        $deletedCount = 0;
         $errorCount = 0;
 
         try {
             $this->entityManager->beginTransaction();
 
+            // Mettre à jour le commentaire global de la liste
+            if ($candidateList->getGlobalComment() !== $globalComment) {
+                $candidateList->setGlobalComment($globalComment ?: null);
+                $this->entityManager->persist($candidateList);
+            }
+
+            // Récupérer tous les engagements existants pour cette liste
+            $existingCommitments = [];
+            foreach ($candidateList->getCommitments() as $commitment) {
+                $existingCommitments[$commitment->getProposition()->getId()] = $commitment;
+            }
+
+            // Traiter les propositions sélectionnées
             foreach ($selectedPropositions as $propositionId) {
                 try {
                     $proposition = $this->entityManager->getRepository(Proposition::class)->find($propositionId);
@@ -138,26 +157,27 @@ class CandidateListCrudController extends AbstractCrudController
                         continue;
                     }
 
-                    // Vérifier si un engagement existe déjà
-                    $existingCommitment = $this->entityManager->getRepository(Commitment::class)
-                        ->findOneBy([
-                            'candidateList' => $candidateList,
-                            'proposition' => $proposition
-                        ]);
+                    // Récupérer le commentaire spécifique à cette proposition
+                    $propositionComment = isset($propositionComments[$propositionId]) ? trim($propositionComments[$propositionId]) : '';
 
-                    if ($existingCommitment) {
-                        // Mettre à jour le commentaire si fourni ou différent
-                        if (!empty($globalComment) && $existingCommitment->getCommentCandidateList() !== $globalComment) {
-                            $existingCommitment->setCommentCandidateList($globalComment);
+                    if (isset($existingCommitments[$propositionId])) {
+                        // Mettre à jour l'engagement existant
+                        $existingCommitment = $existingCommitments[$propositionId];
+
+                        if ($existingCommitment->getCommentCandidateList() !== $propositionComment) {
+                            $existingCommitment->setCommentCandidateList($propositionComment ?: null);
                             $existingCommitment->setUpdateDate(new \DateTime());
                             $updatedCount++;
                         }
+
+                        // Retirer de la liste pour ne pas le supprimer plus tard
+                        unset($existingCommitments[$propositionId]);
                     } else {
                         // Créer un nouvel engagement
                         $commitment = new Commitment();
                         $commitment->setCandidateList($candidateList);
                         $commitment->setProposition($proposition);
-                        $commitment->setCommentCandidateList($globalComment);
+                        $commitment->setCommentCandidateList($propositionComment ?: null);
                         $commitment->setCreationDate(new \DateTime());
                         $commitment->setUpdateDate(new \DateTime());
 
@@ -171,15 +191,22 @@ class CandidateListCrudController extends AbstractCrudController
                 }
             }
 
+            // Supprimer les engagements qui ne sont plus sélectionnés
+            foreach ($existingCommitments as $commitmentToDelete) {
+                $this->entityManager->remove($commitmentToDelete);
+                $deletedCount++;
+            }
+
             $this->entityManager->flush();
             $this->entityManager->commit();
 
             // Messages de succès et d'erreur
-            if ($createdCount > 0 || $updatedCount > 0) {
+            if ($createdCount > 0 || $updatedCount > 0 || $deletedCount > 0) {
                 $message = sprintf(
-                    '%d engagement(s) créé(s) et %d mis à jour pour la liste "%s"',
+                    '%d engagement(s) créé(s), %d mis à jour et %d supprimé(s) pour la liste "%s"',
                     $createdCount,
                     $updatedCount,
+                    $deletedCount,
                     $candidateList->getNameList()
                 );
                 $this->addFlash('success', $message);
