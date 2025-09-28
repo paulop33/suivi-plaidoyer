@@ -8,7 +8,7 @@
                     <div class="card-header bg-success text-white">
                         <h3 class="card-title mb-0">
                             <i class="fas fa-check-double me-2"></i>
-                            Engager la liste sur toutes les propositions
+                            Gérer les engagements de la liste
                         </h3>
                     </div>
                     <div class="card-body">
@@ -41,16 +41,9 @@
                             </div>
 
                             <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <h5><i class="fas fa-list me-2"></i>Sélectionner les propositions</h5>
-                                </div>
-                                <div class="col-md-6 text-end">
-                                    <button type="button" class="btn btn-outline-primary btn-sm" id="selectAll">
-                                        <i class="fas fa-check-square me-1"></i>Tout sélectionner
-                                    </button>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm" id="selectNone">
-                                        <i class="fas fa-square me-1"></i>Tout désélectionner
-                                    </button>
+                                <div class="col-md-12">
+                                    <h5><i class="fas fa-list me-2"></i>Définir le statut pour chaque proposition</h5>
+                                    <p class="text-muted small">Choisissez le statut de chaque proposition. La zone de commentaire s'ouvrira automatiquement pour les propositions acceptées ou refusées.</p>
                                 </div>
                             </div>
 
@@ -68,51 +61,61 @@
                                             </h6>
                                     {% endif %}
 
-                                    <div class="form-check proposition-item p-3 border rounded mb-2 {% if existingCommitments[proposition.id] is defined %}bg-light{% endif %}">
-                                        <input
-                                            class="form-check-input proposition-checkbox"
-                                            type="checkbox"
-                                            name="propositions[]"
-                                            value="{{ proposition.id }}"
-                                            id="prop_{{ proposition.id }}"
-                                            {% if existingCommitments[proposition.id] is defined %}checked{% endif %}
-                                        >
-                                        <label class="form-check-label w-100" for="prop_{{ proposition.id }}">
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <div class="flex-grow-1">
-                                                    <strong>{{ proposition.title }}</strong>
-                                                    {% if proposition.description %}
-                                                        <div class="text-muted small mt-1">
-                                                            {{ proposition.description|slice(0, 150) }}{% if proposition.description|length > 150 %}...{% endif %}
-                                                        </div>
-                                                    {% endif %}
+                                    <div class="proposition-item p-3 border rounded mb-2">
+                                        <div class="d-flex justify-content-between align-items-start mb-3">
+                                            <div class="flex-grow-1">
+                                                <div class="d-flex align-items-center mb-2">
+                                                    <strong class="me-2">{{ proposition.title }}</strong>
+                                                    <a href="{{ path('app_proposition_show', {id: proposition.id}) }}"
+                                                       target="_blank"
+                                                       class="btn btn-outline-primary btn-sm">
+                                                        <i class="fas fa-external-link-alt me-1"></i>Voir
+                                                    </a>
                                                 </div>
-                                                <div class="ms-3 d-flex flex-column align-items-end">
-                                                    <div class="mb-2">
-                                                        {% if existingCommitments[proposition.id] is defined %}
-                                                            <span class="badge bg-success">
-                                                                <i class="fas fa-check me-1"></i>Déjà engagé
-                                                            </span>
-                                                            {% if existingCommitments[proposition.id].commentCandidateList %}
-                                                                <div class="small text-muted mt-1">
-                                                                    <i class="fas fa-sticky-note me-1"></i>Avec commentaire
-                                                                </div>
-                                                            {% endif %}
-                                                        {% else %}
-                                                            <span class="badge bg-secondary">
-                                                                <i class="fas fa-plus me-1"></i>Nouveau
-                                                            </span>
-                                                        {% endif %}
+                                                {% if proposition.description %}
+                                                    <div class="text-muted small mt-1">
+                                                        {{ proposition.description|slice(0, 150) }}{% if proposition.description|length > 150 %}...{% endif %}
                                                     </div>
-                                                    <button type="button" class="btn btn-outline-info btn-sm toggle-comment-btn" data-proposition-id="{{ proposition.id }}">
-                                                        <i class="fas fa-comment-plus me-1"></i>Commentaire
-                                                    </button>
-                                                </div>
+                                                {% endif %}
                                             </div>
-                                        </label>
+                                        </div>
 
-                                        <!-- Zone de commentaire spécifique à la proposition (masquée par défaut) -->
-                                        <div class="proposition-comment-area mt-3" id="comment-area-{{ proposition.id }}" style="display: none;">
+                                        <!-- Statut de l'engagement (toujours visible) -->
+                                        <div class="mb-3">
+                                            <label class="form-label small fw-bold">
+                                                <i class="fas fa-check-circle me-1"></i>
+                                                Statut de l'engagement
+                                            </label>
+                                            <div class="d-flex gap-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input status-radio" type="radio"
+                                                           name="proposition_status[{{ proposition.id }}]"
+                                                           value="accepted"
+                                                           id="status_accepted_{{ proposition.id }}"
+                                                           data-proposition-id="{{ proposition.id }}"
+                                                           {% if existingCommitments[proposition.id] is defined and existingCommitments[proposition.id].status and existingCommitments[proposition.id].status.value == 'accepted' %}checked{% endif %}>
+                                                    <label class="form-check-label text-success fw-bold" for="status_accepted_{{ proposition.id }}">
+                                                        <i class="fas fa-check me-1"></i>Accepter
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input status-radio" type="radio"
+                                                           name="proposition_status[{{ proposition.id }}]"
+                                                           value="refused"
+                                                           id="status_refused_{{ proposition.id }}"
+                                                           data-proposition-id="{{ proposition.id }}"
+                                                           {% if existingCommitments[proposition.id] is defined and existingCommitments[proposition.id].status and existingCommitments[proposition.id].status.value == 'refused' %}checked{% endif %}>
+                                                    <label class="form-check-label text-danger fw-bold" for="status_refused_{{ proposition.id }}">
+                                                        <i class="fas fa-times me-1"></i>Refuser
+                                                    </label>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <!-- Zone de commentaire (masquée par défaut, s'ouvre quand un statut est sélectionné) -->
+                                        <div class="proposition-comment-area" id="comment-area-{{ proposition.id }}"
+                                             style="display: {% if existingCommitments[proposition.id] is defined %}block{% else %}none{% endif %};">
                                             <div class="border-top pt-3">
                                                 <label for="proposition_comment_{{ proposition.id }}" class="form-label small">
                                                     <i class="fas fa-sticky-note me-1"></i>
@@ -122,13 +125,14 @@
                                                     class="form-control form-control-sm proposition-comment"
                                                     id="proposition_comment_{{ proposition.id }}"
                                                     name="proposition_comments[{{ proposition.id }}]"
-                                                    rows="2"
+                                                    rows="3"
                                                     maxlength="1000"
                                                     placeholder="Commentaire spécifique pour cette proposition..."
+                                                    data-proposition-id="{{ proposition.id }}"
                                                 >{% if existingCommitments[proposition.id] is defined and existingCommitments[proposition.id].commentCandidateList %}{{ existingCommitments[proposition.id].commentCandidateList }}{% endif %}</textarea>
                                                 <div class="form-text small">
                                                     <span class="comment-char-count" data-proposition-id="{{ proposition.id }}">
-                                                        ({% if existingCommitments[proposition.id] is defined and existingCommitments[proposition.id].commentCandidateList %}{{ existingCommitments[proposition.id].commentCandidateList|length }}{% else %}0{% endif %}/1000 caractères)
+                                                        (<span class="char-count">{% if existingCommitments[proposition.id] is defined and existingCommitments[proposition.id].commentCandidateList %}{{ existingCommitments[proposition.id].commentCandidateList|length }}{% else %}0{% endif %}</span>/1000 caractères)
                                                     </span>
                                                 </div>
                                             </div>
@@ -148,7 +152,7 @@
                                             <i class="fas fa-arrow-left me-1"></i>Retour
                                         </a>
                                         <button type="submit" class="btn btn-success btn-lg" id="submitBtn">
-                                            <i class="fas fa-save me-2"></i>Enregistrer les engagements
+                                            <i class="fas fa-save me-2"></i>Enregistrer les statuts
                                         </button>
                                     </div>
                                 </div>
@@ -162,111 +166,73 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const selectAllBtn = document.getElementById('selectAll');
-            const selectNoneBtn = document.getElementById('selectNone');
-            const checkboxes = document.querySelectorAll('.proposition-checkbox');
             const submitBtn = document.getElementById('submitBtn');
             const form = document.getElementById('batchCommitmentForm');
             const globalComment = document.getElementById('global_comment');
             const charCount = document.getElementById('charCount');
 
-            // Fonction pour mettre à jour le compteur
-            function updateCounter() {
-                const checkedCount = document.querySelectorAll('.proposition-checkbox:checked').length;
-                submitBtn.innerHTML = `<i class="fas fa-save me-2"></i>Enregistrer les engagements (${checkedCount})`;
-                submitBtn.disabled = checkedCount === 0;
+            // Fonction pour mettre à jour le compteur de statuts
+            function updateStatusCounter() {
+                const acceptedCount = document.querySelectorAll('input[type="radio"][value="accepted"]:checked').length;
+                const refusedCount = document.querySelectorAll('input[type="radio"][value="refused"]:checked').length;
+
+                submitBtn.innerHTML = `<i class="fas fa-save me-2"></i>Enregistrer les statuts (${acceptedCount} acceptées, ${refusedCount} refusées)`;
             }
 
-            // Sélectionner tout
-            selectAllBtn.addEventListener('click', function() {
-                checkboxes.forEach(checkbox => {
-                    checkbox.checked = true;
-                });
-                updateCounter();
-            });
-
-            // Désélectionner tout
-            selectNoneBtn.addEventListener('click', function() {
-                checkboxes.forEach(checkbox => {
-                    checkbox.checked = false;
-                });
-                updateCounter();
-            });
-
-            // Écouter les changements sur les checkboxes
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', updateCounter);
-            });
-
-            // Compteur de caractères pour le commentaire
-            function updateCharCount() {
+            // Compteur de caractères pour le commentaire global
+            function updateGlobalCharCount() {
                 const length = globalComment.value.length;
                 charCount.textContent = `(${length}/1000 caractères)`;
                 charCount.className = length > 900 ? 'text-warning' : length > 1000 ? 'text-danger' : 'text-muted';
             }
 
-            globalComment.addEventListener('input', updateCharCount);
+            globalComment.addEventListener('input', updateGlobalCharCount);
 
-            // Gestion des boutons de commentaire par proposition
-            const toggleCommentBtns = document.querySelectorAll('.toggle-comment-btn');
-            const propositionComments = document.querySelectorAll('.proposition-comment');
+            // Gestion des boutons radio de statut
+            const statusRadios = document.querySelectorAll('.status-radio');
 
-            toggleCommentBtns.forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
+            statusRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
                     const propositionId = this.getAttribute('data-proposition-id');
                     const commentArea = document.getElementById(`comment-area-${propositionId}`);
-                    const icon = this.querySelector('i');
+                    const value = this.value;
 
-                    if (commentArea.style.display === 'none') {
+                    // Afficher/masquer la zone de commentaire selon le statut
+                    if (value === 'accepted' || value === 'refused') {
                         commentArea.style.display = 'block';
-                        icon.className = 'fas fa-comment-minus me-1';
-                        this.innerHTML = '<i class="fas fa-comment-minus me-1"></i>Masquer';
-                        this.classList.remove('btn-outline-info');
-                        this.classList.add('btn-outline-warning');
                     } else {
+                        // Aucun statut sélectionné
                         commentArea.style.display = 'none';
-                        icon.className = 'fas fa-comment-plus me-1';
-                        this.innerHTML = '<i class="fas fa-comment-plus me-1"></i>Commentaire';
-                        this.classList.remove('btn-outline-warning');
-                        this.classList.add('btn-outline-info');
                     }
+
+                    updateStatusCounter();
                 });
             });
 
-            // Compteur de caractères pour les commentaires par proposition
-            function updatePropositionCharCount(propositionId) {
-                const textarea = document.getElementById(`proposition_comment_${propositionId}`);
-                const charCountSpan = document.querySelector(`.comment-char-count[data-proposition-id="${propositionId}"]`);
-
-                if (textarea && charCountSpan) {
-                    const length = textarea.value.length;
-                    charCountSpan.textContent = `(${length}/1000 caractères)`;
-                    charCountSpan.className = length > 900 ? 'text-warning' : length > 1000 ? 'text-danger' : 'text-muted';
-                }
-            }
+            // Compteur de caractères pour les commentaires de proposition
+            const propositionComments = document.querySelectorAll('.proposition-comment');
 
             propositionComments.forEach(textarea => {
-                const propositionId = textarea.id.replace('proposition_comment_', '');
-                textarea.addEventListener('input', function() {
-                    updatePropositionCharCount(propositionId);
-                });
+                const propositionId = textarea.getAttribute('data-proposition-id');
+                const charCountSpan = document.querySelector(`.comment-char-count[data-proposition-id="${propositionId}"] .char-count`);
+
+                function updatePropositionCharCount() {
+                    const length = textarea.value.length;
+                    charCountSpan.textContent = length;
+
+                    const parentSpan = charCountSpan.parentElement;
+                    parentSpan.className = length > 900 ? 'text-warning' : length > 1000 ? 'text-danger' : 'text-muted';
+                }
+
+                textarea.addEventListener('input', updatePropositionCharCount);
+
                 // Initialiser le compteur
-                updatePropositionCharCount(propositionId);
+                updatePropositionCharCount();
             });
 
             // Confirmation avant soumission
             form.addEventListener('submit', function(e) {
-                const checkedCount = document.querySelectorAll('.proposition-checkbox:checked').length;
-                if (checkedCount === 0) {
-                    e.preventDefault();
-                    alert('Veuillez sélectionner au moins une proposition.');
-                    return;
-                }
-
-                // Vérifier la longueur des commentaires par proposition
+                // Vérifier la longueur des commentaires
                 let hasLongComment = false;
                 propositionComments.forEach(textarea => {
                     if (textarea.value.length > 1000) {
@@ -280,15 +246,21 @@
                     return;
                 }
 
-                const confirmMessage = `Êtes-vous sûr de vouloir créer/mettre à jour ${checkedCount} engagement(s) pour la liste "{{ candidateList.nameList }}" ?`;
-                if (!confirm(confirmMessage)) {
-                    e.preventDefault();
+                const acceptedCount = document.querySelectorAll('input[type="radio"][value="accepted"]:checked').length;
+                const refusedCount = document.querySelectorAll('input[type="radio"][value="refused"]:checked').length;
+                const totalChanges = acceptedCount + refusedCount;
+
+                if (totalChanges > 0) {
+                    const confirmMessage = `Êtes-vous sûr de vouloir enregistrer les statuts pour ${totalChanges} proposition(s) (${acceptedCount} acceptées, ${refusedCount} refusées) ?`;
+                    if (!confirm(confirmMessage)) {
+                        e.preventDefault();
+                    }
                 }
             });
 
             // Initialiser les compteurs
-            updateCounter();
-            updateCharCount();
+            updateStatusCounter();
+            updateGlobalCharCount();
         });
     </script>
 

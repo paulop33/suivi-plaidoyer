@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\CommitmentStatus;
 use App\Repository\CommitmentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -34,6 +35,8 @@ class Commitment
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $commentAssociation = null;
 
+    #[ORM\Column(type: Types::STRING, nullable: false, enumType: CommitmentStatus::class)]
+    private CommitmentStatus $status;
 
 
     public function __construct()
@@ -118,4 +121,28 @@ class Commitment
 
         return $this;
     }
+
+    public function getStatus(): CommitmentStatus
+    {
+        return $this->status;
+    }
+
+    public function setStatus(CommitmentStatus $status): static
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function isAccepted(): bool
+    {
+        return $this->status === CommitmentStatus::ACCEPTED;
+    }
+
+    public function isRefused(): bool
+    {
+        return $this->status === CommitmentStatus::REFUSED;
+    }
+
+
 }

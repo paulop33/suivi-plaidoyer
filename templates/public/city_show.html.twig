@@ -102,6 +102,14 @@
             text-decoration: none;
             position: relative;
         }
+        .candidate-tag-accepted {
+            background: #28a745;
+            color: white;
+        }
+        .candidate-tag-refused {
+            background: #dc3545;
+            color: white;
+        }
         .candidate-tag-with-comment {
             padding-right: 1.8rem;
         }
@@ -299,10 +307,13 @@
                                                 </div>
                                                 <div>
                                                     {% for signedListInfo in propositionInfo.signedLists %}
+                                                        {% set commitmentStatus = signedListInfo.commitment.status %}
                                                         <a href="{{ path('app_candidate_list_show', {id: signedListInfo.candidateList.id, slug: signedListInfo.candidateList.slug}) }}"
-                                                           class="candidate-tag{% if signedListInfo.commitment.commentCandidateList %} candidate-tag-with-comment{% endif %}"
-                                                           title="Voir le profil de {{ signedListInfo.candidateList.nameList }}">
-                                                            {{ signedListInfo.candidateList.nameList }}
+                                                           class="candidate-tag{% if signedListInfo.commitment.commentCandidateList %} candidate-tag-with-comment{% endif %}{% if commitmentStatus %} candidate-tag-{{ commitmentStatus.value }}{% endif %}"
+                                                           title="Voir le profil de {{ signedListInfo.candidateList.nameList }}{% if commitmentStatus %} - {{ commitmentStatus.label }}{% endif %}">
+                                                            {% if commitmentStatus %}
+                                                                {% if commitmentStatus.value == 'accepted' %}✅{% elseif commitmentStatus.value == 'refused' %}❌{% endif %}
+                                                            {% endif %}{{ signedListInfo.candidateList.nameList }}
                                                             {% if signedListInfo.commitment.commentCandidateList %}
                                                                 <i class="fas fa-info-circle comment-icon"></i>
                                                                 <div class="comment-tooltip">

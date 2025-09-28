@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\CandidateList;
 use App\Entity\Commitment;
 use App\Entity\Proposition;
+use App\Enum\CommitmentStatus;
 use App\Repository\PropositionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -38,7 +39,7 @@ class CandidateListCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        $batchCommitment = Action::new('batchCommitment', 'Engager sur toutes les propositions')
+        $batchCommitment = Action::new('batchCommitment', 'Gérer les engagements')
             ->linkToCrudAction('batchCommitment')
             ->setIcon('fa fa-check-double')
             ->displayAsButton()
@@ -102,9 +103,9 @@ class CandidateListCrudController extends AbstractCrudController
 
     private function processBatchCommitment(Request $request, CandidateList $candidateList, AdminContext $context): Response
     {
-        $selectedPropositions = $request->request->all('propositions') ?? [];
         $globalComment = trim($request->request->get('global_comment', ''));
         $propositionComments = $request->request->all('proposition_comments') ?? [];
+        $propositionStatuses = $request->request->all('proposition_status') ?? [];
 
         // Validation de la longueur du commentaire global
         if (strlen($globalComment) > 1000) {
@@ -148,8 +149,8 @@ class CandidateListCrudController extends AbstractCrudController
                 $existingCommitments[$commitment->getProposition()->getId()] = $commitment;
             }
 
-            // Traiter les propositions sélectionnées
-            foreach ($selectedPropositions as $propositionId) {
+            // Traiter toutes les propositions qui ont un statut défini
+            foreach ($propositionStatuses as $propositionId => $propositionStatus) {
                 try {
                     $proposition = $this->entityManager->getRepository(Proposition::class)->find($propositionId);
                     if (!$proposition) {
@@ -160,12 +161,29 @@ class CandidateListCrudController extends AbstractCrudController
                     // Récupérer le commentaire spécifique à cette proposition
                     $propositionComment = isset($propositionComments[$propositionId]) ? trim($propositionComments[$propositionId]) : '';
 
+                    // Convertir le statut en énumération (ou null si aucun statut)
+                    $status = match($propositionStatus) {
+                        'accepted' => CommitmentStatus::ACCEPTED,
+                        'refused' => CommitmentStatus::REFUSED,
+                        default => null
+                    };
+
                     if (isset($existingCommitments[$propositionId])) {
                         // Mettre à jour l'engagement existant
                         $existingCommitment = $existingCommitments[$propositionId];
+                        $hasChanges = false;
 
                         if ($existingCommitment->getCommentCandidateList() !== $propositionComment) {
                             $existingCommitment->setCommentCandidateList($propositionComment ?: null);
+                            $hasChanges = true;
+                        }
+
+                        if ($existingCommitment->getStatus() !== $status) {
+                            $existingCommitment->setStatus($status);
+                            $hasChanges = true;
+                        }
+
+                        if ($hasChanges) {
                             $existingCommitment->setUpdateDate(new \DateTime());
                             $updatedCount++;
                         }
@@ -173,16 +191,19 @@ class CandidateListCrudController extends AbstractCrudController
                         // Retirer de la liste pour ne pas le supprimer plus tard
                         unset($existingCommitments[$propositionId]);
                     } else {
-                        // Créer un nouvel engagement
-                        $commitment = new Commitment();
-                        $commitment->setCandidateList($candidateList);
-                        $commitment->setProposition($proposition);
-                        $commitment->setCommentCandidateList($propositionComment ?: null);
-                        $commitment->setCreationDate(new \DateTime());
-                        $commitment->setUpdateDate(new \DateTime());
+                        // Créer un nouvel engagement seulement si un statut est défini
+                        if ($status !== null) {
+                            $commitment = new Commitment();
+                            $commitment->setCandidateList($candidateList);
+                            $commitment->setProposition($proposition);
+                            $commitment->setCommentCandidateList($propositionComment ?: null);
+                            $commitment->setStatus($status);
+                            $commitment->setCreationDate(new \DateTime());
+                            $commitment->setUpdateDate(new \DateTime());
 
-                        $this->entityManager->persist($commitment);
-                        $createdCount++;
+                            $this->entityManager->persist($commitment);
+                            $createdCount++;
+                        }
                     }
                 } catch (\Exception $e) {
                     $errorCount++;
@@ -191,7 +212,7 @@ class CandidateListCrudController extends AbstractCrudController
                 }
             }
 
-            // Supprimer les engagements qui ne sont plus sélectionnés
+            // Supprimer les engagements qui n'ont pas été traités dans cette session
             foreach ($existingCommitments as $commitmentToDelete) {
                 $this->entityManager->remove($commitmentToDelete);
                 $deletedCount++;

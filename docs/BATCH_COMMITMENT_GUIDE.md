@@ -1,8 +1,8 @@
-# Guide d'utilisation : Engagement en masse pour les listes candidates
+# Guide d'utilisation : Gestion des engagements pour les listes candidates
 
 ## Vue d'ensemble
 
-Cette fonctionnalité permet aux administrateurs de créer des engagements pour une liste candidate sur toutes les propositions en une seule fois, directement depuis le back office EasyAdmin.
+Cette fonctionnalité permet aux administrateurs de gérer les engagements d'une liste candidate sur toutes les propositions en une seule fois, avec la possibilité d'accepter, refuser ou ignorer chaque proposition, directement depuis le back office EasyAdmin.
 
 ## Comment utiliser la fonctionnalité
 
@@ -11,11 +11,21 @@ Cette fonctionnalité permet aux administrateurs de créer des engagements pour 
 1. Connectez-vous au back office : `/admin`
 2. Naviguez vers la section "Listes" dans le menu
 3. Sélectionnez une liste candidate (soit depuis l'index, soit en consultant les détails d'une liste)
-4. Cliquez sur le bouton **"Engager sur toutes les propositions"** (icône double check ✓✓)
+4. Cliquez sur le bouton **"Gérer les engagements"** (icône double check ✓✓)
 
-### 2. Utiliser l'interface d'engagement en masse
+### 2. Utiliser l'interface de gestion des engagements
 
 L'interface vous présente :
+
+#### Nouvelles fonctionnalités de statut
+
+Pour chaque proposition, vous pouvez maintenant :
+
+- **Accepter** : La liste candidate accepte cette proposition (badge vert)
+- **Refuser** : La liste candidate refuse cette proposition (badge rouge)
+- **Ignorer** : La liste candidate ignore cette proposition (badge gris)
+
+#### Interface utilisateur
 
 #### Informations de la liste
 - Nom de la liste
