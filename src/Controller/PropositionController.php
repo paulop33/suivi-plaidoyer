@@ -49,8 +49,8 @@ class PropositionController extends AbstractController
         // Utiliser la méthode optimisée du repository
         $proposition = $this->propositionRepository->findOneWithCommitments($proposition->getId());
 
-        // Organiser les engagements par commune
-        $commitmentsByCity = $this->commitmentDataService->organizeCommitmentsByCity($proposition);
+        // Organiser toutes les communes avec leurs engagements (même celles sans engagement)
+        $commitmentsByCity = $this->commitmentDataService->organizeAllCitiesForProposition($proposition);
 
         // Obtenir les listes qui ont signé cette proposition
         $signedLists = $this->commitmentDataService->getListsForProposition($proposition);

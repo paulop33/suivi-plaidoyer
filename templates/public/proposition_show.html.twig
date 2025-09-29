@@ -168,35 +168,25 @@
     <!-- Commitments Section -->
     <section class="py-5">
         <div class="container">
-            {% if commitmentsByCity is empty %}
-                <div class="text-center py-5">
-                    <i class="fas fa-exclamation-triangle fa-4x text-warning mb-3"></i>
-                    <h3 class="text-muted">Aucun engagement pour cette proposition</h3>
-                    <p class="text-muted">Aucune liste candidate n'a encore pris d'engagement sur cette proposition.</p>
-                    <a href="{{ path('app_category_show', {id: proposition.category.id, slug: proposition.category.slug}) }}" class="btn btn-primary">
-                        <i class="fas fa-arrow-left me-2"></i>Retour à la catégorie
-                    </a>
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h2 class="fw-bold mb-4">
+                        <i class="fas fa-handshake text-success me-2"></i>
+                        Listes engagées par commune
+                    </h2>
                 </div>
-            {% else %}
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <h2 class="fw-bold mb-4">
-                            <i class="fas fa-handshake text-success me-2"></i>
-                            Listes engagées par commune
-                        </h2>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="input-group">
-                            <span class="input-group-text">
-                                <i class="fas fa-search"></i>
-                            </span>
-                            <input type="text" class="form-control" id="citySearch"
-                                   placeholder="Rechercher une commune...">
-                        </div>
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input type="text" class="form-control" id="citySearch"
+                               placeholder="Rechercher une commune...">
                     </div>
                 </div>
+            </div>
 
-                <div class="row" id="citiesGrid">
+            <div class="row" id="citiesGrid">
                     {% for cityName, cityData in commitmentsByCity %}
                         <div class="col-lg-6 col-xl-4 mb-4 city-item"
                              data-city-name="{{ cityName|lower }}"
@@ -213,61 +203,70 @@
                                 </div>
 
                                 <div class="card-body">
-                                    {% for listData in cityData.lists %}
-                                        {% set commitmentStatus = listData.commitment.status %}
-                                        <div class="list-item{% if commitmentStatus %} list-item-{{ commitmentStatus.value }}{% endif %}">
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <div class="flex-grow-1">
-                                                    <h6 class="fw-bold mb-1">
-                                                        {% if commitmentStatus %}
-                                                            {% if commitmentStatus.value == 'accepted' %}
-                                                                <span class="status-indicator status-accepted">✅</span>
-                                                            {% elseif commitmentStatus.value == 'refused' %}
-                                                                <span class="status-indicator status-refused">❌</span>
+                                    {% if cityData.lists is empty %}
+                                        <div class="text-center py-4">
+                                            <i class="fas fa-info-circle fa-2x text-muted mb-2"></i>
+                                            <p class="text-muted mb-0">
+                                                Aucune liste de {{ cityName }} ne s'est encore engagée sur cette proposition
+                                            </p>
+                                        </div>
+                                    {% else %}
+                                        {% for listData in cityData.lists %}
+                                            {% set commitmentStatus = listData.commitment.status %}
+                                            <div class="list-item{% if commitmentStatus %} list-item-{{ commitmentStatus.value }}{% endif %}">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div class="flex-grow-1">
+                                                        <h6 class="fw-bold mb-1">
+                                                            {% if commitmentStatus %}
+                                                                {% if commitmentStatus.value == 'accepted' %}
+                                                                    <span class="status-indicator status-accepted">✅</span>
+                                                                {% elseif commitmentStatus.value == 'refused' %}
+                                                                    <span class="status-indicator status-refused">❌</span>
+                                                                {% endif %}
                                                             {% endif %}
-                                                        {% endif %}
-                                                        {{ listData.candidateList.nameList }}
-                                                    </h6>
-                                                    <p class="text-muted mb-2 small">
-                                                        {{ listData.candidateList.firstname }} {{ listData.candidateList.lastname }}
-                                                    </p>
+                                                            {{ listData.candidateList.nameList }}
+                                                        </h6>
+                                                        <p class="text-muted mb-2 small">
+                                                            {{ listData.candidateList.firstname }} {{ listData.candidateList.lastname }}
+                                                        </p>
 
-                                                    {% if listData.commitment.commentCandidateList %}
-                                                        <div class="mt-2">
-                                                            <small class="text-muted">
-                                                                <i class="fas fa-quote-left me-1"></i>
-                                                                {{ listData.commitment.commentCandidateList|slice(0, 100) }}{% if listData.commitment.commentCandidateList|length > 100 %}...{% endif %}
-                                                            </small>
-                                                        </div>
+                                                        {% if listData.commitment.commentCandidateList %}
+                                                            <div class="mt-2">
+                                                                <small class="text-muted">
+                                                                    <i class="fas fa-quote-left me-1"></i>
+                                                                    {{ listData.commitment.commentCandidateList|slice(0, 100) }}{% if listData.commitment.commentCandidateList|length > 100 %}...{% endif %}
+                                                                </small>
+                                                            </div>
+                                                        {% endif %}
+                                                    </div>
+                                                    <a href="{{ path('app_candidate_list_show', {id: listData.candidateList.id, slug: listData.candidateList.slug}) }}"
+                                                       class="btn btn-outline-primary btn-sm">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                </div>
+
+                                                <div class="mt-2 pt-2 border-top">
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-calendar me-1"></i>
+                                                        {% if commitmentStatus.value == 'accepted' %}
+                                                            Engagé le
+                                                        {% else %}
+                                                            Refusé le
+                                                        {% endif %}
+                                                        {{ listData.commitment.creationDate|date('d/m/Y') }}
+                                                    </small>
+                                                    {% if listData.commitment.updateDate != listData.commitment.creationDate %}
+                                                        <small class="text-muted ms-2">
+                                                            <i class="fas fa-edit me-1"></i>
+                                                            Modifié le {{ listData.commitment.updateDate|date('d/m/Y') }}
+                                                        </small>
                                                     {% endif %}
                                                 </div>
-                                                <a href="{{ path('app_candidate_list_show', {id: listData.candidateList.id, slug: listData.candidateList.slug}) }}"
-                                                   class="btn btn-outline-primary btn-sm">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
                                             </div>
+                                        {% endfor %}
+                                    {% endif %}
 
-                                            <div class="mt-2 pt-2 border-top">
-                                                <small class="text-muted">
-                                                    <i class="fas fa-calendar me-1"></i>
-                                                    {% if commitmentStatus.value == 'accepted' %}
-                                                        Engagé le
-                                                    {% else %}
-                                                        Refusé le
-                                                    {% endif %}
-                                                    {{ listData.commitment.creationDate|date('d/m/Y') }}
-                                                </small>
-                                                {% if listData.commitment.updateDate != listData.commitment.creationDate %}
-                                                    <small class="text-muted ms-2">
-                                                        <i class="fas fa-edit me-1"></i>
-                                                        Modifié le {{ listData.commitment.updateDate|date('d/m/Y') }}
-                                                    </small>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-
-                                    <div class="text-center mt-3">
+                                    <div class="text-center mt-3 pt-3 border-top">
                                         <a href="{{ path('app_city_show', {slug: cityData.city.slug}) }}"
                                            class="btn btn-outline-secondary btn-sm">
                                             <i class="fas fa-city me-1"></i>
@@ -279,7 +278,6 @@
                         </div>
                     {% endfor %}
                 </div>
-            {% endif %}
         </div>
     </section>
 

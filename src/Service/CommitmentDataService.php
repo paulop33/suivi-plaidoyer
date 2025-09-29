@@ -7,12 +7,14 @@ use App\Entity\City;
 use App\Entity\CandidateList;
 use App\Entity\Proposition;
 use App\Enum\CommitmentStatus;
+use App\Repository\CityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 class CommitmentDataService
 {
     public function __construct(
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
+        private CityRepository $cityRepository
     ) {
     }
     /**
@@ -42,6 +44,47 @@ class CommitmentDataService
         }
 
         return $commitmentsByCity;
+    }
+
+    /**
+     * Organise toutes les communes avec leurs engagements pour une proposition
+     * Affiche toutes les communes, même celles sans engagement
+     */
+    public function organizeAllCitiesForProposition(Proposition $proposition): array
+    {
+        // Récupérer toutes les communes
+        $allCities = $this->cityRepository->findBy([], ['name' => 'ASC']);
+
+        // Organiser les engagements existants par commune
+        $commitments = $proposition->getCommitments();
+        $commitmentsByCity = [];
+
+        foreach ($commitments as $commitment) {
+            $candidateList = $commitment->getCandidateList();
+            $city = $candidateList->getCity();
+            $cityName = $city->getName();
+
+            if (!isset($commitmentsByCity[$cityName])) {
+                $commitmentsByCity[$cityName] = [];
+            }
+
+            $commitmentsByCity[$cityName][] = [
+                'candidateList' => $candidateList,
+                'commitment' => $commitment
+            ];
+        }
+
+        // Créer le tableau final avec toutes les communes
+        $result = [];
+        foreach ($allCities as $city) {
+            $cityName = $city->getName();
+            $result[$cityName] = [
+                'city' => $city,
+                'lists' => $commitmentsByCity[$cityName] ?? []
+            ];
+        }
+
+        return $result;
     }
 
     /**
