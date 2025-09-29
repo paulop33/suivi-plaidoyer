@@ -348,18 +348,32 @@
         <div class="container">
             {% if cityListData is not empty %}
                 <div class="city-lists-section">
-                    <h2 class="fw-bold mb-4">
-                        <i class="fas fa-users me-2"></i>
-                        Listes candidates de {{ city.name }}
-                        <span class="badge bg-primary ms-2">{{ cityListData|length }} liste{{ cityListData|length > 1 ? 's' : '' }}</span>
-                    </h2>
-                    <p class="text-muted mb-4">
-                        Cliquez sur "Voir détails" pour consulter les engagements complets de chaque liste.
-                    </p>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h2 class="fw-bold mb-2">
+                                <i class="fas fa-users me-2"></i>
+                                Listes candidates de {{ city.name }}
+                                <span class="badge bg-primary ms-2">{{ cityListData|length }} liste{{ cityListData|length > 1 ? 's' : '' }}</span>
+                            </h2>
+                            <p class="text-muted mb-0">
+                                Cliquez sur "Voir détails" pour consulter les engagements complets de chaque liste.
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                                <input type="text" class="form-control" id="listSearch"
+                                       placeholder="Rechercher une liste...">
+                            </div>
+                        </div>
+                    </div>
 
-                    <div class="row">
+                    <div class="row" id="listsGrid">
                         {% for listInfo in cityListData %}
-                            <div class="col-lg-4 col-md-6 mb-3">
+                            <div class="col-lg-4 col-md-6 mb-3 list-item"
+                                 data-list-name="{{ listInfo.candidateList.nameList|lower }}">
                                 <div class="candidate-mini-card">
                                     <div class="text-center mb-3">
                                         <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 rounded-circle mb-2" style="width: 50px; height: 50px;">
@@ -435,4 +449,37 @@
 {% endblock %}
 
 {% block javascripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('listSearch');
+            const listItems = document.querySelectorAll('.list-item');
+
+            if (searchInput && listItems.length > 0) {
+                function filterLists() {
+                    const searchTerm = searchInput.value.toLowerCase();
+                    let visibleCount = 0;
+
+                    listItems.forEach(item => {
+                        const listName = item.dataset.listName;
+                        let showItem = true;
+
+                        // Apply search filter
+                        if (searchTerm && !listName.includes(searchTerm)) {
+                            showItem = false;
+                        }
+
+                        if (showItem) {
+                            item.style.display = 'block';
+                            visibleCount++;
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                }
+
+                // Search input event
+                searchInput.addEventListener('input', filterLists);
+            }
+        });
+    </script>
 {% endblock %}

@@ -115,26 +115,13 @@
         <div class="container">
             <div class="search-box">
                 <div class="row align-items-center">
-                    <div class="col-md-8">
+                    <div class="col-md-12">
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fas fa-search"></i>
                             </span>
                             <input type="text" class="form-control" id="citySearch"
                                    placeholder="Rechercher une commune...">
-                        </div>
-                    </div>
-                    <div class="col-md-4 text-end">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-outline-primary active" data-filter="all">
-                                Toutes
-                            </button>
-                            <button type="button" class="btn btn-outline-primary" data-filter="with-commitments">
-                                Avec engagements
-                            </button>
-                            <button type="button" class="btn btn-outline-primary" data-filter="no-commitments">
-                                Sans engagement
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -250,30 +237,19 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('citySearch');
-            const filterButtons = document.querySelectorAll('[data-filter]');
             const cityItems = document.querySelectorAll('.city-item');
             const noResults = document.getElementById('noResults');
 
             function filterCities() {
                 const searchTerm = searchInput.value.toLowerCase();
-                const activeFilter = document.querySelector('[data-filter].active').dataset.filter;
                 let visibleCount = 0;
 
                 cityItems.forEach(item => {
                     const cityName = item.dataset.cityName;
-                    const hasCommitments = item.dataset.hasCommitments === 'true';
-
                     let showItem = true;
 
                     // Apply search filter
                     if (searchTerm && !cityName.includes(searchTerm)) {
-                        showItem = false;
-                    }
-
-                    // Apply commitment filter
-                    if (activeFilter === 'with-commitments' && !hasCommitments) {
-                        showItem = false;
-                    } else if (activeFilter === 'no-commitments' && hasCommitments) {
                         showItem = false;
                     }
 
@@ -295,15 +271,6 @@
 
             // Search input event
             searchInput.addEventListener('input', filterCities);
-
-            // Filter button events
-            filterButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    filterButtons.forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-                    filterCities();
-                });
-            });
         });
     </script>
 {% endblock %}

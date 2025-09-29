@@ -112,9 +112,28 @@
                     </a>
                 </div>
             {% else %}
-                <div class="row">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h2 class="fw-bold">
+                            <i class="fas fa-lightbulb text-primary me-2"></i>
+                            Propositions
+                        </h2>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="text" class="form-control" id="propositionSearch"
+                                   placeholder="Rechercher une proposition...">
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="propositionsGrid">
                 {% for data in propositionData %}
-                    <div class="col-lg-6 col-xl-4 mb-4">
+                    <div class="col-lg-6 col-xl-4 mb-4 proposition-item"
+                         data-proposition-title="{{ data.proposition.title|lower }}"
+                         data-has-commitments="{{ data.totalSignatures > 0 ? 'true' : 'false' }}">
                     <div class="proposition-card">
                         <div class="card">
                             {% if data.proposition.image %}
@@ -176,4 +195,35 @@
 {% endblock %}
 
 {% block javascripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('propositionSearch');
+            const propositionItems = document.querySelectorAll('.proposition-item');
+
+            function filterPropositions() {
+                const searchTerm = searchInput.value.toLowerCase();
+                let visibleCount = 0;
+
+                propositionItems.forEach(item => {
+                    const propositionTitle = item.dataset.propositionTitle;
+                    let showItem = true;
+
+                    // Apply search filter
+                    if (searchTerm && !propositionTitle.includes(searchTerm)) {
+                        showItem = false;
+                    }
+
+                    if (showItem) {
+                        item.style.display = 'block';
+                        visibleCount++;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            }
+
+            // Search input event
+            searchInput.addEventListener('input', filterPropositions);
+        });
+    </script>
 {% endblock %}
