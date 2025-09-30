@@ -55,11 +55,18 @@ class PropositionController extends AbstractController
         // Obtenir les listes qui ont signé cette proposition
         $signedLists = $this->commitmentDataService->getListsForProposition($proposition);
 
+        // Préparer les attentes (commune et spécifiques)
+        $hasCommonExpectation = $proposition->getCommonExpectation() !== null;
+        $specificExpectations = $proposition->getSpecificExpectations();
+        $hasSpecificExpectations = count($specificExpectations) > 0;
+
         return $this->render('public/proposition_show.html.twig', [
             'proposition' => $proposition,
             'commitmentsByCity' => $commitmentsByCity,
             'signedLists' => $signedLists,
             'totalCommitments' => count($proposition->getCommitments()),
+            'hasCommonExpectation' => $hasCommonExpectation,
+            'hasSpecificExpectations' => $hasSpecificExpectations,
             'breadcrumbItems' => [
                 [
                     'label' => $proposition->getCategory()->getName(),

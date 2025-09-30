@@ -152,15 +152,69 @@
 
     <!-- Description Section -->
     {% if proposition.description %}
+        <section class="py-4 bg-light">
+            <div class="container">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h4 class="fw-bold mb-3">
+                            <i class="fas fa-info-circle text-primary me-2"></i>
+                            Description de la proposition
+                        </h4>
+                        <p class="mb-0 fs-5 lh-lg text-muted">{{ proposition.description|nl2br }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    {% endif %}
+
+    <!-- Expectations Section -->
+    {% if hasCommonExpectation or hasSpecificExpectations %}
         <section class="py-4">
             <div class="container">
-                <div class="description-box">
-                    <h4 class="fw-bold mb-3">
-                        <i class="fas fa-info-circle text-success me-2"></i>
-                        Description de la proposition
-                    </h4>
-                    <p class="mb-0 fs-5 lh-lg">{{ proposition.description|nl2br }}</p>
-                </div>
+                <h4 class="fw-bold mb-4">
+                    <i class="fas fa-bullseye text-success me-2"></i>
+                    Ce que nous attendons des mairies
+                </h4>
+
+                {% if hasCommonExpectation %}
+                    <div class="card border-success mb-3">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-check-circle me-2"></i>
+                                Attente commune pour toutes les mairies
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-0 fs-5 lh-lg">{{ proposition.commonExpectation|nl2br }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if hasSpecificExpectations %}
+                    <div class="card border-info">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-map-marker-alt me-2"></i>
+                                Attentes spécifiques par type de territoire
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                {% for specificExpectation in proposition.specificExpectations %}
+                                    <div class="col-md-6 mb-3">
+                                        <div class="border-start border-info border-4 ps-3">
+                                            <h6 class="fw-bold text-info mb-2">
+                                                <i class="fas fa-tag me-1"></i>
+                                                {{ specificExpectation.specificity.name }}
+                                            </h6>
+                                            <p class="mb-0 text-muted">{{ specificExpectation.expectation|nl2br }}</p>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         </section>
     {% endif %}

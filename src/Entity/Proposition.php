@@ -41,9 +41,23 @@ class Proposition
     #[ORM\OneToMany(targetEntity: Commitment::class, mappedBy: 'proposition', orphanRemoval: true)]
     private Collection $commitments;
 
+    /**
+     * Attente commune pour toutes les mairies
+     */
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $commonExpectation = null;
+
+    /**
+     * @var Collection<int, SpecificExpectation>
+     * Les attentes spécifiques par spécificité
+     */
+    #[ORM\OneToMany(targetEntity: SpecificExpectation::class, mappedBy: 'proposition', orphanRemoval: true, cascade: ['persist', 'remove'])]
+    private Collection $specificExpectations;
+
     public function __construct()
     {
         $this->commitments = new ArrayCollection();
+        $this->specificExpectations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -149,6 +163,77 @@ class Proposition
         $this->position = $position;
 
         return $this;
+    }
+
+    public function getCommonExpectation(): ?string
+    {
+        return $this->commonExpectation;
+    }
+
+    public function setCommonExpectation(?string $commonExpectation): static
+    {
+        $this->commonExpectation = $commonExpectation;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SpecificExpectation>
+     */
+    public function getSpecificExpectations(): Collection
+    {
+        return $this->specificExpectations;
+    }
+
+    public function addSpecificExpectation(SpecificExpectation $specificExpectation): static
+    {
+        if (!$this->specificExpectations->contains($specificExpectation)) {
+            $this->specificExpectations->add($specificExpectation);
+            $specificExpectation->setProposition($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSpecificExpectation(SpecificExpectation $specificExpectation): static
+    {
+        if ($this->specificExpectations->removeElement($specificExpectation)) {
+            // set the owning side to null (unless already changed)
+            if ($specificExpectation->getProposition() === $this) {
+                $specificExpectation->setProposition(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Récupère l'attente pour une ville donnée
+     * Retourne l'attente commune si elle existe, sinon cherche une attente spécifique
+     */
+    public function getExpectationFor(City $city): ?string
+    {
+        // Si une attente commune existe, la retourner
+        if ($this->commonExpectation !== null) {
+            return $this->commonExpectation;
+        }
+
+        // Sinon, chercher une attente spécifique correspondant aux spécificités de la ville
+        foreach ($this->specificExpectations as $specificExpectation) {
+            if ($city->getSpecificities()->contains($specificExpectation->getSpecificity())) {
+                return $specificExpectation->getExpectation();
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Vérifie si cette proposition a une attente (commune ou spécifique) pour une ville donnée
+     */
+    public function hasExpectationFor(City $city): bool
+    {
+        return $this->getExpectationFor($city) !== null;
     }
 
     public function __toString(): string

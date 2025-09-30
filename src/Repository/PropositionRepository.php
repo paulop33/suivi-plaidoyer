@@ -36,7 +36,7 @@ class PropositionRepository extends ServiceEntityRepository
     }
 
     /**
-     * Trouve une proposition avec tous ses engagements
+     * Trouve une proposition avec tous ses engagements et attentes spécifiques
      */
     public function findOneWithCommitments(int $id): ?Proposition
     {
@@ -45,7 +45,9 @@ class PropositionRepository extends ServiceEntityRepository
             ->leftJoin('cm.candidateList', 'cl')
             ->leftJoin('cl.city', 'c')
             ->leftJoin('p.category', 'cat')
-            ->addSelect('cm', 'cl', 'c', 'cat')
+            ->leftJoin('p.specificExpectations', 'se')
+            ->leftJoin('se.specificity', 's')
+            ->addSelect('cm', 'cl', 'c', 'cat', 'se', 's')
             ->where('p.id = :id')
             ->setParameter('id', $id)
             ->getQuery()

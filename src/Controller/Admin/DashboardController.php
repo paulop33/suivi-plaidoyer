@@ -8,6 +8,8 @@ use App\Entity\City;
 use App\Entity\Commitment;
 use App\Entity\CandidateList;
 use App\Entity\Proposition;
+use App\Entity\Specificity;
+use App\Entity\SpecificExpectation;
 use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -73,6 +75,8 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Associations', 'fas fa-users', Association::class);
         yield MenuItem::linkToCrud('Catégories', 'fas fa-tags', Category::class);
         yield MenuItem::linkToCrud('Propositions', 'fas fa-list', Proposition::class);
+        yield MenuItem::linkToCrud('Spécificités', 'fas fa-map-marker-alt', Specificity::class);
+        yield MenuItem::linkToCrud('Attentes spécifiques', 'fas fa-bullseye', SpecificExpectation::class);
         yield MenuItem::linkToCrud('Villes', 'fas fa-city', City::class);
         yield MenuItem::linkToCrud('Listes', 'fas fa-list', CandidateList::class);
         yield MenuItem::linkToCrud('Engagements', 'fas fa-check', Commitment::class);

@@ -26,9 +26,18 @@ class PropositionCrudController extends AbstractCrudController
             TextareaField::new('description', 'Description')->hideOnIndex(),
             TextField::new('image', 'URL de l\'image')->hideOnIndex(),
             IntegerField::new('bareme', 'Bareme'),
-            IntegerField::new('ordre', 'Ordre d\'affichage')
+            IntegerField::new('position', 'Ordre d\'affichage')
                 ->setHelp('Ordre d\'affichage des propositions dans la catégorie (plus petit = affiché en premier)'),
             AssociationField::new('category', 'Catégorie'),
+            TextareaField::new('commonExpectation', 'Attente commune')
+                ->setHelp('L\'attente commune pour toutes les mairies. Si vide, seules les attentes spécifiques s\'appliquent.')
+                ->hideOnIndex(),
+            AssociationField::new('specificExpectations', 'Attentes spécifiques')
+                ->setHelp('Pour gérer les attentes spécifiques, utilisez le menu "Attentes spécifiques"')
+                ->hideOnForm()
+                ->formatValue(function ($value, $entity) {
+                    return $entity->getSpecificExpectations()->count() . ' attente(s) spécifique(s)';
+                }),
         ];
     }
 }

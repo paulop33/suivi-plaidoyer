@@ -28,22 +28,22 @@ class City
     private Collection $contacts;
 
     /**
-     * @var Collection<int, Commitment>
-     */
-    #[ORM\OneToMany(targetEntity: Commitment::class, mappedBy: 'city', orphanRemoval: true)]
-    private Collection $commitments;
-
-    /**
      * @var Collection<int, Association>
      */
     #[ORM\ManyToMany(targetEntity: Association::class, inversedBy: 'cities')]
     private Collection $referentesAssociations;
 
+    /**
+     * @var Collection<int, Specificity>
+     */
+    #[ORM\ManyToMany(targetEntity: Specificity::class, inversedBy: 'cities')]
+    private Collection $specificities;
+
     public function __construct()
     {
         $this->contacts = new ArrayCollection();
-        $this->commitments = new ArrayCollection();
         $this->referentesAssociations = new ArrayCollection();
+        $this->specificities = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -126,36 +126,6 @@ class City
     }
 
     /**
-     * @return Collection<int, Commitment>
-     */
-    public function getCommitments(): Collection
-    {
-        return $this->commitments;
-    }
-
-    public function addCommitment(Commitment $commitment): static
-    {
-        if (!$this->commitments->contains($commitment)) {
-            $this->commitments->add($commitment);
-            $commitment->setCandidateList($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCommitment(Commitment $commitment): static
-    {
-        if ($this->commitments->removeElement($commitment)) {
-            // set the owning side to null (unless already changed)
-            if ($commitment->getCandidateList() === $this) {
-                $commitment->setCandidateList(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, Association>
      */
     public function getReferentesAssociations(): Collection
@@ -175,6 +145,30 @@ class City
     public function removeReferenteAssociation(Association $referenteAssociation): static
     {
         $this->referentesAssociations->removeElement($referenteAssociation);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Specificity>
+     */
+    public function getSpecificities(): Collection
+    {
+        return $this->specificities;
+    }
+
+    public function addSpecificity(Specificity $specificity): static
+    {
+        if (!$this->specificities->contains($specificity)) {
+            $this->specificities->add($specificity);
+        }
+
+        return $this;
+    }
+
+    public function removeSpecificity(Specificity $specificity): static
+    {
+        $this->specificities->removeElement($specificity);
 
         return $this;
     }

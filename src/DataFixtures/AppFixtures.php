@@ -6,6 +6,8 @@ use App\Entity\Association;
 use App\Entity\Category;
 use App\Entity\City;
 use App\Entity\Proposition;
+use App\Entity\Specificity;
+use App\Entity\SpecificExpectation;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
@@ -13,6 +15,9 @@ class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
+        // Créer les spécificités
+        $specificities = $this->createSpecificities($manager);
+
         // Créer les 28 communes de Bordeaux Métropole
         $cities = $this->createCities($manager);
 
@@ -20,12 +25,59 @@ class AppFixtures extends Fixture
         $associations = $this->createAssociations($manager);
 
         // Créer des catégories et propositions
-        $this->createCategoriesAndPropositions($manager);
+        $propositions = $this->createCategoriesAndPropositions($manager);
 
         // Associer quelques associations aux villes
         $this->associateAssociationsWithCities($cities, $associations, $manager);
 
+        // Associer les spécificités aux villes
+        $this->associateSpecificitiesToCities($cities, $specificities, $manager);
+
+        // Associer les spécificités aux propositions
+        $this->associateSpecificitiesToPropositions($propositions, $specificities, $manager);
+
         $manager->flush();
+    }
+
+    private function createSpecificities(ObjectManager $manager): array
+    {
+        $specificitiesData = [
+            [
+                'name' => 'Intra-rocade',
+                'description' => 'Communes situées à l\'intérieur de la rocade bordelaise'
+            ],
+            [
+                'name' => 'Extra-rocade',
+                'description' => 'Communes situées à l\'extérieur de la rocade bordelaise'
+            ],
+            [
+                'name' => 'Centre urbain',
+                'description' => 'Zones à forte densité urbaine'
+            ],
+            [
+                'name' => 'Périurbain',
+                'description' => 'Zones périphériques avec caractère mixte urbain/rural'
+            ],
+            [
+                'name' => 'Rive gauche',
+                'description' => 'Communes situées sur la rive gauche de la Garonne'
+            ],
+            [
+                'name' => 'Rive droite',
+                'description' => 'Communes situées sur la rive droite de la Garonne'
+            ]
+        ];
+
+        $specificities = [];
+        foreach ($specificitiesData as $specificityData) {
+            $specificity = new Specificity();
+            $specificity->setName($specificityData['name']);
+            $specificity->setDescription($specificityData['description']);
+            $manager->persist($specificity);
+            $specificities[$specificityData['name']] = $specificity;
+        }
+
+        return $specificities;
     }
 
     private function createCities(ObjectManager $manager): array
@@ -66,7 +118,7 @@ class AppFixtures extends Fixture
             $city = new City();
             $city->setName($cityName);
             $manager->persist($city);
-            $cities[] = $city;
+            $cities[$cityName] = $city;
         }
 
         return $cities;
@@ -120,8 +172,9 @@ class AppFixtures extends Fixture
         return $associations;
     }
 
-    private function createCategoriesAndPropositions(ObjectManager $manager): void
+    private function createCategoriesAndPropositions(ObjectManager $manager): array
     {
+        $propositions = [];
         $categoriesData = [
             [
                 'name' => 'Circuler dans la Métropole',
@@ -215,9 +268,13 @@ class AppFixtures extends Fixture
                 $proposition->setTitle($propositionData['name']);
                 $proposition->setBareme($propositionData['bareme']);
                 $proposition->setCategory($category);
+                // Les attentes seront définies dans associateSpecificitiesToPropositions()
                 $manager->persist($proposition);
+                $propositions[] = $proposition;
             }
         }
+
+        return $propositions;
     }
 
     private function associateAssociationsWithCities(array $cities, array $associations, ObjectManager $manager): void
@@ -241,9 +298,9 @@ class AppFixtures extends Fixture
             'Villenave-d\'Ornon' => ['MAMMA Rive Gauche']
         ];
 
-        foreach ($cities as $city) {
-            if (isset($cityAssociationMap[$city->getName()])) {
-                foreach ($cityAssociationMap[$city->getName()] as $associationName) {
+        foreach ($cities as $cityName => $city) {
+            if (isset($cityAssociationMap[$cityName])) {
+                foreach ($cityAssociationMap[$cityName] as $associationName) {
                     foreach ($associations as $association) {
                         if ($association->getName() === $associationName) {
                             $city->addReferenteAssociation($association);
@@ -251,6 +308,105 @@ class AppFixtures extends Fixture
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private function associateSpecificitiesToCities(array $cities, array $specificities, ObjectManager $manager): void
+    {
+        // Définir les spécificités pour chaque ville
+        $citySpecificityMap = [
+            // Intra-rocade + Centre urbain + Rive gauche
+            'Bordeaux' => ['Intra-rocade', 'Centre urbain', 'Rive gauche'],
+            'Bègles' => ['Intra-rocade', 'Centre urbain', 'Rive gauche'],
+            'Talence' => ['Intra-rocade', 'Centre urbain', 'Rive gauche'],
+            'Le Bouscat' => ['Intra-rocade', 'Centre urbain', 'Rive gauche'],
+
+            // Intra-rocade + Centre urbain + Rive droite
+            'Cenon' => ['Intra-rocade', 'Centre urbain', 'Rive droite'],
+            'Floirac' => ['Intra-rocade', 'Centre urbain', 'Rive droite'],
+            'Lormont' => ['Intra-rocade', 'Centre urbain', 'Rive droite'],
+
+            // Extra-rocade + Périurbain + Rive gauche
+            'Pessac' => ['Extra-rocade', 'Périurbain', 'Rive gauche'],
+            'Gradignan' => ['Extra-rocade', 'Périurbain', 'Rive gauche'],
+            'Mérignac' => ['Extra-rocade', 'Périurbain', 'Rive gauche'],
+            'Eysines' => ['Extra-rocade', 'Périurbain', 'Rive gauche'],
+            'Le Haillan' => ['Extra-rocade', 'Périurbain', 'Rive gauche'],
+            'Blanquefort' => ['Extra-rocade', 'Périurbain', 'Rive gauche'],
+            'Parempuyre' => ['Extra-rocade', 'Périurbain', 'Rive gauche'],
+            'Saint-Médard-en-Jalles' => ['Extra-rocade', 'Périurbain', 'Rive gauche'],
+            'Martignas-sur-Jalle' => ['Extra-rocade', 'Périurbain', 'Rive gauche'],
+            'Le Taillan-Médoc' => ['Extra-rocade', 'Périurbain', 'Rive gauche'],
+            'Saint-Aubin-de-Médoc' => ['Extra-rocade', 'Périurbain', 'Rive gauche'],
+            'Bruges' => ['Extra-rocade', 'Périurbain', 'Rive gauche'],
+            'Villenave-d\'Ornon' => ['Extra-rocade', 'Périurbain', 'Rive gauche'],
+
+            // Extra-rocade + Périurbain + Rive droite
+            'Artigues-près-Bordeaux' => ['Extra-rocade', 'Périurbain', 'Rive droite'],
+            'Bassens' => ['Extra-rocade', 'Périurbain', 'Rive droite'],
+            'Carbon-Blanc' => ['Extra-rocade', 'Périurbain', 'Rive droite'],
+            'Ambarès-et-Lagrave' => ['Extra-rocade', 'Périurbain', 'Rive droite'],
+            'Ambès' => ['Extra-rocade', 'Périurbain', 'Rive droite'],
+            'Saint-Louis-de-Montferrand' => ['Extra-rocade', 'Périurbain', 'Rive droite'],
+            'Saint-Vincent-de-Paul' => ['Extra-rocade', 'Périurbain', 'Rive droite'],
+            'Bouliac' => ['Extra-rocade', 'Périurbain', 'Rive droite'],
+        ];
+
+        foreach ($citySpecificityMap as $cityName => $specificityNames) {
+            if (isset($cities[$cityName])) {
+                $city = $cities[$cityName];
+                foreach ($specificityNames as $specificityName) {
+                    if (isset($specificities[$specificityName])) {
+                        $city->addSpecificity($specificities[$specificityName]);
+                    }
+                }
+            }
+        }
+    }
+
+    private function associateSpecificitiesToPropositions(array $propositions, array $specificities, ObjectManager $manager): void
+    {
+        // Exemple : Créer des attentes communes et spécifiques pour quelques propositions
+
+        if (count($propositions) > 0) {
+            // Proposition 1 : Attente commune uniquement
+            $propositions[0]->setCommonExpectation('Mettre en place le Savoir Rouler À Vélo (SRAV) dans toutes les écoles de la commune');
+
+            // Proposition 2 : Attente commune + attentes spécifiques
+            if (count($propositions) > 1) {
+                $propositions[1]->setCommonExpectation('Développer les pistes cyclables sur l\'ensemble du territoire');
+
+                // Attente spécifique pour les zones intra-rocade
+                $specificExpectation1 = new SpecificExpectation();
+                $specificExpectation1->setProposition($propositions[1]);
+                $specificExpectation1->setSpecificity($specificities['Intra-rocade']);
+                $specificExpectation1->setExpectation('Créer un réseau cyclable continu et sécurisé avec des pistes séparées de la circulation automobile');
+                $manager->persist($specificExpectation1);
+
+                // Attente spécifique pour les zones extra-rocade
+                $specificExpectation2 = new SpecificExpectation();
+                $specificExpectation2->setProposition($propositions[1]);
+                $specificExpectation2->setSpecificity($specificities['Extra-rocade']);
+                $specificExpectation2->setExpectation('Développer des voies vertes et des liaisons intercommunales sécurisées');
+                $manager->persist($specificExpectation2);
+            }
+
+            // Proposition 3 : Uniquement des attentes spécifiques (pas d'attente commune)
+            if (count($propositions) > 2) {
+                // Attente spécifique pour le centre urbain
+                $specificExpectation3 = new SpecificExpectation();
+                $specificExpectation3->setProposition($propositions[2]);
+                $specificExpectation3->setSpecificity($specificities['Centre urbain']);
+                $specificExpectation3->setExpectation('Créer des zones piétonnes permanentes et des rues à circulation apaisée');
+                $manager->persist($specificExpectation3);
+
+                // Attente spécifique pour le périurbain
+                $specificExpectation4 = new SpecificExpectation();
+                $specificExpectation4->setProposition($propositions[2]);
+                $specificExpectation4->setSpecificity($specificities['Périurbain']);
+                $specificExpectation4->setExpectation('Aménager les centres-bourgs avec des zones 30 et des traversées sécurisées');
+                $manager->persist($specificExpectation4);
             }
         }
     }

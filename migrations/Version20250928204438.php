@@ -20,15 +20,11 @@ final class Version20250928204438 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('DROP SEQUENCE refusal_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE engagement_id_seq CASCADE');
-        $this->addSql('ALTER TABLE refusal DROP CONSTRAINT fk_9a64f34ab27fbb2a');
-        $this->addSql('ALTER TABLE refusal DROP CONSTRAINT fk_9a64f34adb96f9e');
-        $this->addSql('ALTER TABLE engagement DROP CONSTRAINT fk_d86f0141b27fbb2a');
-        $this->addSql('ALTER TABLE engagement DROP CONSTRAINT fk_d86f0141db96f9e');
-        $this->addSql('DROP TABLE refusal');
-        $this->addSql('DROP TABLE engagement');
-        $this->addSql('ALTER TABLE commitment ADD status VARCHAR(255) DEFAULT NULL');
+        $this->addSql('DROP SEQUENCE IF EXISTS refusal_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE IF EXISTS engagement_id_seq CASCADE');
+        $this->addSql('DROP TABLE IF EXISTS refusal CASCADE');
+        $this->addSql('DROP TABLE IF EXISTS engagement CASCADE');
+        $this->addSql('ALTER TABLE commitment ADD COLUMN IF NOT EXISTS status VARCHAR(255) DEFAULT NULL');
     }
 
     public function down(Schema $schema): void

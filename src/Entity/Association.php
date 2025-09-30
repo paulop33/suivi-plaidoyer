@@ -27,7 +27,7 @@ class Association
     /**
      * @var Collection<int, City>
      */
-    #[ORM\ManyToMany(targetEntity: City::class, mappedBy: 'referenteAssociation')]
+    #[ORM\ManyToMany(targetEntity: City::class, mappedBy: 'referentesAssociations')]
     private Collection $cities;
 
     /**
