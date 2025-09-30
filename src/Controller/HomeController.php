@@ -48,12 +48,6 @@ class HomeController extends AbstractController
                     'icon' => 'fas fa-city',
                     'class' => 'btn-primary'
                 ],
-                [
-                    'url' => $this->generateUrl('app_overview'),
-                    'label' => 'Vue d\'ensemble',
-                    'icon' => 'fas fa-chart-bar',
-                    'class' => 'btn-outline-secondary'
-                ]
             ]
         ]);
     }
