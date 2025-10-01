@@ -197,7 +197,8 @@ class CommitmentDataService
             $listData[] = [
                 'candidateList' => $candidateList,
                 'commitmentsByCategory' => $commitmentsByCategory,
-                'totalCommitments' => $candidateList->getCommitments()->count()
+                'positivesCommitmentsByCategory' => $this->filterAcceptedCommitmentsByCategory($commitmentsByCategory),
+                'totalPositivesCommitments' => $candidateList->getPositiveCommitments()->count(),
             ];
         }
 
@@ -450,5 +451,12 @@ class CommitmentDataService
         $summary['listsInvolved'] = count($summary['listsInvolved']);
 
         return $summary;
+    }
+
+    private function filterAcceptedCommitmentsByCategory(array $commitmentsByCategory): array
+    {
+        return array_map(function ($commitments) {
+            return $this->filterAcceptedCommitments($commitments['propositions']);
+        }, $commitmentsByCategory);
     }
 }

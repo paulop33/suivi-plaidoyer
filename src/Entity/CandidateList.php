@@ -219,4 +219,11 @@ class CandidateList
 
         return $slug;
     }
+
+    public function getPositiveCommitments(): Collection
+    {
+        return $this->commitments->filter(function ($commitment) {
+            return $commitment->isAccepted();
+        });
+    }
 }
