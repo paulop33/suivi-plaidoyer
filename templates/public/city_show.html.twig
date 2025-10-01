@@ -311,7 +311,7 @@
                                             {% if propositionInfo.proposition.description %}
                                                 <p class="text-muted small mb-2">{{ propositionInfo.proposition.description|slice(0, 150) }}{% if propositionInfo.proposition.description|length > 150 %}...{% endif %}</p>
                                             {% endif %}
-                                            {% if propositionInfo.totalSignatures > 0 %}
+                                            {% if propositionInfo.signedLists|length > 0 %}
                                                 <div class="mb-2">
                                                     <strong class="small text-muted">Listes engagées :</strong>
                                                 </div>
