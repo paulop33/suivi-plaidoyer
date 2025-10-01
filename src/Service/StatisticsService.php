@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\Category;
 use App\Entity\City;
 use App\Entity\CandidateList;
+use App\Enum\CommitmentStatus;
 use App\Repository\CategoryRepository;
 use App\Repository\CityRepository;
 use App\Repository\CandidateListRepository;
@@ -31,7 +32,7 @@ class StatisticsService
             'totalCities' => $this->cityRepository->count([]),
             'totalLists' => $this->candidateListRepository->count([]),
             'totalPropositions' => $this->propositionRepository->count([]),
-            'totalCommitments' => $this->commitmentRepository->count([])
+            'totalCommitments' => $this->commitmentRepository->count(['status' => CommitmentStatus::ACCEPTED->value])
         ];
     }
 
@@ -57,13 +58,16 @@ class StatisticsService
     {
         $totalPropositions = $category->getPropositions()->count();
         $totalCommitments = 0;
+        $totalPositivesCommitments = 0;
         $uniqueLists = [];
 
         foreach ($category->getPropositions() as $proposition) {
             $commitments = $proposition->getCommitments();
+            $positivesCommitments = $proposition->getPositivesCommitments();
             $totalCommitments += $commitments->count();
+            $totalPositivesCommitments += $positivesCommitments->count();
 
-            foreach ($commitments as $commitment) {
+            foreach ($positivesCommitments as $commitment) {
                 $listId = $commitment->getCandidateList()->getId();
                 $uniqueLists[$listId] = true;
             }
@@ -72,8 +76,9 @@ class StatisticsService
         return [
             'totalPropositions' => $totalPropositions,
             'totalCommitments' => $totalCommitments,
+            'totalPositivesCommitments' => $totalPositivesCommitments,
             'uniqueLists' => count($uniqueLists),
-            'engagementRate' => $totalPropositions > 0 ? ($totalCommitments / $totalPropositions * 100) : 0
+            'engagementRate' => $totalPropositions > 0 ? ($totalPositivesCommitments / $totalPropositions * 100) : 0
         ];
     }
 

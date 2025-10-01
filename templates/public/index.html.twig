@@ -120,7 +120,7 @@
             <div class="row g-4">
                 {% for category in categories %}
                     {% set stats = categoryStats[category.id] %}
-                    {% set engagementRate = stats.totalPropositions > 0 ? (stats.totalCommitments / stats.totalPropositions * 100) : 0 %}
+                    {% set engagementRate = stats.totalPropositions > 0 ? (stats.totalPositivesCommitments / stats.totalPropositions * 100) : 0 %}
 
                     <div class="col-lg-4 col-md-6">
                         <div class="card category-image-card h-100 border-0 shadow-sm">
@@ -164,7 +164,7 @@
                                     </div>
                                     <div class="col-4">
                                         <div class="text-center">
-                                            <div class="h5 text-success mb-1">{{ stats.totalCommitments }}</div>
+                                            <div class="h5 text-success mb-1">{{ stats.totalPositivesCommitments }}</div>
                                             <small class="text-muted">Engagements</small>
                                         </div>
                                     </div>
