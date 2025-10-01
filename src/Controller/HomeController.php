@@ -28,18 +28,10 @@ class HomeController extends AbstractController
         // Récupérer les statistiques générales
         $globalStats = $this->statisticsService->getGlobalStatistics();
 
-        // Obtenir les top catégories et communes
-        $topCategories = $this->statisticsService->getTopCategoriesByEngagements(3);
-        $topCities = $this->statisticsService->getTopCitiesByEngagements(3);
-        $topLists = $this->statisticsService->getTopCandidateListsByEngagements(5);
-
         return $this->render('public/index.html.twig', [
             'categories' => $categories,
             'categoryStats' => $categoryStats,
             'globalStats' => $globalStats,
-            'topCategories' => $topCategories,
-            'topCities' => $topCities,
-            'topLists' => $topLists,
             'breadcrumbItems' => [],
             'quickActions' => [
                 [
