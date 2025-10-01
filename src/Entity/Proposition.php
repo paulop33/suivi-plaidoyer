@@ -240,4 +240,11 @@ class Proposition
     {
         return $this->title;
     }
+
+    public function getPositivesCommitments(): Collection
+    {
+        return $this->commitments->filter(function ($commitment) {
+            return $commitment->isAccepted();
+        });
+    }
 }

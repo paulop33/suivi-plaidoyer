@@ -151,7 +151,7 @@ class CommitmentDataService
         $propositionData = [];
 
         foreach ($propositions as $proposition) {
-            $commitments = $proposition->getCommitments();
+            $commitments = $proposition->getPositivesCommitments();
             $signedLists = [];
             $citiesWithSignatures = [];
 
