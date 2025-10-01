@@ -16,7 +16,6 @@ class CategoryController extends AbstractController
     public function __construct(
         private CategoryRepository $categoryRepository,
         private CommitmentDataService $commitmentDataService,
-        private StatisticsService $statisticsService
     ) {
     }
 
@@ -34,13 +33,9 @@ class CategoryController extends AbstractController
         // Organiser les données des propositions avec leurs signatures
         $propositionData = $this->commitmentDataService->organizePropositionData($category);
 
-        // Calculer les statistiques de la catégorie
-        $categoryStats = $this->statisticsService->calculateCategoryStats($category);
-
         return $this->render('public/category_show.html.twig', [
             'category' => $category,
             'propositionData' => $propositionData,
-            'categoryStats' => $categoryStats,
             'breadcrumbItems' => [
                 [
                     'label' => $category->getName(),
