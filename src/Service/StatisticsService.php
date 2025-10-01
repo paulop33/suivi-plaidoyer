@@ -106,14 +106,13 @@ class StatisticsService
         $totalCommitments = 0;
 
         foreach ($lists as $list) {
-            $totalCommitments += $list->getCommitments()->count();
+            $totalCommitments += $list->getPositiveCommitments()->count();
         }
 
         return [
             'city' => $city,
             'totalLists' => $lists->count(),
             'totalCommitments' => $totalCommitments,
-            'engagementRate' => $lists->count() > 0 ? ($totalCommitments / $lists->count()) : 0
         ];
     }
 
