@@ -63,7 +63,7 @@
                             <label class="form-label fw-bold">Association</label>
                             <div class="d-flex align-items-center">
                                 {% if user.association.color %}
-                                    <div class="me-2" style="width: 20px; height: 20px; background-color: {{ user.association.color }}; border-radius: 3px;"></div>
+                                    <div class="me-2 association-color-box" style="background-color: {{ user.association.color }};"></div>
                                 {% endif %}
                                 <span>{{ user.association.name }}</span>
                             </div>

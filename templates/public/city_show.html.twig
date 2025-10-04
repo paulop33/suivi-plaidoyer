@@ -2,181 +2,6 @@
 
 {% block title %}{{ city.name }} - Suivi Plaidoyer{% endblock %}
 
-{% block stylesheets %}
-    <style>
-        .city-header {
-            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-            color: white;
-            padding: 3rem 0;
-        }
-        .list-card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            margin-bottom: 2rem;
-        }
-        .list-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-        }
-        .proposition-item {
-            background: white;
-            border-radius: 8px;
-            padding: 0.8rem;
-            margin-bottom: 0.5rem;
-            border-left: 3px solid #28a745;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        .breadcrumb-custom {
-            background: transparent;
-            padding: 0;
-        }
-        .breadcrumb-custom .breadcrumb-item + .breadcrumb-item::before {
-            content: "›";
-            color: #6c757d;
-        }
-        .stats-overview {
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-        }
-        .city-lists-section {
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-        .candidate-list-card {
-            background: white;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            border-radius: 12px;
-            border: 1px solid #e9ecef;
-        }
-        .candidate-mini-card {
-            background: white;
-            padding: 1rem;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            border: 1px solid #e9ecef;
-            height: 100%;
-        }
-        .propositions-section {
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-            border: 1px solid #e9ecef;
-        }
-        .propositions-section {
-            padding-top: 2rem;
-        }
-        .category-section {
-            margin-bottom: 2rem;
-            border: 1px solid #e9ecef;
-            border-radius: 12px;
-        }
-        .category-header {
-            background: linear-gradient(45deg, #6c757d, #495057);
-            color: white;
-            padding: 1rem 1.5rem;
-            margin: 0;
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
-        }
-        .proposition-card {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border: 1px solid #e9ecef;
-            overflow: visible;
-        }
-        .category-section .p-3 {
-            overflow: visible;
-        }
-        .candidate-tag {
-            background: #6c757d;
-            color: white;
-            padding: 0.2rem 0.6rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            margin-right: 0.3rem;
-            margin-bottom: 0.3rem;
-            display: inline-block;
-            text-decoration: none;
-            position: relative;
-        }
-        .candidate-tag-accepted {
-            background: #28a745;
-            color: white;
-        }
-        .candidate-tag-refused {
-            background: #dc3545;
-            color: white;
-        }
-        .candidate-tag-with-comment {
-            padding-right: 1.8rem;
-        }
-        .comment-icon {
-            position: absolute;
-            right: 0.4rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #ffc107;
-            font-size: 0.7rem;
-            cursor: help;
-        }
-        .comment-tooltip {
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #333;
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            white-space: normal;
-            max-width: 600px;
-            min-width: 350px;
-            z-index: 1;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s, visibility 0.3s;
-            margin-bottom: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            line-height: 1.5;
-        }
-        .comment-tooltip::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 6px solid transparent;
-            border-top-color: #333;
-        }
-        .candidate-tag:hover .comment-tooltip {
-            opacity: 1;
-            visibility: visible;
-        }
-        .commitment-badge {
-            background: linear-gradient(45deg, #007bff, #0056b3);
-            color: white;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            margin-right: 0.5rem;
-            margin-bottom: 0.3rem;
-            display: inline-block;
-        }
-    </style>
-{% endblock %}
-
 {% block body %}
     <!-- Header Section -->
     <section class="city-header">
@@ -386,7 +211,7 @@
                                  data-list-name="{{ listInfo.candidateList.nameList|lower }}">
                                 <div class="candidate-mini-card">
                                     <div class="text-center mb-3">
-                                        <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 rounded-circle mb-2" style="width: 50px; height: 50px;">
+                                        <div class="candidate-icon-circle d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 rounded-circle mb-2">
                                             <i class="fas fa-users text-primary fa-lg"></i>
                                         </div>
                                         <h5 class="fw-bold text-primary mb-1">{{ listInfo.candidateList.nameList }}</h5>
@@ -411,7 +236,7 @@
                                     {% if listInfo.commitmentsByCategory is not empty %}
                                         <div class="mb-3">
                                             {% for categoryName, categoryData in listInfo.commitmentsByCategory %}
-                                                <span class="badge bg-light text-dark me-1 mb-1" style="font-size: 0.7rem;">
+                                                <span class="badge bg-light text-dark me-1 mb-1 badge-xs">
                                                     {{ categoryName }} ({{ listInfo.positivesCommitmentsByCategory[categoryName]|length }})
                                                 </span>
                                             {% endfor %}

@@ -124,8 +124,7 @@
                                         </div>
 
                                         <!-- Zone de commentaire (masquée par défaut, s'ouvre quand un statut est sélectionné) -->
-                                        <div class="proposition-comment-area" id="comment-area-{{ proposition.id }}"
-                                             style="display: {% if existingCommitments[proposition.id] is defined %}block{% else %}none{% endif %};">
+                                        <div class="proposition-comment-area{% if existingCommitments[proposition.id] is not defined %} d-none{% endif %}" id="comment-area-{{ proposition.id }}">
                                             <div class="border-top pt-3">
                                                 <label for="proposition_comment_{{ proposition.id }}" class="form-label small">
                                                     <i class="fas fa-sticky-note me-1"></i>
@@ -209,10 +208,10 @@
 
                     // Afficher/masquer la zone de commentaire selon le statut
                     if (value === 'accepted' || value === 'refused') {
-                        commentArea.style.display = 'block';
+                        commentArea.classList.remove('d-none');
                     } else {
                         // Aucun statut sélectionné
-                        commentArea.style.display = 'none';
+                        commentArea.classList.add('d-none');
                     }
 
                     updateStatusCounter();
@@ -303,48 +302,4 @@
             updateGlobalCharCount();
         });
     </script>
-
-    <style>
-        .proposition-item {
-            transition: all 0.2s ease;
-        }
-
-        .proposition-item:hover {
-            background-color: #f8f9fa !important;
-            border-color: #007bff !important;
-        }
-
-        .category-header {
-            font-weight: 600;
-            color: #495057;
-            border-left: 4px solid #007bff;
-        }
-
-        .form-check-input:checked ~ .form-check-label {
-            color: #0d6efd;
-        }
-
-        .badge {
-            font-size: 0.75em;
-        }
-
-        .proposition-comment-area {
-            background-color: #f8f9fa;
-            border-radius: 0.375rem;
-            margin-top: 0.75rem;
-        }
-
-        .toggle-comment-btn {
-            font-size: 0.75rem;
-            padding: 0.25rem 0.5rem;
-        }
-
-        .proposition-comment {
-            font-size: 0.875rem;
-        }
-
-        .comment-char-count {
-            font-size: 0.75rem;
-        }
-    </style>
 {% endblock %}

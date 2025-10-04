@@ -1,5 +1,5 @@
 import './bootstrap.js';
-import './styles/app.css';
+import './styles/app.scss';
 
 /*
  * Suivi Plaidoyer - Main JavaScript file

@@ -2,46 +2,6 @@
 
 {% block title %}Suivi Plaidoyer - Accueil{% endblock %}
 
-{% block stylesheets %}
-    <style>
-        .hero-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 4rem 0;
-        }
-        .stats-card {
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
-        .stats-card:hover {
-            transform: translateY(-5px);
-        }
-        .category-card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            margin-bottom: 2rem;
-        }
-        .category-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-        }
-        .progress-custom {
-            height: 8px;
-            border-radius: 10px;
-        }
-        .badge-custom {
-            font-size: 0.9rem;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-        }
-    </style>
-{% endblock %}
-
 {% block body %}
     <!-- Hero Section -->
     <section class="hero-section">
@@ -74,31 +34,39 @@
         <div class="container">
             <div class="row g-4">
                 <div class="col-md-3">
-                    <div class="stats-card text-center">
-                        <i class="fas fa-city fa-3x text-primary mb-3"></i>
-                        <h3 class="fw-bold text-primary">{{ globalStats.totalCities }}</h3>
-                        <p class="text-muted mb-0">Communes</p>
+                    <div class="card border-0">
+                        <div class="card-body stats-card text-center">
+                            <i class="fas fa-city fa-3x text-primary mb-3"></i>
+                            <h3 class="fw-bold text-primary">{{ globalStats.totalCities }}</h3>
+                            <p class="text-muted mb-0">Communes</p>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="stats-card text-center">
-                        <i class="fas fa-users fa-3x text-success mb-3"></i>
-                        <h3 class="fw-bold text-success">{{ globalStats.totalLists }}</h3>
-                        <p class="text-muted mb-0">Listes candidates</p>
+                    <div class="card border-0">
+                        <div class="card-body stats-card text-center">
+                            <i class="fas fa-users fa-3x text-success mb-3"></i>
+                            <h3 class="fw-bold text-success">{{ globalStats.totalLists }}</h3>
+                            <p class="text-muted mb-0">Listes candidates</p>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="stats-card text-center">
-                        <i class="fas fa-lightbulb fa-3x text-warning mb-3"></i>
-                        <h3 class="fw-bold text-warning">{{ globalStats.totalPropositions }}</h3>
-                        <p class="text-muted mb-0">Propositions</p>
+                    <div class="card border-0">
+                        <div class="card-body stats-card text-center">
+                            <i class="fas fa-lightbulb fa-3x text-warning mb-3"></i>
+                            <h3 class="fw-bold text-warning">{{ globalStats.totalPropositions }}</h3>
+                            <p class="text-muted mb-0">Propositions</p>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="stats-card text-center">
-                        <i class="fas fa-check-circle fa-3x text-info mb-3"></i>
-                        <h3 class="fw-bold text-info">{{ globalStats.totalCommitments }}</h3>
-                        <p class="text-muted mb-0">Engagements</p>
+                    <div class="card border-0">
+                        <div class="card-body stats-card text-center">
+                            <i class="fas fa-check-circle fa-3x text-info mb-3"></i>
+                            <h3 class="fw-bold text-info">{{ globalStats.totalCommitments }}</h3>
+                            <p class="text-muted mb-0">Engagements</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -135,20 +103,11 @@
                                         <i class="fas fa-tag fa-3x text-muted"></i>
                                     </div>
                                 {% endif %}
-                                <div class="category-overlay">
-                                    <div class="category-content">
-                                        <h5 class="category-title fw-bold mb-2">{{ category.name }}</h5>
-                                        {% if category.description %}
-                                            <p class="category-description mb-0">
-                                                {{ category.description|slice(0, 80) }}{% if category.description|length > 80 %}...{% endif %}
-                                            </p>
-                                        {% endif %}
-                                    </div>
-                                </div>
                             </div>
 
                             <!-- Statistics Section -->
                             <div class="card-body">
+                                <h5 class="category-title fw-bold mb-2">{{ category.name }}</h5>
                                 <div class="row g-3 mb-3">
                                     <div class="col-4">
                                         <div class="text-center">
