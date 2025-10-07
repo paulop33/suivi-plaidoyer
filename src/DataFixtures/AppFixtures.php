@@ -55,10 +55,6 @@ class AppFixtures extends Fixture
                 'description' => 'Zones à forte densité urbaine'
             ],
             [
-                'name' => 'Périurbain',
-                'description' => 'Zones périphériques avec caractère mixte urbain/rural'
-            ],
-            [
                 'name' => 'Rive gauche',
                 'description' => 'Communes situées sur la rive gauche de la Garonne'
             ],
@@ -261,6 +257,7 @@ class AppFixtures extends Fixture
             $category = new Category();
             $category->setName($categoryData['name']);
             $category->setBareme($categoryData['bareme']);
+            $category->setImage("https://www.bordeaux-metropole.fr/sites/MET-BXMETRO-DRUPAL/files/styles/node_visuel_xl_x2/public/2023-07/parcours_reve_bruges_velo_barbier.webp");
             $manager->persist($category);
 
             foreach ($categoryData['propositions'] as $propositionData) {
@@ -268,6 +265,8 @@ class AppFixtures extends Fixture
                 $proposition->setTitle($propositionData['name']);
                 $proposition->setBareme($propositionData['bareme']);
                 $proposition->setCategory($category);
+                $proposition->setImage("https://www.bordeaux-metropole.fr/sites/MET-BXMETRO-DRUPAL/files/styles/node_visuel_xl_x2/public/2023-07/parcours_reve_bruges_velo_barbier.webp");
+
                 // Les attentes seront définies dans associateSpecificitiesToPropositions()
                 $manager->persist($proposition);
                 $propositions[] = $proposition;
@@ -321,36 +320,36 @@ class AppFixtures extends Fixture
             'Bègles' => ['Intra-rocade', 'Centre urbain', 'Rive gauche'],
             'Talence' => ['Intra-rocade', 'Centre urbain', 'Rive gauche'],
             'Le Bouscat' => ['Intra-rocade', 'Centre urbain', 'Rive gauche'],
+            'Bruges' => ['Intra-rocade', 'Rive gauche'],
+            'Pessac' => ['Intra-rocade', 'Extra-rocade', 'Rive gauche'],
+            'Mérignac' => ['Intra-rocade', 'Extra-rocade', 'Rive gauche'],
+            'Eysines' => ['Intra-rocade', 'Extra-rocade', 'Rive gauche'],
+            'Villenave-d\'Ornon' => ['Intra-rocade', 'Extra-rocade', 'Rive gauche'],
 
             // Intra-rocade + Centre urbain + Rive droite
             'Cenon' => ['Intra-rocade', 'Centre urbain', 'Rive droite'],
             'Floirac' => ['Intra-rocade', 'Centre urbain', 'Rive droite'],
             'Lormont' => ['Intra-rocade', 'Centre urbain', 'Rive droite'],
 
-            // Extra-rocade + Périurbain + Rive gauche
-            'Pessac' => ['Extra-rocade', 'Périurbain', 'Rive gauche'],
-            'Gradignan' => ['Extra-rocade', 'Périurbain', 'Rive gauche'],
-            'Mérignac' => ['Extra-rocade', 'Périurbain', 'Rive gauche'],
-            'Eysines' => ['Extra-rocade', 'Périurbain', 'Rive gauche'],
-            'Le Haillan' => ['Extra-rocade', 'Périurbain', 'Rive gauche'],
-            'Blanquefort' => ['Extra-rocade', 'Périurbain', 'Rive gauche'],
-            'Parempuyre' => ['Extra-rocade', 'Périurbain', 'Rive gauche'],
-            'Saint-Médard-en-Jalles' => ['Extra-rocade', 'Périurbain', 'Rive gauche'],
-            'Martignas-sur-Jalle' => ['Extra-rocade', 'Périurbain', 'Rive gauche'],
-            'Le Taillan-Médoc' => ['Extra-rocade', 'Périurbain', 'Rive gauche'],
-            'Saint-Aubin-de-Médoc' => ['Extra-rocade', 'Périurbain', 'Rive gauche'],
-            'Bruges' => ['Extra-rocade', 'Périurbain', 'Rive gauche'],
-            'Villenave-d\'Ornon' => ['Extra-rocade', 'Périurbain', 'Rive gauche'],
+            // Extra-rocade + Rive gauche
+            'Gradignan' => ['Extra-rocade', 'Rive gauche'],
+            'Le Haillan' => ['Extra-rocade', 'Rive gauche'],
+            'Blanquefort' => ['Extra-rocade', 'Rive gauche'],
+            'Parempuyre' => ['Extra-rocade', 'Rive gauche'],
+            'Saint-Médard-en-Jalles' => ['Extra-rocade', 'Rive gauche'],
+            'Martignas-sur-Jalle' => ['Extra-rocade', 'Rive gauche'],
+            'Le Taillan-Médoc' => ['Extra-rocade', 'Rive gauche'],
+            'Saint-Aubin-de-Médoc' => ['Extra-rocade', 'Rive gauche'],
 
             // Extra-rocade + Périurbain + Rive droite
-            'Artigues-près-Bordeaux' => ['Extra-rocade', 'Périurbain', 'Rive droite'],
-            'Bassens' => ['Extra-rocade', 'Périurbain', 'Rive droite'],
-            'Carbon-Blanc' => ['Extra-rocade', 'Périurbain', 'Rive droite'],
-            'Ambarès-et-Lagrave' => ['Extra-rocade', 'Périurbain', 'Rive droite'],
-            'Ambès' => ['Extra-rocade', 'Périurbain', 'Rive droite'],
-            'Saint-Louis-de-Montferrand' => ['Extra-rocade', 'Périurbain', 'Rive droite'],
-            'Saint-Vincent-de-Paul' => ['Extra-rocade', 'Périurbain', 'Rive droite'],
-            'Bouliac' => ['Extra-rocade', 'Périurbain', 'Rive droite'],
+            'Artigues-près-Bordeaux' => ['Extra-rocade', 'Rive droite'],
+            'Bassens' => ['Extra-rocade', 'Rive droite'],
+            'Carbon-Blanc' => ['Extra-rocade', 'Rive droite'],
+            'Ambarès-et-Lagrave' => ['Extra-rocade', 'Rive droite'],
+            'Ambès' => ['Extra-rocade', 'Rive droite'],
+            'Saint-Louis-de-Montferrand' => ['Extra-rocade', 'Rive droite'],
+            'Saint-Vincent-de-Paul' => ['Extra-rocade', 'Rive droite'],
+            'Bouliac' => ['Extra-rocade', 'Intra-rocade', 'Rive droite'],
         ];
 
         foreach ($citySpecificityMap as $cityName => $specificityNames) {
@@ -404,7 +403,7 @@ class AppFixtures extends Fixture
                 // Attente spécifique pour le périurbain
                 $specificExpectation4 = new SpecificExpectation();
                 $specificExpectation4->setProposition($propositions[2]);
-                $specificExpectation4->setSpecificity($specificities['Périurbain']);
+                $specificExpectation4->setSpecificity($specificities['Extra-rocade']);
                 $specificExpectation4->setExpectation('Aménager les centres-bourgs avec des zones 30 et des traversées sécurisées');
                 $manager->persist($specificExpectation4);
             }
