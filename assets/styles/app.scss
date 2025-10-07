@@ -527,6 +527,7 @@ section#categories {
 }
 
 /* Profile Cards */
+.global-comment-card,
 .profile-card {
     background: var(--color-white);
     border-radius: var(--radius-3xl);
@@ -535,6 +536,11 @@ section#categories {
     margin-top: -3rem;
     position: relative;
     z-index: 10;
+}
+
+.profile-card {
+    margin-top: -3rem;
+    margin-bottom: 3rem;
 }
 
 /* Breadcrumbs */

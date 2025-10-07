@@ -127,6 +127,23 @@
         </div>
     </section>
 
+    {% if candidateList.globalComment %}
+    <!-- General Comment Section -->
+    <section class="py-4 bg-light">
+        <div class="container">
+            <div class="global-comment-card">
+                <h4 class="fw-bold mb-3">
+                    <i class="fa-solid fa-quote-left text-info me-2"></i>
+                    Commentaire général de {{ candidateList.firstname }} {{ candidateList.lastname }}
+                </h4>
+                <div class="alert alert-secondary mb-0">
+                    <p class="mb-0">{{ candidateList.globalComment|nl2br }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
     <!-- Commitments Section -->
     <section class="py-5">
         <div class="container">
