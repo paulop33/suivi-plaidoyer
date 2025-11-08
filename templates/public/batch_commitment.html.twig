@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des engagements - {{ candidateList.nameList }}</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .category-header {
+            background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+            border-left: 4px solid #007bff;
+        }
+        .proposition-item {
+            background: white;
+            transition: box-shadow 0.2s ease;
+        }
+        .proposition-item:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .status-radio:checked + label {
+            font-weight: bold;
+        }
+        .char-count-warning {
+            color: #ffc107 !important;
+        }
+        .char-count-danger {
+            color: #dc3545 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Messages flash -->
+        {% for type, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ type == 'error' ? 'danger' : type }} alert-dismissible fade show" role="alert">
+                    <i class="fas fa-{{ type == 'success' ? 'check-circle' : (type == 'error' ? 'exclamation-triangle' : 'info-circle') }} me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h3 class="card-title mb-0">
+                    <i class="fas fa-check-double me-2"></i>
+                    Gérer les engagements de la liste
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Liste sélectionnée :</strong> {{ candidateList.nameList }}
+                    ({{ candidateList.firstname }} {{ candidateList.lastname }} - {{ candidateList.city.name }})
+                </div>
+
+                <form method="post" id="batchCommitmentForm">
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <label for="global_comment" class="form-label">
+                                <i class="fas fa-comment me-1"></i>
+                                Commentaire global de la liste (optionnel)
+                            </label>
+                            <textarea
+                                class="form-control"
+                                id="global_comment"
+                                name="global_comment"
+                                rows="3"
+                                maxlength="1000"
+                                placeholder="Ce commentaire sera associé à la liste candidate..."
+                            >{{ candidateList.globalComment ?? '' }}</textarea>
+                            <div class="form-text">
+                                Ce commentaire est associé à la liste candidate et non aux propositions individuelles.
+                                <span id="charCount" class="text-muted">({{ candidateList.globalComment ? candidateList.globalComment|length : 0 }}/1000 caractères)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <h5><i class="fas fa-list me-2"></i>Définir le statut pour chaque proposition</h5>
+                            <p class="text-muted small">Choisissez le statut de chaque proposition. La zone de commentaire s'ouvrira automatiquement pour les propositions acceptées ou refusées.</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="btn-group" role="group" aria-label="Actions rapides">
+                                <button type="button" class="btn btn-success btn-sm" id="acceptAllBtn">
+                                    <i class="fas fa-check-double me-1"></i>Tout accepter
+                                </button>
+                                <button type="button" class="btn btn-danger btn-sm" id="refuseAllBtn">
+                                    <i class="fas fa-times-circle me-1"></i>Tout refuser
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="propositions-list">
+                        {% for category_name, propositions in propositionsByCategory %}
+                            <div class="category-section mb-4">
+                                <h6 class="category-header bg-light p-2 rounded">
+                                    <i class="fas fa-tag me-2"></i>{{ category_name }}
+                                </h6>
+
+                                {% for proposition in propositions %}
+                                    {% set existing_commitment = existingCommitments[proposition.id] ?? null %}
+                                    {% set existing_comment = existing_commitment ? existing_commitment.commentCandidateList : '' %}
+                                    {% set existing_status = existing_commitment ? existing_commitment.status.value : '' %}
+                                    {% set comment_length = existing_comment ? existing_comment|length : 0 %}
+                                    {% set has_existing_commitment = existing_commitment is not null %}
+
+                                    <div class="proposition-item p-3 border rounded mb-2">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <strong class="me-2">{{ proposition.title }}</strong>
+                                        </div>
+                                        {% if proposition.description %}
+                                            <div class="text-muted small mt-1">
+                                                {{ proposition.description|slice(0, 200) }}{% if proposition.description|length > 200 %}...{% endif %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <!-- Statut de l'engagement (toujours visible) -->
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">
+                                        <i class="fas fa-check-circle me-1"></i>
+                                        Statut de l'engagement
+                                    </label>
+                                    <div class="d-flex gap-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input status-radio" type="radio"
+                                                   name="proposition_status[{{ proposition.id }}]"
+                                                   value="accepted"
+                                                   id="status_accepted_{{ proposition.id }}"
+                                                   data-proposition-id="{{ proposition.id }}"
+                                                   {% if existing_status == 'accepted' %}checked{% endif %}>
+                                            <label class="form-check-label text-success fw-bold" for="status_accepted_{{ proposition.id }}">
+                                                <i class="fas fa-check me-1"></i>Accepter
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input status-radio" type="radio"
+                                                   name="proposition_status[{{ proposition.id }}]"
+                                                   value="refused"
+                                                   id="status_refused_{{ proposition.id }}"
+                                                   data-proposition-id="{{ proposition.id }}"
+                                                   {% if existing_status == 'refused' %}checked{% endif %}>
+                                            <label class="form-check-label text-danger fw-bold" for="status_refused_{{ proposition.id }}">
+                                                <i class="fas fa-times me-1"></i>Refuser
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Zone de commentaire (masquée par défaut, s'ouvre quand un statut est sélectionné) -->
+                                <div class="proposition-comment-area{% if not has_existing_commitment %} d-none{% endif %}" id="comment-area-{{ proposition.id }}">
+                                    <div class="border-top pt-3">
+                                        <label for="proposition_comment_{{ proposition.id }}" class="form-label small">
+                                            <i class="fas fa-sticky-note me-1"></i>
+                                            Commentaire spécifique à cette proposition
+                                        </label>
+                                        <textarea
+                                            class="form-control form-control-sm proposition-comment"
+                                            id="proposition_comment_{{ proposition.id }}"
+                                            name="proposition_comments[{{ proposition.id }}]"
+                                            rows="3"
+                                            maxlength="1000"
+                                            placeholder="Commentaire spécifique pour cette proposition..."
+                                            data-proposition-id="{{ proposition.id }}"
+                                        >{{ existing_comment }}</textarea>
+                                        <div class="form-text small">
+                                            <span class="comment-char-count" data-proposition-id="{{ proposition.id }}">
+                                                (<span class="char-count">{{ comment_length }}</span>/1000 caractères)
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                    </div>
+                                {% endfor %}
+                            </div> <!-- Close category-section -->
+                        {% endfor %}
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12 text-center">
+                            <button type="submit" class="btn btn-success btn-lg" id="submitBtn">
+                                <i class="fas fa-save me-2"></i>Enregistrer les statuts
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const submitBtn = document.getElementById('submitBtn');
+            const form = document.getElementById('batchCommitmentForm');
+            const globalComment = document.getElementById('global_comment');
+            const charCount = document.getElementById('charCount');
+
+            // Fonction pour mettre à jour le compteur de statuts
+            function updateStatusCounter() {
+                const acceptedCount = document.querySelectorAll('input[type="radio"][value="accepted"]:checked').length;
+                const refusedCount = document.querySelectorAll('input[type="radio"][value="refused"]:checked').length;
+
+                submitBtn.innerHTML = `<i class="fas fa-save me-2"></i>Enregistrer les statuts (${acceptedCount} acceptées, ${refusedCount} refusées)`;
+            }
+
+            // Compteur de caractères pour le commentaire global
+            function updateGlobalCharCount() {
+                const length = globalComment.value.length;
+                charCount.textContent = `(${length}/1000 caractères)`;
+                charCount.className = length > 900 ? 'text-warning' : length > 1000 ? 'text-danger' : 'text-muted';
+            }
+
+            globalComment.addEventListener('input', updateGlobalCharCount);
+
+            // Gestion des boutons radio de statut
+            const statusRadios = document.querySelectorAll('.status-radio');
+
+            statusRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const propositionId = this.getAttribute('data-proposition-id');
+                    const commentArea = document.getElementById(`comment-area-${propositionId}`);
+                    const value = this.value;
+
+                    // Afficher/masquer la zone de commentaire selon le statut
+                    if (value === 'accepted' || value === 'refused') {
+                        commentArea.classList.remove('d-none');
+                    } else {
+                        // Aucun statut sélectionné
+                        commentArea.classList.add('d-none');
+                    }
+
+                    updateStatusCounter();
+                });
+            });
+
+            // Gestion des boutons "Tout accepter" et "Tout refuser"
+            const acceptAllBtn = document.getElementById('acceptAllBtn');
+            const refuseAllBtn = document.getElementById('refuseAllBtn');
+
+            acceptAllBtn.addEventListener('click', function() {
+                if (confirm('Êtes-vous sûr de vouloir accepter toutes les propositions ?')) {
+                    const acceptedRadios = document.querySelectorAll('input[type="radio"][value="accepted"]');
+                    acceptedRadios.forEach(radio => {
+                        radio.checked = true;
+                        // Déclencher l'événement change pour afficher les zones de commentaire
+                        const event = new Event('change', { bubbles: true });
+                        radio.dispatchEvent(event);
+                    });
+                    updateStatusCounter();
+                }
+            });
+
+            refuseAllBtn.addEventListener('click', function() {
+                if (confirm('Êtes-vous sûr de vouloir refuser toutes les propositions ?')) {
+                    const refusedRadios = document.querySelectorAll('input[type="radio"][value="refused"]');
+                    refusedRadios.forEach(radio => {
+                        radio.checked = true;
+                        // Déclencher l'événement change pour afficher les zones de commentaire
+                        const event = new Event('change', { bubbles: true });
+                        radio.dispatchEvent(event);
+                    });
+                    updateStatusCounter();
+                }
+            });
+
+            // Compteur de caractères pour les commentaires de proposition
+            const propositionComments = document.querySelectorAll('.proposition-comment');
+
+            propositionComments.forEach(textarea => {
+                const propositionId = textarea.getAttribute('data-proposition-id');
+                const charCountSpan = document.querySelector(`.comment-char-count[data-proposition-id="${propositionId}"] .char-count`);
+
+                function updatePropositionCharCount() {
+                    const length = textarea.value.length;
+                    charCountSpan.textContent = length;
+
+                    const parentSpan = charCountSpan.parentElement;
+                    parentSpan.className = length > 900 ? 'text-warning' : length > 1000 ? 'text-danger' : 'text-muted';
+                }
+
+                textarea.addEventListener('input', updatePropositionCharCount);
+
+                // Initialiser le compteur
+                updatePropositionCharCount();
+            });
+
+            // Confirmation avant soumission
+            form.addEventListener('submit', function(e) {
+                // Vérifier la longueur des commentaires
+                let hasLongComment = false;
+                propositionComments.forEach(textarea => {
+                    if (textarea.value.length > 1000) {
+                        hasLongComment = true;
+                    }
+                });
+
+                if (hasLongComment) {
+                    e.preventDefault();
+                    alert('Un ou plusieurs commentaires dépassent la limite de 1000 caractères.');
+                    return;
+                }
+
+                const acceptedCount = document.querySelectorAll('input[type="radio"][value="accepted"]:checked').length;
+                const refusedCount = document.querySelectorAll('input[type="radio"][value="refused"]:checked').length;
+                const totalChanges = acceptedCount + refusedCount;
+
+                if (totalChanges > 0) {
+                    const confirmMessage = `Êtes-vous sûr de vouloir enregistrer les statuts pour ${totalChanges} proposition(s) (${acceptedCount} acceptées, ${refusedCount} refusées) ?`;
+                    if (!confirm(confirmMessage)) {
+                        e.preventDefault();
+                    }
+                }
+            });
+
+            // Initialiser les compteurs
+            updateStatusCounter();
+            updateGlobalCharCount();
+        });
+    </script>
+</body>
+</html>
