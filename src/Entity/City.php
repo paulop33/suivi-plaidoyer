@@ -39,11 +39,18 @@ class City
     #[ORM\ManyToMany(targetEntity: Specificity::class, inversedBy: 'cities')]
     private Collection $specificities;
 
+    /**
+     * @var Collection<int, ElectedList>
+     */
+    #[ORM\OneToMany(targetEntity: ElectedList::class, mappedBy: 'city', orphanRemoval: true)]
+    private Collection $electedLists;
+
     public function __construct()
     {
         $this->contacts = new ArrayCollection();
         $this->referentesAssociations = new ArrayCollection();
         $this->specificities = new ArrayCollection();
+        $this->electedLists = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -171,6 +178,60 @@ class City
         $this->specificities->removeElement($specificity);
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, ElectedList>
+     */
+    public function getElectedLists(): Collection
+    {
+        return $this->electedLists;
+    }
+
+    public function addElectedList(ElectedList $electedList): static
+    {
+        if (!$this->electedLists->contains($electedList)) {
+            $this->electedLists->add($electedList);
+            $electedList->setCity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeElectedList(ElectedList $electedList): static
+    {
+        if ($this->electedLists->removeElement($electedList)) {
+            // set the owning side to null (unless already changed)
+            if ($electedList->getCity() === $this) {
+                $electedList->setCity(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get the current elected list for this city
+     */
+    public function getCurrentElectedList(): ?ElectedList
+    {
+        $currentYear = (int) date('Y');
+
+        foreach ($this->electedLists as $electedList) {
+            if ($electedList->getIsActive() && $electedList->isCurrentMandate()) {
+                return $electedList;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Check if this city has an elected list
+     */
+    public function hasElectedList(): bool
+    {
+        return $this->getCurrentElectedList() !== null;
     }
 
     public function __toString(): string

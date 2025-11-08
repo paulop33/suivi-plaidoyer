@@ -7,6 +7,8 @@ use App\Entity\Category;
 use App\Entity\City;
 use App\Entity\Commitment;
 use App\Entity\CandidateList;
+use App\Entity\ElectedList;
+use App\Entity\ProgressUpdate;
 use App\Entity\Proposition;
 use App\Entity\Specificity;
 use App\Entity\SpecificExpectation;
@@ -80,6 +82,11 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Villes', 'fas fa-city', City::class);
         yield MenuItem::linkToCrud('Listes', 'fas fa-list', CandidateList::class);
         yield MenuItem::linkToCrud('Engagements', 'fas fa-check', Commitment::class);
+
+        // Menu suivi post-élections
+        yield MenuItem::section('Suivi post-élections');
+        yield MenuItem::linkToCrud('Listes élues', 'fas fa-trophy', ElectedList::class);
+        yield MenuItem::linkToCrud('Suivi des avancées', 'fas fa-chart-line', ProgressUpdate::class);
 
         // Menu administration accessible uniquement aux super admins
         if ($this->isGranted('ROLE_SUPER_ADMIN')) {

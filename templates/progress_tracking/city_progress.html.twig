@@ -1,0 +1,181 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ city.name }} - Suivi du Mandat{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-4">
+    <!-- En-tête -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="{{ path('app_progress_tracking_index') }}">Suivi des Mandatures</a>
+                            </li>
+                            <li class="breadcrumb-item active">{{ city.name }}</li>
+                        </ol>
+                    </nav>
+                    <h1 class="h3 mb-1">🏛️ {{ city.name }}</h1>
+                    <p class="text-muted mb-0">Suivi de la progression des engagements</p>
+                </div>
+                <div>
+                    <a href="{{ path('app_progress_tracking_index') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left"></i> Retour
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Informations sur la liste élue -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h5 class="card-title mb-2">
+                                <i class="fas fa-users text-primary"></i>
+                                {{ electedList.candidateList.nameList }}
+                            </h5>
+                            <p class="text-muted mb-2">
+                                <strong>Maire :</strong> {{ electedList.mayorName }}<br>
+                                <strong>Mandat :</strong> {{ electedList.mandateStartYear }} - {{ electedList.mandateEndYear }}
+                            </p>
+                            {% if electedList.programSummary %}
+                                <p class="mb-0">{{ electedList.programSummary }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            {% if electedList.contactEmail %}
+                                <a href="mailto:{{ electedList.contactEmail }}" class="btn btn-outline-primary btn-sm mb-2">
+                                    <i class="fas fa-envelope"></i> Contact
+                                </a>
+                            {% endif %}
+                            {% if electedList.contactPhone %}
+                                <br>
+                                <small class="text-muted">
+                                    <i class="fas fa-phone"></i> {{ electedList.contactPhone }}
+                                </small>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Liste des engagements avec progression -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-list text-primary"></i>
+                        Détail des engagements
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if allCommitmentsData is not empty %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Engagement</th>
+                                        <th>Catégorie</th>
+                                        <th>Dernière mise à jour</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for data in allCommitmentsData %}
+                                        {% set commitment = data.commitment %}
+                                        {% set update = data.latestUpdate %}
+                                        <tr class="{{ not data.hasUpdate ? 'table-light' : '' }}">
+                                            <td>
+                                                <div class="text-truncate" style="max-width: 300px;">
+                                                    {{ commitment.proposition.title }}
+                                                </div>
+                                                {% if not data.hasUpdate %}
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-clock"></i> Aucun suivi
+                                                    </small>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-light text-dark">
+                                                    {{ commitment.proposition.category.name }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                {% if data.hasUpdate %}
+                                                    <small class="text-muted">
+                                                        {{ update.updateDate|date('d/m/Y') }}
+                                                    </small>
+                                                {% else %}
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-minus"></i> Jamais
+                                                    </small>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if data.hasUpdate %}
+                                                    <a href="{{ path('app_progress_tracking_commitment_history', {id: commitment.id}) }}"
+                                                       class="btn btn-outline-primary btn-sm">
+                                                        <i class="fas fa-history"></i> Historique
+                                                    </a>
+                                                {% else %}
+                                                    <span class="text-muted">
+                                                        <i class="fas fa-clock"></i> En attente
+                                                    </span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-tasks fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">Aucun engagement trouvé</h5>
+                            <p class="text-muted">Cette liste élue n'a pas encore d'engagements acceptés.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.progress {
+    background-color: #f8f9fa;
+}
+
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+.badge {
+    font-size: 0.75rem;
+}
+
+.breadcrumb {
+    background: none;
+    padding: 0;
+    margin-bottom: 0.5rem;
+}
+</style>
+{% endblock %}

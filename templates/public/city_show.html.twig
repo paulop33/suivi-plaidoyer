@@ -66,6 +66,26 @@
         </div>
     </section>
 
+    <!-- Progress Tracking Alert (if elected list exists) -->
+    {% if electedList %}
+        <section class="py-3 bg-light">
+            <div class="container">
+                <div class="alert alert-success d-flex align-items-center" role="alert">
+                    <i class="fas fa-trophy fa-2x me-3"></i>
+                    <div class="flex-grow-1">
+                        <h5 class="alert-heading mb-1">Liste élue : {{ electedList.mayorName }}</h5>
+                        <p class="mb-2">
+                            Suivez l'avancement des engagements pris par la liste élue pendant le mandat {{ electedList.mandateDuration }}.
+                        </p>
+                        <a href="{{ path('app_progress_tracking_city', {slug: city.slug}) }}" class="btn btn-success btn-sm">
+                            <i class="fas fa-chart-line me-1"></i>Voir le suivi du mandat
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    {% endif %}
+
     <!-- Overview Section -->
     <section class="py-4">
         <div class="container">

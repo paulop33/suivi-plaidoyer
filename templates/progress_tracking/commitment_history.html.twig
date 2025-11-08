@@ -1,0 +1,249 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Historique - {{ commitment.proposition.title }}{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-4">
+    <!-- En-tête -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('app_progress_tracking_index') }}">Suivi des Mandatures</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('app_progress_tracking_city', {slug: commitment.candidateList.city.slug}) }}">
+                            {{ commitment.candidateList.city.name }}
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active">Historique de l'engagement</li>
+                </ol>
+            </nav>
+
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h1 class="h4 mb-2">📋 Historique de l'engagement</h1>
+                    <h2 class="h5 text-primary mb-1">{{ commitment.proposition.title }}</h2>
+                    <p class="text-muted mb-0">
+                        <span class="badge bg-light text-dark me-2">{{ commitment.proposition.category.name }}</span>
+                        {{ commitment.candidateList.city.name }} • {{ commitment.candidateList.nameList }}
+                    </p>
+                </div>
+                <div>
+                    <a href="{{ path('app_progress_tracking_city', {slug: commitment.candidateList.city.slug}) }}"
+                       class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left"></i> Retour
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Informations sur l'engagement -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <h6 class="card-title">
+                                <i class="fas fa-file-alt text-primary"></i>
+                                Description de l'engagement
+                            </h6>
+                            <p class="card-text">{{ commitment.proposition.description }}</p>
+
+                            {% if commitment.commentCandidateList %}
+                                <h6 class="mt-3">
+                                    <i class="fas fa-comment text-info"></i>
+                                    Commentaire de la liste candidate
+                                </h6>
+                                <p class="card-text text-muted">{{ commitment.commentCandidateList }}</p>
+                            {% endif %}
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timeline des mises à jour -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-history text-primary"></i>
+                        Chronologie des mises à jour
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if progressUpdates is not empty %}
+                        <div class="timeline">
+                            {% for update in progressUpdates %}
+                                <div class="timeline-item">
+                                    <div class="timeline-marker" style="background-color: {{ update.status.color }};">
+                                        <i class="{{ update.status.icon }} text-white"></i>
+                                    </div>
+                                    <div class="timeline-content">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <div>
+                                                <h6 class="mb-1">
+                                                    <span class="badge" style="background-color: {{ update.status.color }};">
+                                                        {{ update.status.label }}
+                                                    </span>
+                                                </h6>
+                                                <small class="text-muted">
+                                                    {{ update.updateDate|date('d/m/Y à H:i') }}
+                                                    {% if update.updatedBy %}
+                                                        • par {{ update.updatedBy.firstName }} {{ update.updatedBy.lastName }}
+                                                    {% endif %}
+                                                    {% if update.isValidated %}
+                                                        <span class="badge bg-success ms-2">
+                                                            <i class="fas fa-check"></i> Validé
+                                                        </span>
+                                                    {% endif %}
+                                                </small>
+                                            </div>
+
+                                        </div>
+
+                                        {% if update.description %}
+                                            <p class="mb-2">{{ update.description }}</p>
+                                        {% endif %}
+
+                                        {% if update.challenges %}
+                                            <div class="mb-2">
+                                                <strong class="text-warning">
+                                                    <i class="fas fa-exclamation-triangle"></i> Défis :
+                                                </strong>
+                                                <span class="text-muted">{{ update.challenges }}</span>
+                                            </div>
+                                        {% endif %}
+
+                                        {% if update.nextSteps %}
+                                            <div class="mb-2">
+                                                <strong class="text-info">
+                                                    <i class="fas fa-arrow-right"></i> Prochaines étapes :
+                                                </strong>
+                                                <span class="text-muted">{{ update.nextSteps }}</span>
+                                            </div>
+                                        {% endif %}
+
+                                        {% if update.budgetAllocated or update.budgetSpent %}
+                                            <div class="mb-2">
+                                                <strong class="text-success">
+                                                    <i class="fas fa-euro-sign"></i> Budget :
+                                                </strong>
+                                                {% if update.budgetAllocated %}
+                                                    <span class="text-muted">
+                                                        Alloué : {{ update.budgetAllocated|number_format(0, ',', ' ') }}€
+                                                    </span>
+                                                {% endif %}
+                                                {% if update.budgetSpent %}
+                                                    <span class="text-muted">
+                                                        • Dépensé : {{ update.budgetSpent|number_format(0, ',', ' ') }}€
+                                                    </span>
+                                                {% endif %}
+                                            </div>
+                                        {% endif %}
+
+                                        {% if update.expectedCompletionDate %}
+                                            <div class="mb-2">
+                                                <strong class="text-primary">
+                                                    <i class="fas fa-calendar"></i> Échéance prévue :
+                                                </strong>
+                                                <span class="text-muted">{{ update.expectedCompletionDate|date('d/m/Y') }}</span>
+                                            </div>
+                                        {% endif %}
+
+                                        {% if update.evidenceLinks is not empty %}
+                                            <div class="mt-2">
+                                                <strong class="text-info">
+                                                    <i class="fas fa-link"></i> Liens de preuve :
+                                                </strong>
+                                                {% for link in update.evidenceLinks %}
+                                                    <a href="{{ link }}" target="_blank" class="btn btn-outline-info btn-sm ms-1">
+                                                        <i class="fas fa-external-link-alt"></i> Lien {{ loop.index }}
+                                                    </a>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">Aucun historique disponible</h5>
+                            <p class="text-muted">
+                                Les mises à jour pour cet engagement apparaîtront ici
+                                une fois qu'elles auront été ajoutées par l'équipe municipale.
+                            </p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.breadcrumb {
+    background: none;
+    padding: 0;
+    margin-bottom: 1rem;
+}
+
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e9ecef;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -22px;
+    top: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.timeline-content {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border-left: 3px solid #dee2e6;
+}
+
+.progress {
+    background-color: #e9ecef;
+}
+
+.badge {
+    font-size: 0.75rem;
+}
+</style>
+{% endblock %}

@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Enum\CommitmentStatus;
 use App\Repository\CommitmentRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -38,11 +40,17 @@ class Commitment
     #[ORM\Column(type: Types::STRING, nullable: false, enumType: CommitmentStatus::class)]
     private CommitmentStatus $status;
 
+    /**
+     * @var Collection<int, ProgressUpdate>
+     */
+    #[ORM\OneToMany(targetEntity: ProgressUpdate::class, mappedBy: 'commitment', orphanRemoval: true)]
+    private Collection $progressUpdates;
 
     public function __construct()
     {
         $this->creationDate = new \DateTime();
         $this->updateDate = new \DateTime();
+        $this->progressUpdates = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -144,5 +152,67 @@ class Commitment
         return $this->status === CommitmentStatus::REFUSED;
     }
 
+    /**
+     * @return Collection<int, ProgressUpdate>
+     */
+    public function getProgressUpdates(): Collection
+    {
+        return $this->progressUpdates;
+    }
 
+    public function addProgressUpdate(ProgressUpdate $progressUpdate): static
+    {
+        if (!$this->progressUpdates->contains($progressUpdate)) {
+            $this->progressUpdates->add($progressUpdate);
+            $progressUpdate->setCommitment($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProgressUpdate(ProgressUpdate $progressUpdate): static
+    {
+        if ($this->progressUpdates->removeElement($progressUpdate)) {
+            // set the owning side to null (unless already changed)
+            if ($progressUpdate->getCommitment() === $this) {
+                $progressUpdate->setCommitment(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get the latest progress update for this commitment
+     */
+    public function getLatestProgressUpdate(): ?ProgressUpdate
+    {
+        if ($this->progressUpdates->isEmpty()) {
+            return null;
+        }
+
+        $updates = $this->progressUpdates->toArray();
+        usort($updates, function(ProgressUpdate $a, ProgressUpdate $b) {
+            return $b->getUpdateDate() <=> $a->getUpdateDate();
+        });
+
+        return $updates[0];
+    }
+
+    /**
+     * Check if this commitment has progress tracking
+     */
+    public function hasProgressTracking(): bool
+    {
+        return !$this->progressUpdates->isEmpty();
+    }
+
+    /**
+     * Get the current implementation status if available
+     */
+    public function getCurrentImplementationStatus(): ?string
+    {
+        $latestUpdate = $this->getLatestProgressUpdate();
+        return $latestUpdate?->getStatus()->getLabel();
+    }
 }

@@ -6,6 +6,7 @@ use App\Entity\City;
 use App\Service\CommitmentDataService;
 use App\Service\StatisticsService;
 use App\Repository\CityRepository;
+use App\Repository\ElectedListRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -16,7 +17,8 @@ class CityController extends AbstractController
     public function __construct(
         private CityRepository $cityRepository,
         private CommitmentDataService $commitmentDataService,
-        private StatisticsService $statisticsService
+        private StatisticsService $statisticsService,
+        private ElectedListRepository $electedListRepository
     ) {
     }
 
@@ -67,12 +69,16 @@ class CityController extends AbstractController
         // Obtenir la répartition des engagements par catégorie
         $engagementDistribution = $this->commitmentDataService->getCityEngagementDistribution($city);
 
+        // Vérifier s'il y a une liste élue pour cette ville
+        $electedList = $this->electedListRepository->findByCity($city);
+
         return $this->render('public/city_show.html.twig', [
             'city' => $city,
             'cityListData' => $cityListData,
             'propositionData' => $propositionData,
             'cityStats' => $cityStats,
             'engagementDistribution' => $engagementDistribution,
+            'electedList' => $electedList,
             'breadcrumbItems' => [
                 [
                     'label' => 'Communes',
@@ -84,14 +90,20 @@ class CityController extends AbstractController
                     'icon' => 'fas fa-map-marker-alt'
                 ]
             ],
-            'quickActions' => [
+            'quickActions' => array_filter([
                 [
                     'url' => $this->generateUrl('app_cities_index'),
                     'label' => 'Toutes les communes',
                     'icon' => 'fas fa-city',
                     'class' => 'btn-outline-primary'
-                ]
-            ]
+                ],
+                $electedList ? [
+                    'url' => $this->generateUrl('app_progress_tracking_city', ['slug' => $city->getSlug()]),
+                    'label' => 'Suivi du mandat',
+                    'icon' => 'fas fa-chart-line',
+                    'class' => 'btn-outline-success'
+                ] : null
+            ])
         ]);
     }
 }
