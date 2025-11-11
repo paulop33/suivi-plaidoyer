@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Communes à 30km/h - Métropole Bordelaise</title>
+    <script src="https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.js"></script>
+    <link href="https://unpkg.com/maplibre-gl@3.4.0/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.1.0/chroma.min.js"></script>
+    <style>
+        html, body { margin:0; padding:0; }
+        #map { height: 100vh; width: 100vw; }
+        .label {
+            background-color: white;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-size: 12px;
+            box-shadow: 0 0 3px rgba(0,0,0,0.5);
+        }
+        #logo {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            z-index: 10;
+            margin: 0;
+        }
+        #legend {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+        .legend-color {
+            width: 30px;
+            height: 20px;
+            margin-right: 10px;
+            border: 1px solid #999;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <div id="legend">
+        <h3 style="margin: 0 0 10px 0; font-size: 14px;">Communes à 30km/h</h3>
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: #764BA2;"></div>
+            <span>Passée à 30km/h</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: #ccc;"></div>
+            <span>Non passée à 30km/h</span>
+        </div>
+    </div>
+    <script>
+        const map = new maplibregl.Map({
+            container: 'map',
+            style: {
+                version: 8,
+                sources: {
+                    osm: {
+                        type: 'raster',
+                        tiles: ["https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"],
+                        tileSize: 256
+                    }
+                },
+                layers: [{
+                    id: 'osm-layer',
+                    type: 'raster',
+                    source: 'osm'
+                }]
+            },
+            center: [-0.57918, 44.8378],
+            zoom: 11
+        });
+
+
+        // Données des communes passées à 30km/h (1 = oui, 0 = non)
+        const villes = [
+            {nom: "Ambès", passed30: 0},
+            {nom: "Ambarès-et-Lagrave", passed30: 0},
+            {nom: "Artigues-Près-Bordeaux", passed30: 1},
+            {nom: "Bassens", passed30: 0},
+            {nom: "Blanquefort", passed30: 0},
+            {nom: "Bordeaux", passed30: 1},
+            {nom: "Bouliac", passed30: 0},
+            {nom: "Bruges", passed30: 1},
+            {nom: "Bègles", passed30: 1},
+            {nom: "Carbon-Blanc", passed30: 0},
+            {nom: "Cenon", passed30: 1},
+            {nom: "Eysines", passed30: 0},
+            {nom: "Floirac", passed30: 1},
+            {nom: "Gradignan", passed30: 0},
+            {nom: "Le Bouscat", passed30: 0},
+            {nom: "Le Haillan", passed30: 1},
+            {nom: "Le Taillan-Médoc", passed30: 0},
+            {nom: "Lormont", passed30: 1},
+            {nom: "Martignas-sur-Jalle", passed30: 0},
+            {nom: "Mérignac", passed30: 0},
+            {nom: "Parempuyre", passed30: 0},
+            {nom: "Pessac", passed30: 0},
+            {nom: "Saint-Aubin-de-Médoc", passed30: 0},
+            {nom: "Saint-Louis-de-Montferrand", passed30: 0},
+            {nom: "Saint-Médard-en-Jalles", passed30: 0},
+            {nom: "Saint-Vincent-de-Paul", passed30: 0},
+            {nom: "Talence", passed30: 0},
+            {nom: "Villenave-d'Ornon", passed30: 0},
+        ];
+
+        map.on('load', () => {
+            fetch('https://opendata.bordeaux-metropole.fr/api/explore/v2.1/catalog/datasets/fv_commu_s/exports/geojson?lang=fr&timezone=Europe%2FBerlin')
+            .then(response => response.json())
+            .then(data => {
+                data.features.forEach(feature => {
+                    const ville = villes.find(v => v.nom === feature.properties.nom);
+                    feature.properties.passed30 = ville ? ville.passed30 : 0;
+                    if ('Saint-Louis-de-Montferrand' === feature.properties.nom) {
+                        feature.properties.geo_point_2d.lat = 44.9625;
+                    }
+                    if ('Bassens' === feature.properties.nom) {
+                            feature.properties.geo_point_2d.lat = 44.91;
+                    }
+                    if ('Artigues-Près-Bordeaux' === feature.properties.nom) {
+                        feature.properties.geo_point_2d.lat = 44.8625;
+                    }
+
+                });
+
+                map.addSource('communes', {
+                    type: 'geojson',
+                    data: data
+                });
+
+                map.addLayer({
+                    id: 'communes-fill',
+                    type: 'fill',
+                    source: 'communes',
+                    paint: {
+                        'fill-color': [
+                            'case',
+                            ['==', ['get', 'passed30'], 1],
+                            '#764BA2',
+                            '#ccc'
+                        ],
+                        'fill-opacity': 0.7
+                    }
+                });
+
+                map.addLayer({
+                    id: 'communes-border',
+                    type: 'line',
+                    source: 'communes',
+                    paint: {
+                        'line-color': '#FFF',
+                        'line-width': 1
+                    }
+                });
+
+                data.features
+                    .sort((a, b) => b.properties.passed30 - a.properties.passed30)
+                    .forEach(feature => {
+                    const center = feature.properties.geo_point_2d;
+                    const status = feature.properties.passed30 === 1 ? '✓ 30km/h' : '';
+                    new maplibregl.Marker({
+                        element: createLabel(`${feature.properties.nom}${status ? ' ' + status : ''}`, feature.properties.passed30)
+                    }).setLngLat(center).addTo(map);
+                });
+
+                const bounds = new maplibregl.LngLatBounds();
+                data.features.forEach(feature => {
+                    feature.geometry.coordinates[0].forEach(coord => bounds.extend(coord));
+                });
+                map.fitBounds(bounds, { padding: 20 });
+            });
+        });
+
+        function createLabel(text, passed30) {
+            const div = document.createElement('div');
+            div.className = 'label';
+            div.innerText = text;
+            div.style.fontWeight = passed30 === 1 ? 'bold' : 'normal';
+            div.style.backgroundColor = passed30 === 1 ? '#e6f9ff' : 'white';
+            return div;
+        }
+    </script>
+</body>
+</html>
+
