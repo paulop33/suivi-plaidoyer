@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Suivi Plaidoyer - Accueil{% endblock %}
+{% block title %}Plaidoyer Vélo Bordeaux - Accueil{% endblock %}
 
 {% block body %}
     <!-- Hero Section -->
@@ -8,8 +8,7 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-8">
-                    <h1 class="display-4 fw-bold mb-4">Engagements du Plaidoyer Vélo
-                    </h1>
+                    <h1 class="display-4 fw-bold mb-4">Pour une métropole cyclable et marchable</h1>
                     <p class="lead mb-4">
                         Découvrez les propositions portées par les associations du vélo et les engagements pris par les candidates et candidats
                         dans les 28 communes de Bordeaux Métropole.
@@ -27,7 +26,8 @@
                     </div>
                 </div>
                 <div class="col-lg-4 text-center">
-                    <i class="fas fa-handshake fa-10x opacity-75"></i>
+                    <img src="{{ asset('images/couverture-plaidoyer.png') }}" alt="" height="350">
+{#                    <i class="fas fa-handshake fa-10x opacity-75"></i>#}
                 </div>
             </div>
         </div>
@@ -156,7 +156,7 @@
                 </div>
             </div>
             <div class="row g-4">
-                <div class="col-md-4">
+                <div class="col-md-4 offset-md-2">
                     <div class="card border-0 h-100">
                         <div class="card-body text-center">
                             <i class="fas fa-search fa-3x text-primary mb-3"></i>
@@ -166,20 +166,6 @@
                             </p>
                             <a href="{{ path('app_cities_index') }}" class="btn btn-primary">
                                 Voir les communes
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card border-0 h-100">
-                        <div class="card-body text-center">
-                            <i class="fas fa-chart-bar fa-3x text-success mb-3"></i>
-                            <h5 class="card-title">Vue d'ensemble</h5>
-                            <p class="card-text text-muted">
-                                Consultez un tableau de bord complet des engagements par commune et catégorie
-                            </p>
-                            <a href="#" class="btn btn-success">
-                                Voir le tableau de bord
                             </a>
                         </div>
                     </div>
