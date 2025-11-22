@@ -42,11 +42,11 @@
                     </div>
                     <div class="d-flex gap-4">
                         <div class="text-center">
-{#                            <div class="h3 mb-1">{{ totalCommitments }}</div>#}
+                            <div class="h3 mb-1">{{ listStats.totalCommitments }}</div>
                             <small class="opacity-75">Engagements</small>
                         </div>
                         <div class="text-center">
-                            <div class="h3 mb-1">{{ commitmentsByCategory|length }}</div>
+                            <div class="h3 mb-1">{{ listStats.commitmentsByCategory|length }}</div>
                             <small class="opacity-75">Catégories</small>
                         </div>
                         <div class="text-center">
@@ -87,39 +87,6 @@
                                 <strong class="text-muted">Tête de liste :</strong><br>
                                 <span class="fs-5">{{ candidateList.firstname }} {{ candidateList.lastname }}</span>
                             </div>
-                            <div class="col-sm-6 mb-3">
-                                <strong class="text-muted">Engagements totaux :</strong><br>
-{#                                <span class="fs-5 text-success fw-bold">{{ totalCommitments }}</span>#}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="candidateList-info">
-                            <h6 class="fw-bold mb-3">
-                                <i class="fas fa-address-card me-1"></i>CandidateList
-                            </h6>
-                            {% if candidateList.email %}
-                                <p class="mb-2">
-                                    <i class="fas fa-envelope text-primary me-2"></i>
-                                    <a href="mailto:{{ candidateList.email }}" class="text-decoration-none">
-                                        {{ candidateList.email }}
-                                    </a>
-                                </p>
-                            {% endif %}
-                            {% if candidateList.phone %}
-                                <p class="mb-2">
-                                    <i class="fas fa-phone text-success me-2"></i>
-                                    <a href="tel:{{ candidateList.phone }}" class="text-decoration-none">
-                                        {{ candidateList.phone }}
-                                    </a>
-                                </p>
-                            {% endif %}
-                            {% if not candidateList.email and not candidateList.phone %}
-                                <p class="text-muted mb-0">
-                                    <i class="fas fa-info-circle me-1"></i>
-                                    Aucune information de liste disponible
-                                </p>
-                            {% endif %}
                         </div>
                     </div>
                 </div>
