@@ -4,12 +4,12 @@
 /* Global styles */
 :root {
     /* Primary Colors */
-    --bs-primary: #fed5b5;
+    --bs-primary: #ffd6b6;
     --bs-btn-bg:  #00aeef;
     --bs-primary-rgb: 48, 94, 180;
 
     /* Color Palette */
-    --color-purple-light: #481148;
+    --color-purple-light: #461248;
     --color-purple-dark: #764ba2;
     --color-blue: #007bff;
     --color-blue-dark: #0056b3;
@@ -39,7 +39,7 @@
     --color-tooltip-bg: #333333;
 
     /* Gradients */
-    --gradient-purple: linear-gradient(135deg, var(--color-purple-light) 0%, var(--bs-primary) 100%);
+    --gradient-purple: linear-gradient(45deg, var(--color-purple-light) 0%, #a93747 33%, #f2a15f 66%, var(--bs-primary) 100%);
 
     /* Shadows */
     --card-shadow: 0 5px 20px rgba(0,0,0,0.1);
