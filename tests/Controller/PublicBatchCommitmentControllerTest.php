@@ -168,7 +168,6 @@ class PublicBatchCommitmentControllerTest extends WebTestCase
         $proposition = new Proposition();
         $proposition->setTitle('Test Proposition');
         $proposition->setDescription('Test proposition description');
-        $proposition->setBareme(10);
         $proposition->setPosition(1);
         $proposition->setCategory($category);
 

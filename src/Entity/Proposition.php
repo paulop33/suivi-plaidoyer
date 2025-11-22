@@ -22,9 +22,6 @@ class Proposition
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $bareme = null;
-
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
@@ -73,18 +70,6 @@ class Proposition
     public function setTitle(string $title): static
     {
         $this->title = $title;
-
-        return $this;
-    }
-
-    public function getBareme(): ?int
-    {
-        return $this->bareme;
-    }
-
-    public function setBareme(?int $bareme): static
-    {
-        $this->bareme = $bareme;
 
         return $this;
     }

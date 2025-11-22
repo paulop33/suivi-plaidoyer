@@ -24,7 +24,6 @@ class CategoryCrudController extends AbstractCrudController
             TextField::new('name', 'Nom'),
             TextareaField::new('description', 'Description'),
             TextField::new('image', 'URL de l\'image'),
-            IntegerField::new('bareme', 'Barème'),
             IntegerField::new('position', 'Ordre d\'affichage')
                 ->setHelp('Ordre d\'affichage des catégories (plus petit = affiché en premier)'),
             AssociationField::new('propositions', 'Propositions')

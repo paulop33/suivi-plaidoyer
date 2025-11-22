@@ -371,11 +371,9 @@ class CommitmentDataService
         $score = 0;
         foreach ($candidateList->getCommitments() as $commitment) {
             $proposition = $commitment->getProposition();
-            $score += $proposition->getBareme() ?? 0;
 
             // Bonus pour la catégorie si elle a un barème
             $category = $proposition->getCategory();
-            $score += $category->getBareme() ?? 0;
         }
         return $score;
     }

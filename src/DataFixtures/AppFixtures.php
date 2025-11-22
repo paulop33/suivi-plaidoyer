@@ -174,81 +174,74 @@ class AppFixtures extends Fixture
         $categoriesData = [
             [
                 'name' => 'Circuler dans la Métropole',
-                'bareme' => 100,
                 'propositions' => [
-                    ['name' => 'Poursuivre le développement du ReVE en respectant l’ambition et les standards votés en 2021.', 'bareme' => 20],
-                    ['name' => 'Accélérer le déploiement du ReVE pour tenir l’échéance de livraison fixé à 2030', 'bareme' => 25],
-                    ['name' => 'Connecter les quartiers au ReVE ou aux grandes pistes de la métropole avec des aménagements cyclables', 'bareme' => 15],
-                    ['name' => 'Soutenir la mise en place et la communication pour une métropole à 30km/h', 'bareme' => 20],
-                    ['name' => 'Expérimenter et généraliser le M12 tridirectionnel au grand format', 'bareme' => 20],
-                    ['name' => 'Transformer le service des modes actifs de Bordeaux Métropole en une direction générale et renforcer ces effectifs', 'bareme' => 20],
-                    ['name' => 'Créer et mettre en place une charte de chantier pour prendre en compte les cyclistes lors des travaux de voirie', 'bareme' => 20],
+                    ['name' => 'Poursuivre le développement du ReVE en respectant l’ambition et les standards votés en 2021.'],
+                    ['name' => 'Accélérer le déploiement du ReVE pour tenir l’échéance de livraison fixé à 2030'],
+                    ['name' => 'Connecter les quartiers au ReVE ou aux grandes pistes de la métropole avec des aménagements cyclables'],
+                    ['name' => 'Soutenir la mise en place et la communication pour une métropole à 30km/h'],
+                    ['name' => 'Expérimenter et généraliser le M12 tridirectionnel au grand format'],
+                    ['name' => 'Transformer le service des modes actifs de Bordeaux Métropole en une direction générale et renforcer ces effectifs'],
+                    ['name' => 'Créer et mettre en place une charte de chantier pour prendre en compte les cyclistes lors des travaux de voirie'],
                 ]
             ],
             [
                 'name' => 'Circuler dans mon Quartier',
-                'bareme' => 100,
                 'propositions' => [
-                    ['name' => 'Privilégier dans l’ordre piéton.nes, vélos, transport en commun', 'bareme' => 30],
-                    ['name' => 'repenser les plans de circulation de chaque quartier en limitant le transit motorisé', 'bareme' => 15],
-                    ['name' => 'connecter les quartiers au ReVE ou aux grandes pistes de la métropole avec des aménagements cyclables tels que des vélorues.', 'bareme' => 25],
-                    ['name' => 'Marquer les entrées de quartier en généralisant les trottoirs et pistes traversants', 'bareme' => 15],
-                    ['name' => 'Réduire le stationnement en voirie', 'bareme' => 15],
-                    ['name' => 'Éviter les couloirs partagés Bus/vélo', 'bareme' => 15]
+                    ['name' => 'Privilégier dans l’ordre piéton.nes, vélos, transport en commun'],
+                    ['name' => 'repenser les plans de circulation de chaque quartier en limitant le transit motorisé'],
+                    ['name' => 'connecter les quartiers au ReVE ou aux grandes pistes de la métropole avec des aménagements cyclables tels que des vélorues.'],
+                    ['name' => 'Marquer les entrées de quartier en généralisant les trottoirs et pistes traversants'],
+                    ['name' => 'Réduire le stationnement en voirie'],
+                    ['name' => 'Éviter les couloirs partagés Bus/vélo']
                 ]
             ],
             [
                 'name' => 'Les piétons',
-                'bareme' => 100,
                 'propositions' => [
-                    ['name' => 'Développer des cœurs de quartier piéton ainsi qu’une trame piétonne', 'bareme' => 25],
-                    ['name' => 'Proposer une alternative cyclable aux principaux axes piétons', 'bareme' => 20],
-                    ['name' => 'Généraliser les trottoirs traversants', 'bareme' => 25],
-                    ['name' => 'Réaliser des trottoirs plats', 'bareme' => 15],
+                    ['name' => 'Développer des cœurs de quartier piéton ainsi qu’une trame piétonne'],
+                    ['name' => 'Proposer une alternative cyclable aux principaux axes piétons'],
+                    ['name' => 'Généraliser les trottoirs traversants'],
+                    ['name' => 'Réaliser des trottoirs plats'],
                 ]
             ],
             [
                 'name' => 'Les écoles',
-                'bareme' => 100,
                 'propositions' => [
-                    ['name' => 'Mettre en place le Savoir Rouler À Vélo (SRAV) jusqu’au niveau 3', 'bareme' => 25],
-                    ['name' => 'Transformer les rues des écoles en lieux de vie (permanents) sans voiture', 'bareme' => 20],
-                    ['name' => 'Inciter et faciliter le déplacements des enfants à vélo ou à pieds', 'bareme' => 25],
+                    ['name' => 'Mettre en place le Savoir Rouler À Vélo (SRAV) jusqu’au niveau 3'],
+                    ['name' => 'Transformer les rues des écoles en lieux de vie (permanents) sans voiture'],
+                    ['name' => 'Inciter et faciliter le déplacements des enfants à vélo ou à pieds'],
                 ]
             ],
             [
                 'name' => 'Intermodalité et stationnements',
-                'bareme' => 100,
                 'propositions' => [
-                    ['name' => 'Proposer des stationnements sécurisés, simple d’accès, et quantitatif adaptés à chaque gare', 'bareme' => 25],
-                    ['name' => 'Développer des parkings sécurisés type Metstation dans les secteurs de stationnement tendus et les pôle d’intérêt majeur', 'bareme' => 20],
-                    ['name' => 'Proposer une offre simplifié et unique permettant l’accès à l’ensemble des Metstation de la métropole,', 'bareme' => 25],
-                    ['name' => 'Multiplier le nombre de Vélobox dans les quartiers.', 'bareme' => 15],
+                    ['name' => 'Proposer des stationnements sécurisés, simple d’accès, et quantitatif adaptés à chaque gare'],
+                    ['name' => 'Développer des parkings sécurisés type Metstation dans les secteurs de stationnement tendus et les pôle d’intérêt majeur'],
+                    ['name' => 'Proposer une offre simplifié et unique permettant l’accès à l’ensemble des Metstation de la métropole,'],
+                    ['name' => 'Multiplier le nombre de Vélobox dans les quartiers.'],
                 ]
             ],
             [
                 'name' => 'Guide aménagements Sécurité et confort',
-                'bareme' => 100,
                 'propositions' => [
-                    ['name' => 'Uniformiser de la couleur des aménagements cyclables', 'bareme' => 25],
-                    ['name' => 'Ne plus utiliser le stabilisé et le béton pour les trottoirs et pistes cyclables', 'bareme' => 20],
-                    ['name' => 'Généraliser la création de trottoirs et pistes traversantes', 'bareme' => 25],
-                    ['name' => 'Aménager des trottoirs plats sans “bateaux”', 'bareme' => 15],
-                    ['name' => 'Réaliser tous les aménagements cyclables sans bordures', 'bareme' => 15],
-                    ['name' => 'Généraliser les arrêt de bus flottant', 'bareme' => 15],
-                    ['name' => 'Créer une zone tampon pour mettre à distance du stationnement les bandes/pistes cyclable pour éviter le risque d’emportiérage', 'bareme' => 15],
-                    ['name' => 'Sécuriser les sas vélo avec un système de double feu', 'bareme' => 15],
-                    ['name' => 'Réaliser tous les giratoires sur le principe des rond point hollandais.', 'bareme' => 15],
+                    ['name' => 'Uniformiser de la couleur des aménagements cyclables'],
+                    ['name' => 'Ne plus utiliser le stabilisé et le béton pour les trottoirs et pistes cyclables'],
+                    ['name' => 'Généraliser la création de trottoirs et pistes traversantes'],
+                    ['name' => 'Aménager des trottoirs plats sans “bateaux”'],
+                    ['name' => 'Réaliser tous les aménagements cyclables sans bordures'],
+                    ['name' => 'Généraliser les arrêt de bus flottant'],
+                    ['name' => 'Créer une zone tampon pour mettre à distance du stationnement les bandes/pistes cyclable pour éviter le risque d’emportiérage'],
+                    ['name' => 'Sécuriser les sas vélo avec un système de double feu'],
+                    ['name' => 'Réaliser tous les giratoires sur le principe des rond point hollandais.'],
                 ]
             ],
             [
                 'name' => 'Elaborer un Plan vélo',
-                'bareme' => 100,
                 'propositions' => [
-                    ['name' => 'Elaborer un plan vélo à l’échelle de ma commune', 'bareme' => 25],
-                    ['name' => 'Respecter la loi LOM (L228-2 du code de l’environnement)', 'bareme' => 20],
-                    ['name' => 'Communiquer favorablement et régulièrement sur le vélo', 'bareme' => 25],
-                    ['name' => 'Organiser des rencontres', 'bareme' => 15],
+                    ['name' => 'Elaborer un plan vélo à l’échelle de ma commune'],
+                    ['name' => 'Respecter la loi LOM (L228-2 du code de l’environnement)'],
+                    ['name' => 'Communiquer favorablement et régulièrement sur le vélo'],
+                    ['name' => 'Organiser des rencontres'],
                 ]
             ]
         ];
@@ -256,14 +249,12 @@ class AppFixtures extends Fixture
         foreach ($categoriesData as $categoryData) {
             $category = new Category();
             $category->setName($categoryData['name']);
-            $category->setBareme($categoryData['bareme']);
             $category->setImage("https://www.bordeaux-metropole.fr/sites/MET-BXMETRO-DRUPAL/files/styles/node_visuel_xl_x2/public/2023-07/parcours_reve_bruges_velo_barbier.webp");
             $manager->persist($category);
 
             foreach ($categoryData['propositions'] as $propositionData) {
                 $proposition = new Proposition();
                 $proposition->setTitle($propositionData['name']);
-                $proposition->setBareme($propositionData['bareme']);
                 $proposition->setCategory($category);
                 $proposition->setImage("https://www.bordeaux-metropole.fr/sites/MET-BXMETRO-DRUPAL/files/styles/node_visuel_xl_x2/public/2023-07/parcours_reve_bruges_velo_barbier.webp");
 

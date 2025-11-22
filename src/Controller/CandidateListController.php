@@ -43,14 +43,10 @@ class CandidateListController extends AbstractController
         // Calculer les statistiques de la liste
         $listStats = $this->statisticsService->calculateCandidateListStats($candidateList);
 
-        // Calculer le score d'engagement
-        $engagementScore = $this->commitmentDataService->calculateEngagementScore($candidateList);
-
         return $this->render('public/candidate_list_show.html.twig', [
             'candidateList' => $candidateList,
             'commitmentsByCategory' => $commitmentsByCategory,
             'listStats' => $listStats,
-            'engagementScore' => $engagementScore,
             'breadcrumbItems' => [
                 [
                     'label' => 'Communes',

@@ -21,9 +21,6 @@ class Category
     #[ORM\Column(length: 255, unique: true)]
     private ?string $slug = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $bareme = null;
-
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
@@ -71,18 +68,6 @@ class Category
     public function setSlug(string $slug): static
     {
         $this->slug = $slug;
-
-        return $this;
-    }
-
-    public function getBareme(): ?int
-    {
-        return $this->bareme;
-    }
-
-    public function setBareme(?int $bareme): static
-    {
-        $this->bareme = $bareme;
 
         return $this;
     }

@@ -266,14 +266,12 @@ class FillRandomCommitmentsCommandTest extends KernelTestCase
         // Créer une catégorie
         $category = new Category();
         $category->setName('Catégorie Test ' . uniqid());
-        $category->setBareme(100);
         $this->entityManager->persist($category);
 
         // Créer des propositions
         for ($i = 1; $i <= 5; $i++) {
             $proposition = new Proposition();
             $proposition->setTitle('Proposition Test ' . $i . ' ' . uniqid());
-            $proposition->setBareme(20);
             $proposition->setCategory($category);
             $this->entityManager->persist($proposition);
         }
