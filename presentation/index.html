@@ -12,10 +12,12 @@
 
     <style>
         :root {
-            --velocite-green: #42b983;
+            --velocite-green: #305eb6;
             --velocite-dark: #2c3e50;
             --velocite-light: #ecf0f1;
         }
+
+        /* police TT HOVES (reste) ou Sugo Display (titre) */
 
         .reveal {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -56,6 +58,18 @@
 
         .reveal section {
             height: 100%;
+            text-align: left;
+        }
+
+        /* Force left alignment for all content except title slides */
+        .reveal section:not(.title-slide) {
+            text-align: left !important;
+        }
+
+        .reveal section:not(.title-slide) p,
+        .reveal section:not(.title-slide) div,
+        .reveal section:not(.title-slide) .engagement {
+            text-align: left !important;
         }
 
         .reveal ul {
@@ -325,7 +339,7 @@
         <section>
             <section>
                 <h2>1. Circuler dans la Métropole</h2>
-                <p style="font-size: 1.2em; text-align: center; margin-top: 50px;">8 engagements pour développer le
+                <p style="font-size: 1.2em; margin-top: 50px;">7 engagements pour développer le
                     vélo</p>
             </section>
 
@@ -394,11 +408,8 @@
                     <iframe class="fragment" src="https://reve.velo-cite.org/carte-interactive" width="100%" height="100%"></iframe>
             </section>
             <section class="engagement-slide" data-background-image="https://reve.velo-cite.org/reve/3/reve-3-allees-de-boutaut-nord.jpg">
-                <div style="text-align: center;">
-                    <img src="https://reve.velo-cite.org/reve/3/reve-3-allees-de-boutaut-nord.jpg"
-                         alt="Piste cyclable" style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+                <div>
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Poursuivre le développement du ReVE en respectant l'ambition et les standards votés en
                             2021</strong>
                     </div>
@@ -406,25 +417,12 @@
             </section>
 
             <section class="engagement-slide" data-background-image="https://reve.velo-cite.org/reve/3/reve-3-allees-de-boutaut-nord.jpg">
-                <div style="text-align: center;">
+                <div>
                     <img src="https://reve.velo-cite.org/reve/3/reve-3-allees-de-boutaut-nord.jpg"
                          alt="Cycliste rapide" style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
 
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Accélérer le déploiement du ReVE pour tenir l'échéance de livraison à 2030</strong>
-                    </div>
-                </div>
-            </section>
-
-            <section class="engagement-slide" data-background-image="https://images.unsplash.com/photo-1474552226712-ac0f0961a954?w=1920&h=1080&fit=crop">
-                <div class="fragment" style="text-align: center;">
-                    <img src="https://images.unsplash.com/photo-1474552226712-ac0f0961a954?w=400&h=300&fit=crop"
-                         alt="Réseau cyclable urbain"
-                         style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
-                        <strong>Connecter les quartiers au ReVE avec des aménagements cyclables</strong>
-                        <p style="font-size: 0.8em; margin-top: 20px;">(pistes, voies vertes et vélorues)</p>
                     </div>
                 </div>
             </section>
@@ -433,22 +431,16 @@
                 <iframe class="fragment" src="communes-30kmh.html" width="100%" height="100%"></iframe>
             </section>
             <section class="engagement-slide" data-background-image="https://www.ville-lehaillan.fr/app/uploads/2024/05/Image_Ville-30-scaled.jpg">
-                <div style="text-align: center;">
-                    <img src="full-metropole-30.png"
-                         alt="Zone 30" style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+                <div>
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Soutenir la mise en place d'une<br> Métropole à 30km/h</strong>
                     </div>
                 </div>
             </section>
 
             <section class="engagement-slide" data-background-image="m12gfd.jpg">
-                <div class="fragment" style="text-align: center;">
-                    <img src="m12gfd.jpg"
-                         alt="Feu tricolore" style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+                <div class="fragment">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Généraliser le panneau M12 au grand format.<br>
                             Communiquer pour le faire connaître</strong>
                     </div>
@@ -456,34 +448,29 @@
             </section>
 
             <section class="engagement-slide" data-background-size="800px" data-background-image="https://upload.wikimedia.org/wikipedia/fr/thumb/f/f6/Bordeaux_Metropole_Logo.svg/1280px-Bordeaux_Metropole_Logo.svg.png">
-                <div class="fragment" style="text-align: center;">
+                <div class="fragment">
                     <img src="https://upload.wikimedia.org/wikipedia/fr/thumb/f/f6/Bordeaux_Metropole_Logo.svg/1280px-Bordeaux_Metropole_Logo.svg.png"
                          alt="" style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
 
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Renforcer le Service Modes Actifs en moyens humains, financiers et décisionnels</strong>
                     </div>
                 </div>
             </section>
 
-            <section class="engagement-slide" data-background-image="chantier.jpg">
-                <div class="fragment" style="text-align: center;">
-                    <img src="chantier.jpg" alt="" style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+            <section class="engagement-slide" data-background-image="chantier-bordeaux.jpg">
+                <div class="fragment">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Créer une charte de chantier pour prendre en compte cyclistes et piéton·nes lors des
                             travaux</strong>
                     </div>
                 </div>
             </section>
-
+            <section class="engagement-slide" data-background-image="chantier.jpg">
+            </section>
             <section class="engagement-slide" data-background-image="boulevard.jpeg">
-                <div class="fragment" style="text-align: center;">
-                    <img src="boulevard.jpeg"
-                         alt="Boulevard avec piste cyclable"
-                         style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+                <div class="fragment">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Soutenir la création d'une piste cyclable en site propre sur les boulevards</strong>
                     </div>
                 </div>
@@ -507,62 +494,47 @@
 
             <section>
                 <h2>Les engagements</h2>
-                <p style="font-size: 1.2em; text-align: center; margin-top: 50px;">6 engagements pour des quartiers
+                <p style="font-size: 1.2em; margin-top: 50px;">6 engagements pour des quartiers
                     vivants</p>
             </section>
 
-            <section class="engagement-slide" data-background-image="ordre-mode.avif    ">
-                <div class="fragment" style="text-align: center;">
-                    <img src="ordre-mode.avif"
-                         alt="" style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+            <section class="engagement-slide" data-background-image="ordre-mode.avif" data-background-size="1400px">
+                <div class="fragment">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Privilégier dans l'ordre : piéton·nes, vélos, transports en commun, puis voiture
                             individuelle</strong>
                     </div>
                 </div>
             </section>
 
-            <section class="engagement-slide" data-background-image="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1920&h=1080&fit=crop">
-                <div class="fragment" style="text-align: center;">
-                    <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
-                         alt="Plan de circulation" style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+            <section class="engagement-slide" data-background-image="infoggir-web-bouscatplandecirculation.jpg" data-background-size="1400px">
+                <div class="fragment">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Repenser les plans de circulation en limitant le transit motorisé</strong>
                     </div>
                 </div>
             </section>
 
-            <section class="engagement-slide" data-background-image="https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=1920&h=1080&fit=crop">
-                <div class="fragment" style="text-align: center;">
-                    <img src="https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=400&h=300&fit=crop"
-                         alt="Quartier résidentiel"
-                         style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
-                        <strong>Connecter les quartiers au ReVE avec des vélorues</strong>
+            <section class="engagement-slide" data-background-image="reve-14-allee-cervantes.jpg">
+                <div class="fragment">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
+                        <strong>Connecter les quartiers au ReVE avec des aménagements cyclables</strong>
+                        <p style="font-size: 0.8em; margin-top: 20px;">(pistes, voies vertes et vélorues)</p>
                     </div>
                 </div>
             </section>
 
-            <section class="engagement-slide" data-background-image="entree-quartier.jpg">
-                <div class="fragment" style="text-align: center;">
-                    <img src="entree-quartier.jpg"
-                         alt="Entrée de quartier" style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+            <section class="engagement-slide" data-background-image="porte-quartier.jpg">
+                <div class="fragment">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Marquer les entrées de quartier pour créer un effet de porte très lisible</strong>
                     </div>
                 </div>
             </section>
 
-            <section class="engagement-slide" data-background-image="stationnement.webp">
-                <div class="fragment" style="text-align: center;">
-                    <img src="stationnement.webp"
-                         alt="Stationnement vélo" style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+            <section class="engagement-slide" data-background-image="stationnement.jpg">
+                <div class="fragment">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Augmenter l'espace consacré aux modes actifs en diminuant le stationnement en
                             voirie</strong>
                     </div>
@@ -570,15 +542,14 @@
             </section>
 
             <section class="engagement-slide" data-background-image="couloir-de-bus.jpg">
-                <div class="fragment" style="text-align: center;">
-                    <img src="piste-quai.png"
-                         alt="Bus et vélo" style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+                <div class="fragment">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Éviter les couloirs partagés bus/vélo</strong>
                         <p style="font-size: 0.8em; margin-top: 20px;">(sauf si fréquence faible)</p>
                     </div>
                 </div>
+            </section>
+            <section class="engagement-slide" data-background-image="piste-quai.png" data-background-size="1400px">
             </section>
 
         </section>
@@ -588,56 +559,47 @@
             <section>
                 <h2>3. Les piéton·nes</h2>
                 <h3>Pourquoi défendons-nous les piétons ?</h3>
-                <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
-                    Une ville adaptée et sécurisée pour les plus fragiles est une ville adaptée et sécurisée pour toutes et tous.
+                <div class="engagement" style="font-size: 1.3em; padding: 40px;">
+                    Une ville adaptée aux plus fragiles est une ville sécurisée pour toutes et tous.
                 </div>
             </section>
 
             <section>
                 <h2>Les engagements</h2>
-                <p style="font-size: 1.2em; text-align: center; margin-top: 50px;">4 engagements pour les piéton·nes</p>
+                <p style="font-size: 1.2em; margin-top: 50px;">4 engagements pour les piéton·nes</p>
             </section>
 
-            <section class="engagement-slide" data-background-image="https://www.bordeaux.fr/sites/bor-bdxfr-drupal/files/styles/3_2_930x620/public/2025-04/projet-urbain_place-des-capucins_Rodolphe-Escher.jpg.webp">
-                <div class="fragment" style="text-align: center;">
-                    <img src="https://www.bordeaux.fr/sites/bor-bdxfr-drupal/files/styles/3_2_930x620/public/2025-04/projet-urbain_place-des-capucins_Rodolphe-Escher.jpg.webp"
-                         alt="Zone piétonne" style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+            <section class="engagement-slide" data-background-image="kleber.jpg">
+                <div class="fragment">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Développer des cœurs de quartier piétons et des trames piétonnes</strong>
                     </div>
                 </div>
             </section>
 
             <section class="engagement-slide" data-background-image="sainte-catherine.webp">
-                <div class="fragment" style="text-align: center;">
-                    <img src="sainte-catherine.webp"
-                         alt="Piste cyclable et trottoir"
-                         style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
+                <div class="fragment">
 
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Proposer une alternative cyclable aux principaux axes piétons</strong>
                     </div>
                 </div>
             </section>
 
             <section class="engagement-slide" data-background-image="trottoir-traversant.jpeg">
-                <div class="fragment" style="text-align: center;">
-                    <img src="trottoir-traversant.jpeg"
-                         alt="Trottoir traversant" style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+                <div class="fragment">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Généraliser les trottoirs traversants pour plus de sécurité et de confort</strong>
                     </div>
                 </div>
             </section>
 
-            <section class="engagement-slide" data-background-image="Montagne_russe.jpg">
-                <div class="fragment" style="text-align: center;">
+            <section class="engagement-slide" data-background-image="Montagne_russe.jpg" data-background-size="1400px">
+                <div class="fragment">
                     <img src="bateau_trottoir_plat.jpeg"
                          alt="Accessibilité" style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
 
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Réaliser des trottoirs plats (sans "bateaux") lors de leur rénovation</strong>
                     </div>
                 </div>
@@ -649,37 +611,28 @@
             <section>
                 <h2>4. Les écoles</h2>
                 <h3>Pour des écoles apaisées et des enfants qui savent rouler à vélo</h3>
-                <p style="font-size: 1.2em; text-align: center; margin-top: 50px;">3 engagements pour les écoles</p>
+                <p style="font-size: 1.2em; margin-top: 50px;">3 engagements pour les écoles</p>
             </section>
 
-            <section class="engagement-slide" data-background-image="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=1920&h=1080&fit=crop">
-                <div class="fragment" style="text-align: center;">
-                    <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400&h=300&fit=crop"
-                         alt="Enfants à vélo" style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+            <section class="engagement-slide" data-background-image="srav.jpg">
+                <div class="fragment">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Mettre en place le programme "Savoir Rouler À Vélo" (SRAV) jusqu'au niveau 3</strong>
                     </div>
                 </div>
             </section>
 
             <section class="engagement-slide" data-background-image="rue-aux-ecoles.jpg">
-                <div class="fragment" style="text-align: center;">
-                    <img src="rue-aux-ecoles.jpg"
-                         alt="Rue scolaire" style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+                <div class="fragment">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Transformer les rues des écoles en lieux de vie sans voiture</strong>
                     </div>
                 </div>
             </section>
 
-            <section class="engagement-slide" data-background-image="velotaffeurstressois-velobus.jpg">
-                <div class="fragment" style="text-align: center;">
-                    <img src="velotaffeurstressois-velobus.jpg"
-                         alt="Famille à vélo" style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+            <section class="engagement-slide" data-background-image="velotaffeurstressois-velobus.jpg" data-background-size="1200px">
+                <div class="fragment">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Soutenir des initiatives pour faciliter le déplacement des enfants à vélo ou à
                             pied</strong>
                         <p style="font-size: 0.8em; margin-top: 20px;">Vélobus, pédibus, stationnement vélo...</p>
@@ -693,60 +646,46 @@
         <section>
             <section>
                 <h2>5. Intermodalité et stationnement</h2>
-                <p style="font-size: 1.2em; text-align: center; margin-top: 50px;">5 engagements pour faciliter l'intermodalité</p>
+                <p style="font-size: 1.2em; margin-top: 50px;">5 engagements pour faciliter l'intermodalité</p>
             </section>
 
             <section class="engagement-slide" data-background-image="velo-station.webp">
-                <div class="fragment" style="text-align: center;">
+                <div class="fragment">
                     <img src="velo-station-2.webp"
                          alt="Parking vélo sécurisé"
                          style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
 
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Proposer des stationnements sécurisés, faciles d'accès, et quantitativement adaptés à chaque gare ou pôle multimodal</strong>
                     </div>
                 </div>
             </section>
 
-            <section class="engagement-slide" data-background-image="metstation.png">
-                <div class="fragment" style="text-align: center;">
-                    <img src="metstation.png"
-                         alt="Metstation" style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+            <section class="engagement-slide" data-background-image="metstation.png" data-background-size="1400px">
+                <div class="fragment">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Développer des parkings sécurisés type Metstation dans les secteurs tendus et les pôles d'intérêt majeurs</strong>
                     </div>
                 </div>
             </section>
 
-            <section class="engagement-slide" data-background-image="metstation-2.jpeg">
-                <div class="fragment" style="text-align: center;">
-                    <img src="metstation-2.jpeg"
-                         alt="Abonnement" style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
-                        <strong>Proposer une offre simplifiée, unique et sans abonnement permettant l’accès à l’ensemble des Metstations</strong>
-                    </div>
+            <section class="engagement-slide" data-background-image="metstation.png" data-background-size="1400px">
+                <div class="engagement" style="font-size: 1.3em; padding: 40px;">
+                    <strong>Proposer une offre simplifiée, unique et sans abonnement permettant l’accès à l’ensemble des Metstations</strong>
                 </div>
             </section>
 
-            <section class="engagement-slide" data-background-image="Vélobox.jpg">
-                <div class="fragment" style="text-align: center;">
-                    <img src="Vélobox.jpg"
-                         alt="Vélobox" style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+            <section class="engagement-slide" data-background-image="Vélobox.jpg" data-background-size="1400px">
+                <div class="fragment">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Multiplier les Vélobox dans les quartiers</strong>
                     </div>
                 </div>
             </section>
 
-            <section class="engagement-slide" data-background-image="https://images.unsplash.com/photo-1554672407-fb6497c6e5f6?w=1920&h=1080&fit=crop">
-                <div class="fragment" style="text-align: center;">
-                    <img src="https://images.unsplash.com/photo-1554672407-fb6497c6e5f6?w=400&h=300&fit=crop"
-                         alt="Tram et vélo" style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+            <section class="engagement-slide" data-background-image="levelo.jpg" data-background-size="1400px">
+                <div class="fragment">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Renforcer le maillage territorial du "vélo par TBM"</strong>
                     </div>
                 </div>
@@ -758,98 +697,69 @@
             <section>
                 <h2>6. Guide aménagements</h2>
                 <h3>Sécurité et confort</h3>
-                <p style="font-size: 1.2em; text-align: center; margin-top: 50px;">9 engagements pour des aménagements
+                <p style="font-size: 1.2em; margin-top: 50px;">9 engagements pour des aménagements
                     de qualité</p>
             </section>
 
             <section class="engagement-slide" data-background-image="couleur.jpg">
-                <div class="fragment" style="text-align: center;">
-                    <img src="couleur.jpg"
-                         alt="Piste cyclable rouge"
-                         style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+                <div class="fragment">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Uniformiser la couleur des aménagements cyclables (comme aux Pays-Bas)</strong>
                     </div>
                 </div>
             </section>
 
             <section class="engagement-slide" data-background-image="stabilise.jpg">
-                <div class="fragment" style="text-align: center;">
-                    <img src="stabilise.jpg"
-                         alt="Revêtement de qualité"
-                         style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+                <div class="fragment">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Ne plus utiliser le stabilisé et le béton pour trottoirs et pistes cyclables</strong>
                     </div>
                 </div>
             </section>
 
             <section class="engagement-slide" data-background-image="piste-traversante.jpg">
-                <div class="fragment" style="text-align: center;">
-                    <img src="piste-traversante.jpg"
-                         alt="Trottoir traversant" style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+                <div class="fragment">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Généraliser la création de trottoirs et pistes traversants</strong>
                     </div>
                 </div>
             </section>
 
             <section class="engagement-slide" data-background-image="montreuil.jpg">
-                <div class="fragment" style="text-align: center;">
-                    <img src="montreuil.jpg"
-                         alt="Piste cyclable sans bordure"
-                         style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+                <div class="fragment">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Réaliser tous les aménagements cyclables sans bordures à franchir</strong>
                     </div>
                 </div>
             </section>
 
             <section class="engagement-slide" data-background-image="arret-flotant.jpg">
-                <div class="fragment" style="text-align: center;">
-                    <img src="arret-flotant.jpg"
-                         alt="Arrêt de bus flottant"
-                         style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+                <div class="fragment">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Généraliser les arrêts de bus flottants</strong>
                     </div>
                 </div>
             </section>
 
-            <section class="engagement-slide" data-background-image="emportierage.jpg">
-                <div class="fragment" style="text-align: center;">
-                    <img src="emportierage.jpg"
-                         alt="Zone tampon" style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+            <section class="engagement-slide" data-background-image="emportierage.jpg" data-background-size="1400px">
+                <div class="fragment">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Créer une zone tampon pour éviter le risque d'emportiérage</strong>
                     </div>
                 </div>
             </section>
 
-            <section class="engagement-slide" data-background-image="velo-sas-sensbilisation-rennes.jpg">
-                <div class="fragment" style="text-align: center;">
-                    <img src="velo-sas-sensbilisation-rennes.jpg"
-                         alt="Sas vélo" style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+            <section class="engagement-slide" data-background-image="sas.WEBP" data-background-size="1400px">
+                <div class="fragment">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Sécuriser les sas vélo en peignant leur emprise</strong> (rapport Barbe)
                     </div>
                 </div>
             </section>
 
-            <section class="engagement-slide" data-background-image="https://images.unsplash.com/photo-1534067783941-51c9c23ecefd?w=1920&h=1080&fit=crop">
-                <div class="fragment" style="text-align: center;">
-                    <img src="https://images.unsplash.com/photo-1534067783941-51c9c23ecefd?w=400&h=300&fit=crop"
-                         alt="Rond-point hollandais"
-                         style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+            <section class="engagement-slide" data-background-image="giratoire-hollandais.jpeg" data-background-size="1400px">
+                <div class="fragment">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Réaliser tous les giratoires sur le principe des rond-points hollandais</strong>
                     </div>
                 </div>
@@ -860,17 +770,13 @@
         <section>
             <section>
                 <h2>7. Élaborer un Plan vélo</h2>
-                <h3>Pour déployer une politique ambitieuse pour les modes actifs</h3>
-                <p style="font-size: 1.2em; text-align: center; margin-top: 50px;">4 engagements pour une politique
-                    structurée</p>
+                <p style="font-size: 1.2em; margin-top: 50px;">4 engagements pour une politique
+                    vélo structurée</p>
             </section>
 
-            <section class="engagement-slide" data-background-image="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1920&h=1080&fit=crop">
-                <div class="fragment" style="text-align: center;">
-                    <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&h=300&fit=crop"
-                         alt="Plan stratégique" style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+            <section class="engagement-slide" data-background-image="plan-velo.jpg">
+                <div class="fragment">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Élaborer un plan marche et vélo à l'échelle de ma commune</strong>
                         <p style="font-size: 0.8em; margin-top: 20px;">Reprenant les actions à mener, les axes
                             prioritaires et les engagements pris</p>
@@ -879,28 +785,19 @@
             </section>
 
             <section class="engagement-slide" data-background-image="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1920&h=1080&fit=crop">
-                <div class="fragment" style="text-align: center;">
-                    <img src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=400&h=300&fit=crop"
-                         alt="Loi et justice" style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+                <div class="fragment">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Respecter la loi LOM (L228-2 du code de l'environnement)</strong>
                         <p style="font-size: 0.8em; margin-top: 20px;">À l'occasion des réalisations ou rénovations de
                             voies urbaines, mettre au point des itinéraires cyclables (pistes, bandes, voies vertes,
                             zones de rencontre...)</p>
                     </div>
-                    <div class="focus-box" style="margin-top: 30px;">
-                        <p>⚠️ La zone 30 n'est pas un aménagement conforme à la loi</p>
-                    </div>
                 </div>
             </section>
 
             <section class="engagement-slide" data-background-image="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1920&h=1080&fit=crop">
-                <div class="fragment" style="text-align: center;">
-                    <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400&h=300&fit=crop"
-                         alt="Communication" style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+                <div class="fragment">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Communiquer favorablement et régulièrement sur le vélo</strong>
                         <p style="font-size: 0.8em; margin-top: 20px;">Sas vélo, panneau M12, DSC, distance de
                             dépassement, stationnements gênants...</p>
@@ -909,12 +806,8 @@
             </section>
 
             <section class="engagement-slide" data-background-image="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1920&h=1080&fit=crop">
-                <div class="fragment" style="text-align: center;">
-                    <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=400&h=300&fit=crop"
-                         alt="Réunion collaborative"
-                         style="max-height: 250px; border-radius: 10px; margin-bottom: 20px;">
-
-                    <div class="engagement" style="font-size: 1.3em; text-align: center; padding: 40px;">
+                <div class="fragment">
+                    <div class="engagement" style="font-size: 1.3em; padding: 40px;">
                         <strong>Organiser des rencontres entre associations vélos, adjoint·es (voirie et sécurité) et services
                             techniques</strong>
                     </div>
@@ -923,16 +816,18 @@
         </section>
 
         <!-- Slide finale : Merci -->
-        <section class="title-slide">
-            <h1>Merci</h1>
-            <h2>Pour une métropole marchable et cyclable</h2>
-            <p style="margin-top: 50px; font-size: 1.2em;">
-                Consultez les engagements des candidat·e·s<br>
-                sur notre site internet
-            </p>
-            <p style="margin-top: 30px;">
-                <strong>Municipales 2026</strong>
-            </p>
+        <section>
+            <section class="engagement-slide">
+                <h1>Merci</h1>
+                <h2>Pour une métropole marchable et cyclable</h2>
+                <p style="margin-top: 50px; font-size: 1.2em;">
+                    Consultez les engagements des candidat·e·s<br>
+                    sur notre site internet
+                </p>
+                <p style="margin-top: 30px;">
+                    <strong>Municipales 2026</strong>
+                </p>
+            </section>
         </section>
     </div>
 </div>
