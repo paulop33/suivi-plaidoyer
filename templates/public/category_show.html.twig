@@ -87,7 +87,7 @@
                     <div class="proposition-card">
                         <div class="card">
                             {% if data.proposition.image %}
-                                <img src="{{ data.proposition.image }}"
+                                <img src="{{ asset(data.proposition.imageForAsset) }}"
                                      alt="{{ data.proposition.title }}"
                                      class="card-img-top proposition-image">
                             {% endif %}

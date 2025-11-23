@@ -11,6 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: PropositionRepository::class)]
 class Proposition
 {
+    public const UPLOAD_IMAGE_PATH = 'images/propositions/';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -48,7 +50,7 @@ class Proposition
      * @var Collection<int, SpecificExpectation>
      * Les attentes spécifiques par spécificité
      */
-    #[ORM\OneToMany(targetEntity: SpecificExpectation::class, mappedBy: 'proposition', orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(targetEntity: SpecificExpectation::class, mappedBy: 'proposition', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $specificExpectations;
 
     public function __construct()
@@ -121,6 +123,11 @@ class Proposition
         return $this->description;
     }
 
+    public function getDescriptionStripped(): ?string
+    {
+        return strip_tags($this->description);
+    }
+
     public function setDescription(?string $description = null): void
     {
         $this->description = $description;
@@ -129,6 +136,11 @@ class Proposition
     public function getImage(): ?string
     {
         return $this->image;
+    }
+
+    public function getImageForAsset(): ?string
+    {
+        return (str_starts_with($this->image, 'http') ? '' : self::UPLOAD_IMAGE_PATH).$this->image;
     }
 
     public function setImage(?string $image): static

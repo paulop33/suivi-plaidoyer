@@ -134,7 +134,7 @@
                                                 {% endif %}
                                             </div>
                                             {% if propositionInfo.proposition.description %}
-                                                <p class="text-muted small mb-2">{{ propositionInfo.proposition.description|slice(0, 150) }}{% if propositionInfo.proposition.description|length > 150 %}...{% endif %}</p>
+                                                <p class="text-muted small mb-2">{{ propositionInfo.proposition.descriptionStripped|slice(0, 150) }}{% if propositionInfo.proposition.descriptionStripped|length > 150 %}...{% endif %}</p>
                                             {% endif %}
                                             {% if propositionInfo.signedLists|length > 0 %}
                                                 <div class="mb-2">

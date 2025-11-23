@@ -5,13 +5,16 @@ namespace App\Controller\Admin;
 use App\Entity\Proposition;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 
 class PropositionCrudController extends AbstractCrudController
 {
+
     public static function getEntityFqcn(): string
     {
         return Proposition::class;
@@ -23,8 +26,9 @@ class PropositionCrudController extends AbstractCrudController
         return [
             IdField::new('id')->hideOnForm(),
             TextareaField::new('title', 'Titre'),
-            TextareaField::new('description', 'Description')->hideOnIndex(),
-            TextField::new('image', 'URL de l\'image')->hideOnIndex(),
+            TextEditorField::new('description', 'Description')
+                ->hideOnIndex(),
+            ImageField::new('image', 'URL de l\'image')->setUploadDir('public/'.Proposition::UPLOAD_IMAGE_PATH)->hideOnIndex(),
             IntegerField::new('position', 'Ordre d\'affichage')
                 ->setHelp('Ordre d\'affichage des propositions dans la catégorie (plus petit = affiché en premier)'),
             AssociationField::new('category', 'Catégorie'),
