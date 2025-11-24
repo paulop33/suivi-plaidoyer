@@ -11,6 +11,20 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
 
     <style>
+        /* Import de la police TT Hoves Pro Trial Regular */
+        @font-face {
+            font-family: 'TT Hoves Pro Trial';
+            src: url('TT Hoves Pro Trial Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Sugo Pro Classic Regular';
+            src: url('Sugo-Pro-Classic-Regular-trial.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
         :root {
             --velocite-green: #305eb6;
             --velocite-dark: #2c3e50;
@@ -19,8 +33,11 @@
 
         /* police TT HOVES (reste) ou Sugo Display (titre) */
 
+        .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
+            font-family: 'TT Hoves Pro Trial', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+        }
         .reveal {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'TT Hoves Pro Trial', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
             color: var(--velocite-dark);
         }
 
@@ -305,7 +322,7 @@
                     <li>La Maison des Livreurs</li>
                     <li>Les Vélotaffeurs Tressois</li>
                     <li>Vélo-Cité</li>
-                    <li>Le soutien de x entreprises et x associations</li>
+                    <li>Soutien des autres MAMMA (Léon à Vélo, Le Garage Moderne, Recyclerie Sportive)</li>
                 </ul>
             </section>
             <section>
@@ -326,10 +343,11 @@
                 <h2>Notre approche</h2>
 
                 <div class="engagement" style="font-size: 1.1em;">
-                    <p><strong>Nous invitons les candidat·es à s'engager mesure par mesure</strong></p>
-                    <ul>
+                    <p><strong>Nous invitons les candidat·es à s'engager par mesure</strong></p>
+                    <ul style="margin-left: 3rem;">
                         <li>Souplesse</li>
-                        <li>Pas d'engagement pour l'intégralité des propositions</li>
+                        <li>Engagement par mesure</li>
+                        <li>Possibilité d'argumenter</li>
                     </ul>
                 </div>
             </section>
@@ -339,8 +357,7 @@
         <section>
             <section>
                 <h2>1. Circuler dans la Métropole</h2>
-                <p style="font-size: 1.2em; margin-top: 50px;">7 engagements pour développer le
-                    vélo</p>
+                <p style="font-size: 1.2em; margin-top: 50px;">➞ 7 engagements métropolitains</p>
             </section>
 
 <!--            <section>-->
@@ -472,7 +489,7 @@
         <!-- Slide 7 : Circuler dans mon quartier -->
         <section>
             <section>
-                <h2>2. Circuler dans mon Quartier</h2>
+                <h2>2. Circuler dans le Quartier</h2>
                 <h3>Pourquoi apaiser mon quartier ?</h3>
                 <ul>
                     <li>Redonner de l'espace aux piéton·nes et cyclistes</li>
@@ -486,7 +503,7 @@
 
             <section>
                 <h2>Les engagements</h2>
-                <p style="font-size: 1.2em; margin-top: 50px;">6 engagements pour des quartiers
+                <p style="font-size: 1.2em; margin-top: 50px;">➞ 6 engagements pour des quartiers
                     vivants</p>
             </section>
 
@@ -558,7 +575,7 @@
 
             <section>
                 <h2>Les engagements</h2>
-                <p style="font-size: 1.2em; margin-top: 50px;">4 engagements pour les piéton·nes</p>
+                <p style="font-size: 1.2em; margin-top: 50px;">➞ 4 engagements pour les piéton·nes</p>
             </section>
 
             <section class="engagement-slide" data-background-image="kleber.jpg">
@@ -603,7 +620,7 @@
             <section>
                 <h2>4. Les écoles</h2>
                 <h3>Pour des écoles apaisées et des enfants qui savent rouler à vélo</h3>
-                <p style="font-size: 1.2em; margin-top: 50px;">3 engagements pour les écoles</p>
+                <p style="font-size: 1.2em; margin-top: 50px;">➞ 3 engagements pour les écoles</p>
             </section>
 
             <section class="engagement-slide" data-background-image="srav.jpg">
@@ -638,7 +655,7 @@
         <section>
             <section>
                 <h2>5. Intermodalité et stationnement</h2>
-                <p style="font-size: 1.2em; margin-top: 50px;">5 engagements pour faciliter l'intermodalité</p>
+                <p style="font-size: 1.2em; margin-top: 50px;">➞ 5 engagements pour faciliter l'intermodalité</p>
             </section>
 
             <section class="engagement-slide" data-background-image="velo-station.webp">
@@ -688,7 +705,7 @@
             <section>
                 <h2>6. Guide aménagements</h2>
                 <h3>Sécurité et confort</h3>
-                <p style="font-size: 1.2em; margin-top: 50px;">9 engagements pour des aménagements
+                <p style="font-size: 1.2em; margin-top: 50px;">➞ 9 engagements pour des aménagements
                     de qualité</p>
             </section>
 
@@ -761,7 +778,7 @@
         <section>
             <section>
                 <h2>7. Élaborer un Plan vélo</h2>
-                <p style="font-size: 1.2em; margin-top: 50px;">4 engagements pour une politique
+                <p style="font-size: 1.2em; margin-top: 50px;">➞ 4 engagements pour une politique
                     vélo structurée</p>
             </section>
 
@@ -812,12 +829,14 @@
                 <h1>Merci</h1>
                 <h2>Pour une métropole marchable et cyclable</h2>
                 <p style="margin-top: 50px; font-size: 1.2em;">
-                    Consultez les engagements des candidat·e·s<br>
-                    sur notre site internet
+                    Consultez les engagements des candidate·s sur notre site internet
                 </p>
-                <p style="margin-top: 30px;">
-                    <strong>Municipales 2026</strong>
-                </p>
+                <div class="flex" style="display: flex; align-items: center; justify-content: space-evenly;">
+                    <p style="margin-top: 30px;">
+                        <a href="https://bordeaux-a-velo.fr">https://bordeaux-a-velo.fr</a>
+                    </p>
+                    <img src="qr-code.jpg" width="150" alt="">
+                </div>
             </section>
         </section>
     </div>
