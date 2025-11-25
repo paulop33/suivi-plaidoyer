@@ -3,4 +3,87 @@
 {% block title %}Plaidoyer Vélo Bordeaux - Page blanche maison des livreurs{% endblock %}
 
 {% block body %}
+    <section class="hero-section">
+        <div class="container">
+            <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb breadcrumb-custom">
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('app_home') }}" class="text-white-50">
+                            <i class="fas fa-home me-1"></i>Accueil
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        La maison des livreurs
+                    </li>
+                </ol>
+            </nav>
+
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-3">Carte blanche à la Maison des Livreurs</h1>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <img src="{{ asset('images/MAISON-DES-LIVREURS-1-300x158.png') }}" alt="">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 mt-5">
+                    <p>
+                        Dans le cadre des réflexions sur l’amélioration et la sécurisation de la mobilité en ville, il est aujourd’hui
+                        essentiel de prendre en compte l’activité quotidienne de milliers de livreurs à deux roues.
+                        En situation précaire et soumis aux injonctions déraisonnables d’une plateforme numérique (notamment Uber,
+                        Deliveroo et Stuart), ces travailleurs sont poussés à prendre des risques sur la route avec des conséquences
+                        pour eux et autrui.
+                    </p>
+
+                    <p>
+                        En l’absence d’abri, ils attendent en rue exposés aux intempéries. En l’absence de lieu de repos, ils se
+                        déplacent épuisés dans la ville jusqu’à 14h par jour tous les jours. En l’absence de lieu de maintenance, ils
+                        peinent à entretenir convenablement leur véhicule. Affublés d’un lourd sac à dos et d’une veste fluo, ils sont
+                        aujourd’hui près de 10 000 à parcourir au quotidien la métropole bordelaise (données Insee). À toute heure, ils
+                        multiplient les trajets et allers-retours afin de livrer repas, colis et courses de supermarchés. Rémunérés
+                        uniquement à la tâche, parfois rémunérés moins de 40 centimes par kilomètre parcouru, les livreurs des
+                        plateformes numériques sont dans une situation instable et fragile.
+                    </p>
+                    <p>
+                        L’association La Maison des Livreurs gère un lieu de pause et de solidarité au 14 rue du Fort Louis à Bordeaux,
+                        près de la place André Meunier, afin de venir en aide à ces travailleurs. Ce sont essentiellement des personnes
+                        d’origine étrangère et des jeunes résidents des Quartiers Prioritaires de la Ville. Ils cumulent souvent les
+                        freins à l’emploi, ne parviennent pas à accéder à un emploi stable et s’orientent donc vers cette activité de
+                        livraison par contrainte économique et non par choix.
+                    </p>
+                    <p>
+                        Aujourd’hui, en s’appuyant sur son expérience de terrain au quotidien avec les premiers concernés, l’équipe de
+                        l’association La Maison des Livreurs partage des recommandations concrètes :
+                    </p>
+                    <p>
+                        Des villes françaises ont fait le choix d’interdire les regroupements de ces travailleurs en les sanctionnant
+                        systématiquement dans l’espoir de les « gommer » de l’espace public. Nous ne recommandons pas cette voie qui est
+                        une impasse et contre productive. En effet, ce choix ne fait qu’aggraver l’isolement et la précarité, et
+                        provoquer des pratiques à risque d’évitement des forces de l’ordre.
+                    </p>
+                    <p>
+                        Nous recommandons d’intégrer les travailleurs des plateformes aux groupes de travail sur l’amélioration et la
+                        sécurisation de la mobilité à deux roues sur la métropole bordelaise.
+                    </p>
+                    <p>
+                        Nous recommandons aux collectivités et acteurs de la mobilité sur la métropole bordelaise de prendre
+                        connaissance des préconisations
+                        <a target="_blank" href="https://cdn.paris.fr/paris/2025/05/27/mie-uberisation-150525_compressed-aPpn.pdf">
+                            du rapport « L’Uberisation dans la ville » réalisé dans le cadre d’une mission
+                            d’information et d’évaluation du Conseil de la ville de Paris
+                        </a>,
+                        notamment la promotion de modèles alternatifs de
+                        type coopérative et la contribution des plateformes numériques telles Uber et Deliveroo à la compensation de
+                        leurs externalités négatives.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
 {% endblock %}
