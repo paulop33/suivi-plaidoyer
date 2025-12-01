@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Plaidoyer Vélo Bordeaux - Contact{% endblock %}
+
+{% block body %}
+    <section class="hero-section">
+        <div class="container">
+            <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb breadcrumb-custom">
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('app_home') }}" class="text-white-50">
+                            <i class="fas fa-home me-1"></i>Accueil
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        Contact
+                    </li>
+                </ol>
+            </nav>
+
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-3">Contact</h1>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <i class="fas fa-envelope fa-8x opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 mt-5">
+                    <p>
+                        Vous êtes candidat·e ? Vous souhaitez nous contacter pour remplir vos engagements ? N'hésitez pas à nous envoyer un message.
+                    </p>
+                    <p>
+                        Pour cela, veuillez écrire à l'une des associations porteuses du plaidoyer : <br>
+                        contact (at) velo-cite.org <br>
+                        contact (at) cycles-manivelles.org <br>
+                        velotaffeurstressois (at) gmail.com <br>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

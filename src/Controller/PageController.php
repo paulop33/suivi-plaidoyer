@@ -26,4 +26,11 @@ class PageController extends AbstractController
         return $this->render('page/maison-des-livreurs.html.twig', [
         ]);
     }
+
+    #[Route('/contact', name: 'app_contact')]
+    public function contact(): Response
+    {
+        return $this->render('page/contact.html.twig', [
+        ]);
+    }
 }
