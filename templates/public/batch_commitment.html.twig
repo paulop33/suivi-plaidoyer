@@ -128,8 +128,17 @@
                                             <strong class="me-2">{{ proposition.title }}</strong>
                                         </div>
                                         {% if proposition.description %}
-                                            <div class="text-muted small mt-1">
-                                                {{ proposition.description|slice(0, 200) }}{% if proposition.description|length > 200 %}...{% endif %}
+                                            <button class="btn btn-link p-0 mt-1 toggle-description"
+                                                    data-target="desc-{{ proposition.id }}">
+                                                <i class="fas fa-eye me-1"></i>Afficher la description
+                                            </button>
+
+                                            <div id="desc-{{ proposition.id }}" class="text-muted small mt-2 d-none description-content">
+                                                {% if proposition.image %}
+                                                    <img src="{{ asset(proposition.imageForAsset) }}"
+                                                         alt="{{ proposition.title }}" height="200px">
+                                                {% endif %}
+                                                {{ proposition.description|raw }}
                                             </div>
                                         {% endif %}
                                     </div>
@@ -338,6 +347,28 @@
             // Initialiser les compteurs
             updateStatusCounter();
             updateGlobalCharCount();
+
+            // Gestion de l’affichage des descriptions
+            document.querySelectorAll('.toggle-description').forEach(btn => {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('data-target');
+                    const content = document.getElementById(targetId);
+
+                    if (content.classList.contains('d-none')) {
+                        content.classList.remove('d-none');
+                        this.innerHTML = '<i class="fas fa-eye-slash me-1"></i>Masquer la description';
+                    } else {
+                        content.classList.add('d-none');
+                        this.innerHTML = '<i class="fas fa-eye me-1"></i>Afficher la description';
+                    }
+                });
+            });
+
+            document.querySelectorAll('.description-content a').forEach(link => {
+                link.setAttribute('target', '_blank');
+                link.setAttribute('rel', 'noopener noreferrer');
+            });
         });
     </script>
 </body>
