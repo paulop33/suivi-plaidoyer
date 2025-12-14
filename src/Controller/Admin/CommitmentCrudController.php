@@ -22,18 +22,6 @@ class CommitmentCrudController extends AbstractCrudController
         return Commitment::class;
     }
 
-
-    public function configureActions(Actions $actions): Actions
-    {
-        $batchAdd = Action::new('batchAdd', 'Batch Add')
-            ->linkToCrudAction('batchAdd')
-            ->createAsGlobalAction()
-            ->setIcon('fa fa-plus')
-        ;
-
-        return $actions->add(Crud::PAGE_INDEX, $batchAdd);
-    }
-
     public function configureFields(string $pageName): iterable
     {
         parent::configureFields($pageName);
@@ -56,28 +44,5 @@ class CommitmentCrudController extends AbstractCrudController
                 }),
             TextareaField::new('commentCandidateList', 'Commentaire spécifique'),
         ];
-    }
-
-    public function batchAdd(Request $request, EntityManagerInterface $em): Response
-    {
-        if ($request->isMethod('POST')) {
-            $names = array_filter(array_map('trim', explode("\n", $request->request->get('names'))));
-
-            foreach ($names as $name) {
-                $product = new Commitment();
-                $product->setName($name);
-                $em->persist($product);
-            }
-            $em->flush();
-
-            $this->addFlash('success', count($names) . ' produits ajoutés avec succès');
-
-            return $this->redirect($this->generateUrl('admin', [
-                'crudControllerFqcn' => self::class,
-                'crudAction' => 'index',
-            ]));
-        }
-
-        return $this->render('admin/batch_add.html.twig');
     }
 }
