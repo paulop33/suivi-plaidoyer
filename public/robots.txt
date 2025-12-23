@@ -1,0 +1,11 @@
+# robots.txt pour Suivi Plaidoyer
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /login
+Disallow: /logout
+
+# Sitemap
+Sitemap: https://bordeaux-a-velo.fr/sitemap.xml
+

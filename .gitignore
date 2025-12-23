@@ -21,3 +21,4 @@
 ###< symfony/asset-mapper ###
 
 .idea/
+public/sitemap.xml

@@ -48,7 +48,8 @@
         "symfonycasts/sass-bundle": "^0.8.3",
         "twbs/bootstrap": "^5.3.8",
         "twig/extra-bundle": "^2.12|^3.22.1",
-        "twig/twig": "^2.12|^3.22"
+        "twig/twig": "^2.12|^3.22",
+        "ext-dom": "*"
     },
     "config": {
         "allow-plugins": {
