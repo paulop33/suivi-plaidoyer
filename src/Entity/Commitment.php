@@ -8,6 +8,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CommitmentRepository::class)]
+#[ORM\UniqueConstraint(name: 'unique_commitment', columns: ['candidate_list_id', 'proposition_id'])]
 class Commitment
 {
     #[ORM\Id]
