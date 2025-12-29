@@ -8,6 +8,7 @@ use App\Entity\Proposition;
 use App\Entity\Category;
 use App\Entity\Commitment;
 use App\Enum\CommitmentStatus;
+use App\Service\CandidateListPasswordService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,6 +18,7 @@ class PublicBatchCommitmentControllerTest extends WebTestCase
 {
     private EntityManagerInterface $entityManager;
     private UriSigner $uriSigner;
+    private CandidateListPasswordService $passwordService;
     private $client;
 
     protected function setUp(): void
@@ -24,6 +26,7 @@ class PublicBatchCommitmentControllerTest extends WebTestCase
         $this->client = static::createClient();
         $this->entityManager = static::getContainer()->get('doctrine')->getManager();
         $this->uriSigner = static::getContainer()->get(UriSigner::class);
+        $this->passwordService = static::getContainer()->get(CandidateListPasswordService::class);
     }
 
     public function testAccessWithoutSignatureIsDenied(): void
@@ -137,6 +140,131 @@ class PublicBatchCommitmentControllerTest extends WebTestCase
         $this->assertSelectorExists('.alert-danger, .flash-error');
     }
 
+    public function testAccessWithPasswordProtectedListRequiresPassword(): void
+    {
+        $candidateList = $this->createTestCandidateListWithPassword('testpassword123');
+        $url = 'http://localhost/public/batch-commitment/' . $candidateList->getId();
+        $signedUrl = $this->uriSigner->sign($url);
+
+        $this->client->request('GET', $signedUrl);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h4', 'Accès protégé');
+        $this->assertSelectorExists('input[name="password"]');
+    }
+
+    public function testCorrectPasswordAllowsAccess(): void
+    {
+        $candidateList = $this->createTestCandidateListWithPassword('testpassword123');
+        $url = 'http://localhost/public/batch-commitment/' . $candidateList->getId();
+        $signedUrl = $this->uriSigner->sign($url);
+
+        // Soumettre le bon mot de passe
+        $this->client->request('POST', $signedUrl, [
+            'candidate_list_password' => [
+                'password' => 'testpassword123',
+                'submit' => ''
+            ]
+        ]);
+
+        // Devrait rediriger vers la page d'engagements
+        $this->assertResponseRedirects();
+
+        // Suivre la redirection
+        $this->client->followRedirect();
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h3', 'Gérer les engagements de la liste');
+    }
+
+    public function testIncorrectPasswordShowsError(): void
+    {
+        $candidateList = $this->createTestCandidateListWithPassword('testpassword123');
+        $url = 'http://localhost/public/batch-commitment/' . $candidateList->getId();
+        $signedUrl = $this->uriSigner->sign($url);
+
+        // Soumettre un mauvais mot de passe
+        $this->client->request('POST', $signedUrl, [
+            'candidate_list_password' => [
+                'password' => 'wrongpassword123',
+                'submit' => ''
+            ]
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('.alert-danger, .flash-error');
+        $this->assertSelectorTextContains('.alert-danger, .flash-error', 'Mot de passe incorrect');
+    }
+
+    public function testSetPasswordForUnprotectedList(): void
+    {
+        $candidateList = $this->createTestCandidateList();
+        $url = 'http://localhost/public/batch-commitment/' . $candidateList->getId() . '/set-password';
+        $signedUrl = $this->uriSigner->sign($url);
+
+        $this->client->request('GET', $signedUrl);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h4', 'Définir un mot de passe');
+        $this->assertSelectorExists('input[name="candidate_list_password[password][first]"]');
+        $this->assertSelectorExists('input[name="candidate_list_password[password][second]"]');
+    }
+
+    public function testSetPasswordWithValidData(): void
+    {
+        $candidateList = $this->createTestCandidateList();
+        $url = 'http://localhost/public/batch-commitment/' . $candidateList->getId() . '/set-password';
+        $signedUrl = $this->uriSigner->sign($url);
+
+        // Soumettre un nouveau mot de passe
+        $this->client->request('POST', $signedUrl, [
+            'candidate_list_password' => [
+                'password' => [
+                    'first' => 'newpassword123',
+                    'second' => 'newpassword123'
+                ],
+                'submit' => ''
+            ]
+        ]);
+
+        // Devrait rediriger vers la page d'engagements
+        $this->assertResponseRedirects();
+
+        // Vérifier que le mot de passe a été défini et haché
+        $this->entityManager->refresh($candidateList);
+        $this->assertTrue($this->passwordService->verifyPassword('newpassword123', $candidateList->getPassword()));
+        $this->assertTrue($candidateList->hasPassword());
+    }
+
+    public function testChangePasswordWithCorrectCurrentPassword(): void
+    {
+        $candidateList = $this->createTestCandidateListWithPassword('oldpassword123');
+        $url = 'http://localhost/public/batch-commitment/' . $candidateList->getId();
+        $signedUrl = $this->uriSigner->sign($url);
+
+        // D'abord s'authentifier
+        $this->client->request('POST', $signedUrl, [
+            'candidate_list_password' => [
+                'password' => 'oldpassword123',
+                'submit' => ''
+            ]
+        ]);
+        $this->client->followRedirect();
+
+        // Maintenant changer le mot de passe
+        $this->client->request('POST', $signedUrl, [
+            'action' => 'change_password',
+            'current_password' => 'oldpassword123',
+            'new_password' => 'newpassword123',
+            'confirm_password' => 'newpassword123'
+        ]);
+
+        $this->assertResponseRedirects();
+
+        // Vérifier que le mot de passe a été changé et haché
+        $this->entityManager->refresh($candidateList);
+        $this->assertTrue($this->passwordService->verifyPassword('newpassword123', $candidateList->getPassword()));
+    }
+
     private function createTestCandidateList(): CandidateList
     {
         $city = new City();
@@ -152,6 +280,17 @@ class PublicBatchCommitmentControllerTest extends WebTestCase
         $candidateList->setPhone('0123456789');
         $candidateList->setCity($city);
 
+        $this->entityManager->persist($candidateList);
+        $this->entityManager->flush();
+
+        return $candidateList;
+    }
+
+    private function createTestCandidateListWithPassword(string $password): CandidateList
+    {
+        $candidateList = $this->createTestCandidateList();
+        $hashedPassword = $this->passwordService->hashPassword($password);
+        $candidateList->setPassword($hashedPassword);
         $this->entityManager->persist($candidateList);
         $this->entityManager->flush();
 

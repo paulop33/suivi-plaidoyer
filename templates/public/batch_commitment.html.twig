@@ -68,6 +68,42 @@
                     ({{ candidateList.firstname }} {{ candidateList.lastname }} - {{ candidateList.city.name }})
                 </div>
 
+                <!-- Section de gestion du mot de passe -->
+                <div class="card mb-4">
+                    <div class="card-header bg-light">
+                        <h6 class="card-title mb-0">
+                            <i class="fas fa-key me-2"></i>
+                            Protection par mot de passe
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        {% if candidateList.hasPassword %}
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-shield-alt text-success me-2"></i>
+                                    <span class="text-success">Cette liste est protégée par un mot de passe</span>
+                                </div>
+                                <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                                    <i class="fas fa-edit me-1"></i>Modifier le mot de passe
+                                </button>
+                            </div>
+                        {% else %}
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-unlock text-warning me-2"></i>
+                                    <span class="text-warning">Aucun mot de passe défini</span>
+                                </div>
+                                <a href="{{ setPasswordUrl }}" class="btn btn-outline-success btn-sm">
+                                    <i class="fas fa-plus me-1"></i>Définir un mot de passe
+                                </a>
+                            </div>
+                            <small class="text-muted mt-2 d-block">
+                                Définir un mot de passe protégera l'accès aux engagements de cette liste.
+                            </small>
+                        {% endif %}
+                    </div>
+                </div>
+
                 <form method="post" id="batchCommitmentForm">
                     <div class="row mb-4">
                         <div class="col-md-12">
@@ -216,6 +252,53 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal pour changer le mot de passe -->
+    {% if candidateList.hasPassword %}
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="changePasswordModalLabel">
+                        <i class="fas fa-key me-2"></i>Modifier le mot de passe
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="changePasswordForm" method="post" action="{{ signedUrl }}">
+                    <div class="modal-body">
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Attention :</strong> Modifier le mot de passe nécessitera de le saisir à nouveau lors des prochaines connexions.
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="current_password" class="form-label">Mot de passe actuel</label>
+                            <input type="password" class="form-control" id="current_password" name="current_password" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="new_password" class="form-label">Nouveau mot de passe</label>
+                            <input type="password" class="form-control" id="new_password" name="new_password" required minlength="8">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="confirm_password" class="form-label">Confirmer le nouveau mot de passe</label>
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required minlength="8">
+                        </div>
+
+                        <input type="hidden" name="action" value="change_password">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>Modifier le mot de passe
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -369,6 +452,31 @@
                 link.setAttribute('target', '_blank');
                 link.setAttribute('rel', 'noopener noreferrer');
             });
+
+            // Gestion du formulaire de changement de mot de passe
+            const changePasswordForm = document.getElementById('changePasswordForm');
+            if (changePasswordForm) {
+                changePasswordForm.addEventListener('submit', function(e) {
+                    const newPassword = document.getElementById('new_password').value;
+                    const confirmPassword = document.getElementById('confirm_password').value;
+
+                    if (newPassword !== confirmPassword) {
+                        e.preventDefault();
+                        alert('Les nouveaux mots de passe ne correspondent pas.');
+                        return;
+                    }
+
+                    if (newPassword.length < 8) {
+                        e.preventDefault();
+                        alert('Le nouveau mot de passe doit contenir au moins 8 caractères.');
+                        return;
+                    }
+
+                    if (!confirm('Êtes-vous sûr de vouloir modifier le mot de passe ?')) {
+                        e.preventDefault();
+                    }
+                });
+            }
         });
     </script>
 </body>
