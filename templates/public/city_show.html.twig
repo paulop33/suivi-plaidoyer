@@ -148,7 +148,11 @@
                                                            title="Voir le profil de {{ signedListInfo.candidateList.nameList }}{% if commitmentStatus %} - {{ commitmentStatus.label }}{% endif %}">
                                                             {% if commitmentStatus %}
                                                                 {% if commitmentStatus.value == 'accepted' %}✅{% endif %}
-                                                            {% endif %}{{ signedListInfo.candidateList.nameList }}
+                                                            {% endif %}
+                                                            {{ signedListInfo.candidateList.nameList }}
+                                                            {%  if signedListInfo.candidateList.nameList != (signedListInfo.candidateList.firstname ~ ' ' ~ signedListInfo.candidateList.lastname)  %}
+                                                                - {{ signedListInfo.candidateList.firstname }} {{ signedListInfo.candidateList.lastname }}
+                                                            {% endif %}
                                                             {% if signedListInfo.commitment.commentCandidateList %}
                                                                 <i class="fas fa-info-circle comment-icon"></i>
                                                                 <div class="comment-tooltip">
