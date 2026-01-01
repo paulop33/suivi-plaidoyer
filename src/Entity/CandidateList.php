@@ -41,6 +41,9 @@ class CandidateList
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $globalComment = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $password = null;
+
     /**
      * @var Collection<int, Commitment>
      */
@@ -182,6 +185,23 @@ class CandidateList
         $this->globalComment = $globalComment;
 
         return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(?string $password): static
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    public function hasPassword(): bool
+    {
+        return !empty($this->password);
     }
 
     public function __toString(): string

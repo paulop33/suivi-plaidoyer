@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -46,7 +47,7 @@ class CandidateListCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        return [
+        $fields = [
             TextField::new('nameList', 'Nom de la liste'),
             TextField::new('firstname', 'Prénom'),
             TextField::new('lastname', 'Nom'),
@@ -55,6 +56,15 @@ class CandidateListCrudController extends AbstractCrudController
             AssociationField::new('city', 'Ville'),
             TextareaField::new('globalComment', 'Commentaire global'),
         ];
+
+        // Ajouter l'affichage de l'état de protection par mot de passe (lecture seule)
+        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL])) {
+            $fields[] = BooleanField::new('hasPassword', 'Protégé par mot de passe')
+                ->renderAsSwitch(false)
+                ->setHelp('Le mot de passe peut uniquement être défini/modifié depuis la liste');
+        }
+
+        return $fields;
     }
 
 }

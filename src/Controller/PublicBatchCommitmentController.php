@@ -6,12 +6,16 @@ use App\Entity\CandidateList;
 use App\Entity\Commitment;
 use App\Entity\Proposition;
 use App\Enum\CommitmentStatus;
+use App\Form\CandidateListPasswordType;
 use App\Repository\PropositionRepository;
+use App\Service\CandidateListPasswordService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\UriSigner;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -22,7 +26,8 @@ class PublicBatchCommitmentController extends AbstractController
     public function __construct(
         private PropositionRepository $propositionRepository,
         private EntityManagerInterface $entityManager,
-        private UriSigner $uriSigner
+        private UriSigner $uriSigner,
+        private CandidateListPasswordService $passwordService
     ) {
     }
 
@@ -37,6 +42,17 @@ class PublicBatchCommitmentController extends AbstractController
 
         if (!$candidateList) {
             throw new NotFoundHttpException('Liste candidate non trouvée');
+        }
+
+        // Vérifier si un mot de passe est requis
+        if ($candidateList->hasPassword()) {
+            $session = $request->getSession();
+            $sessionKey = 'candidate_list_password_' . $candidateListId;
+
+            // Vérifier si l'utilisateur est déjà authentifié pour cette liste
+            if (!$session->get($sessionKey, false)) {
+                return $this->handlePasswordAuthentication($request, $candidateList);
+            }
         }
 
         if ($request->isMethod('POST')) {
@@ -62,11 +78,18 @@ class PublicBatchCommitmentController extends AbstractController
             $existingCommitments[$commitment->getProposition()->getId()] = $commitment;
         }
 
+        // Générer l'URL signée pour définir un mot de passe
+        $setPasswordUrl = $this->generateUrl('public_batch_commitment_set_password', [
+            'candidateListId' => $candidateListId
+        ], UrlGeneratorInterface::ABSOLUTE_URL);
+        $setPasswordUrl = $this->uriSigner->sign($setPasswordUrl);
+
         return $this->render('public/batch_commitment.html.twig', [
             'candidateList' => $candidateList,
             'propositionsByCategory' => $propositionsByCategory,
             'existingCommitments' => $existingCommitments,
             'signedUrl' => $request->getUri(), // Passer l'URL signée complète pour les formulaires
+            'setPasswordUrl' => $setPasswordUrl, // URL signée pour définir un mot de passe
         ]);
     }
 
@@ -83,6 +106,11 @@ class PublicBatchCommitmentController extends AbstractController
 
     private function processBatchCommitment(Request $request, CandidateList $candidateList): Response
     {
+        // Vérifier si c'est une demande de changement de mot de passe
+        if ($request->request->get('action') === 'change_password') {
+            return $this->handlePasswordChange($request, $candidateList);
+        }
+
         $globalComment = trim($request->request->get('global_comment', ''));
         $propositionComments = $request->request->all('proposition_comments') ?? [];
         $propositionStatuses = $request->request->all('proposition_status') ?? [];
@@ -234,6 +262,137 @@ class PublicBatchCommitmentController extends AbstractController
         // Re-signer l'URL pour la redirection
         $signedUrl = $this->uriSigner->sign($redirectUrl);
 
+        return $this->redirect($signedUrl);
+    }
+
+    private function handlePasswordAuthentication(Request $request, CandidateList $candidateList): Response
+    {
+        $form = $this->createForm(CandidateListPasswordType::class, null, [
+            'is_setting_password' => false
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $submittedPassword = $form->get('password')->getData();
+
+            // Vérifier le mot de passe avec le service de hachage
+            if ($this->passwordService->verifyPassword($submittedPassword, $candidateList->getPassword())) {
+                // Authentification réussie, stocker en session
+                $session = $request->getSession();
+                $sessionKey = 'candidate_list_password_' . $candidateList->getId();
+                $session->set($sessionKey, true);
+
+                // Rediriger vers la même page pour afficher le formulaire d'engagements
+                $redirectUrl = $this->generateUrl('public_batch_commitment', [
+                    'candidateListId' => $candidateList->getId()
+                ], UrlGeneratorInterface::ABSOLUTE_URL);
+                $signedUrl = $this->uriSigner->sign($redirectUrl);
+
+                return $this->redirect($signedUrl);
+            } else {
+                $this->addFlash('error', 'Mot de passe incorrect.');
+            }
+        }
+
+        return $this->render('public/password_form.html.twig', [
+            'candidateList' => $candidateList,
+            'form' => $form->createView(),
+            'signedUrl' => $request->getUri(),
+        ]);
+    }
+
+    #[Route('/public/batch-commitment/{candidateListId}/set-password', name: 'public_batch_commitment_set_password', methods: ['GET', 'POST'])]
+    public function setPassword(int $candidateListId, Request $request): Response
+    {
+        // Validation du token de sécurité
+        $this->validateSecurityToken($request);
+
+        // Récupération de la liste candidate
+        $candidateList = $this->entityManager->getRepository(CandidateList::class)->find($candidateListId);
+
+        if (!$candidateList) {
+            throw new NotFoundHttpException('Liste candidate non trouvée');
+        }
+
+        // Vérifier que la liste n'a pas déjà un mot de passe
+        if ($candidateList->hasPassword()) {
+            $this->addFlash('error', 'Cette liste a déjà un mot de passe défini.');
+            $redirectUrl = $this->generateUrl('public_batch_commitment', [
+                'candidateListId' => $candidateList->getId()
+            ], UrlGeneratorInterface::ABSOLUTE_URL);
+            $signedUrl = $this->uriSigner->sign($redirectUrl);
+            return $this->redirect($signedUrl);
+        }
+
+        $form = $this->createForm(CandidateListPasswordType::class, null, [
+            'is_setting_password' => true
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $password = $form->get('password')->getData();
+
+            // Hacher et stocker le mot de passe
+            $hashedPassword = $this->passwordService->hashPassword($password);
+            $candidateList->setPassword($hashedPassword);
+            $this->entityManager->persist($candidateList);
+            $this->entityManager->flush();
+
+            // Authentifier automatiquement l'utilisateur
+            $session = $request->getSession();
+            $sessionKey = 'candidate_list_password_' . $candidateList->getId();
+            $session->set($sessionKey, true);
+
+            $this->addFlash('success', 'Mot de passe défini avec succès.');
+
+            // Rediriger vers la page d'engagements
+            $redirectUrl = $this->generateUrl('public_batch_commitment', [
+                'candidateListId' => $candidateList->getId()
+            ], UrlGeneratorInterface::ABSOLUTE_URL);
+            $signedUrl = $this->uriSigner->sign($redirectUrl);
+
+            return $this->redirect($signedUrl);
+        }
+
+        return $this->render('public/password_form.html.twig', [
+            'candidateList' => $candidateList,
+            'form' => $form->createView(),
+            'signedUrl' => $request->getUri(),
+            'is_setting_password' => true,
+        ]);
+    }
+
+    private function handlePasswordChange(Request $request, CandidateList $candidateList): Response
+    {
+        $currentPassword = $request->request->get('current_password');
+        $newPassword = $request->request->get('new_password');
+        $confirmPassword = $request->request->get('confirm_password');
+
+        // Vérifier le mot de passe actuel
+        if (!$this->passwordService->verifyPassword($currentPassword, $candidateList->getPassword())) {
+            $this->addFlash('error', 'Le mot de passe actuel est incorrect.');
+        } elseif ($newPassword !== $confirmPassword) {
+            $this->addFlash('error', 'Les nouveaux mots de passe ne correspondent pas.');
+        } elseif (strlen($newPassword) < 8) {
+            $this->addFlash('error', 'Le nouveau mot de passe doit contenir au moins 8 caractères.');
+        } else {
+            // Hacher et mettre à jour le mot de passe
+            $hashedPassword = $this->passwordService->hashPassword($newPassword);
+            $candidateList->setPassword($hashedPassword);
+            $this->entityManager->persist($candidateList);
+            $this->entityManager->flush();
+
+            $this->addFlash('success', 'Mot de passe modifié avec succès.');
+        }
+
+        // Redirection vers l'URL signée originale
+        $redirectUrl = $this->generateUrl('public_batch_commitment', [
+            'candidateListId' => $candidateList->getId()
+        ], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        $signedUrl = $this->uriSigner->sign($redirectUrl);
         return $this->redirect($signedUrl);
     }
 }
