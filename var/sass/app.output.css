@@ -12456,7 +12456,7 @@ section#categories {
 
 .candidate-tag-refused {
   background: var(--color-red);
-  color: var(--color-white);
+  color: var(--color-black);
 }
 
 .candidate-tag-with-comment {
