@@ -2,6 +2,12 @@
 
 {% block title %}{{ candidateList.nameList }} - {{ candidateList.city.name }} - Plaidoyer Vélo Bordeaux{% endblock %}
 
+{% block descriptionmeta %}Les engagements autour du vélo de {{ candidateList.firstname }} {{ candidateList.lastname }}, candidat·e de {{ candidateList.nameList }}.
+    {{ candidateList.firstname }} {{ candidateList.lastname }} est candidat·e dans la commune de {{ candidateList.city.name }}.
+    {{ candidateList.firstname }} {{ candidateList.lastname }} s'est engagé·e sur {{ listStats.totalCommitments }} propositions.
+    La liste peut se positionner dans plusieurs catégories ({% for categoryName, categoryData in commitmentsByCategory  %}{{ categoryName }}{% if not loop.last %}, {% endif %}{% endfor %}).
+{% endblock %}
+
 {% block body %}
     <!-- Header Section -->
     <section class="candidate-header">

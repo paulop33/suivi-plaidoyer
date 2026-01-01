@@ -2,6 +2,11 @@
 
 {% block title %}{{ city.name }} - Plaidoyer Vélo Bordeaux{% endblock %}
 
+{% block descriptionmeta %}Page regroupant les engagements des différentes listes de {{ city.name }} pour le Plaidoyer vélo 2026.
+{{ city.name }} regroupe {{ cityListData|length }} listes ({% for listInfo in cityListData %}{{ listInfo.candidateList.nameList }}{% if not loop.last %}, {% endif %}{% endfor %}).
+Les listes peuvent se positionner dans plusieurs catégories ({% for categoryName, categoryData in propositionData  %}{{ categoryName }}{% if not loop.last %}, {% endif %}{% endfor %}).
+{% endblock %}
+
 {% block body %}
     <!-- Header Section -->
     <section class="city-header">

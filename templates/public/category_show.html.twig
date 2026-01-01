@@ -2,6 +2,12 @@
 
 {% block title %}{{ category.name }} - Plaidoyer Vélo Bordeaux{% endblock %}
 
+{% block descriptionmeta %}
+    Les propositions du collectif autour du Plaidoyer vélo 2026 de Bordeaux Métropole, pour la catégorie {{ category.name }}.
+    La catégorie {{ category.name }} regroupe {{ propositionData|length }} propositions
+    ({% for data in propositionData %}{{ data.proposition.title }}{% if not loop.last %}, {% endif %}{% endfor %}).
+{% endblock %}
+
 {% block body %}
     <!-- Header Section -->
     <section class="category-header">
