@@ -7,6 +7,44 @@
 Les listes peuvent se positionner dans plusieurs catégories ({% for categoryName, categoryData in propositionData  %}{{ categoryName }}{% if not loop.last %}, {% endif %}{% endfor %}).
 {% endblock %}
 
+{% block stylesheets %}
+    <style>
+        .description-content.collapsed {
+            max-height: 25px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .description-content.collapsed::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: linear-gradient(to bottom, transparent, white);
+        }
+
+        .description-content.expanded {
+            max-height: none;
+        }
+
+        .toggle-description {
+            color: #0d6efd;
+            text-decoration: none;
+            font-size: 0.875rem;
+        }
+
+        .toggle-description:hover {
+            text-decoration: underline;
+        }
+
+        .toggle-description i {
+            transition: transform 0.3s ease;
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
     <!-- Header Section -->
     <section class="city-header">
@@ -129,7 +167,7 @@ Les listes peuvent se positionner dans plusieurs catégories ({% for categoryNam
                                 </h3>
                                 <div class="p-3">
                                     {% for propositionInfo in categoryData.propositions %}
-                                        <div class="proposition-card">
+                                        <div class="proposition-card px-2 py-2">
                                             <div class="d-flex justify-content-between align-items-start mb-2">
                                                 <h5 class="fw-bold mb-1">{{ propositionInfo.proposition.title }}</h5>
                                                 {% if propositionInfo.totalSignatures > 0 %}
@@ -139,7 +177,18 @@ Les listes peuvent se positionner dans plusieurs catégories ({% for categoryNam
                                                 {% endif %}
                                             </div>
                                             {% if propositionInfo.proposition.description %}
-                                                <p class="text-muted small mb-2">{{ propositionInfo.proposition.descriptionStripped|slice(0, 150) }}{% if propositionInfo.proposition.descriptionStripped|length > 150 %}...{% endif %}</p>
+                                                <div class="description-wrapper mb-2">
+                                                    <strong class="small text-muted d-block mb-1">Description :</strong>
+                                                    <div class="description-content collapsed" id="desc-{{ propositionInfo.proposition.id }}">
+                                                        <div class="text-muted small">{{ propositionInfo.proposition.description|raw }}</div>
+                                                    </div>
+                                                    <button class="btn btn-link btn-sm p-0 toggle-description"
+                                                            data-target="desc-{{ propositionInfo.proposition.id }}"
+                                                            type="button">
+                                                        <i class="fas fa-chevron-down me-1"></i>
+                                                        <span class="toggle-text">Voir plus</span>
+                                                    </button>
+                                                </div>
                                             {% endif %}
                                             {% if propositionInfo.signedLists|length > 0 %}
                                                 <div class="mb-2">
@@ -321,6 +370,30 @@ Les listes peuvent se positionner dans plusieurs catégories ({% for categoryNam
                 // Search input event
                 searchInput.addEventListener('input', filterLists);
             }
+
+            // Toggle description functionality
+            document.querySelectorAll('.toggle-description').forEach(button => {
+                button.addEventListener('click', function() {
+                    const targetId = this.dataset.target;
+                    const descContent = document.getElementById(targetId);
+                    const icon = this.querySelector('i');
+                    const text = this.querySelector('.toggle-text');
+
+                    if (descContent.classList.contains('collapsed')) {
+                        descContent.classList.remove('collapsed');
+                        descContent.classList.add('expanded');
+                        icon.classList.remove('fa-chevron-down');
+                        icon.classList.add('fa-chevron-up');
+                        text.textContent = 'Voir moins';
+                    } else {
+                        descContent.classList.remove('expanded');
+                        descContent.classList.add('collapsed');
+                        icon.classList.remove('fa-chevron-up');
+                        icon.classList.add('fa-chevron-down');
+                        text.textContent = 'Voir plus';
+                    }
+                });
+            });
         });
     </script>
 {% endblock %}
