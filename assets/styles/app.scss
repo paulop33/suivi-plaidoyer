@@ -155,11 +155,9 @@ html {
 @keyframes fadeInDown {
     from {
         opacity: 0;
-        transform: translateY(-10px);
     }
     to {
         opacity: 1;
-        transform: translateY(0);
     }
 }
 
@@ -175,7 +173,6 @@ section#categories {
 }
 
 .card-custom:hover {
-    transform: translateY(-5px);
     box-shadow: var(--card-shadow-hover);
 }
 
@@ -200,8 +197,8 @@ section#categories {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 /* Custom progress bars */
@@ -283,7 +280,6 @@ section#categories {
 }
 
 .category-image-card:hover {
-    transform: translateY(-5px);
     box-shadow: var(--card-shadow-hover);
 }
 
@@ -313,7 +309,6 @@ section#categories {
     right: 0;
     background: linear-gradient(transparent, rgba(0,0,0,0.8));
     padding: 1.5rem 1rem 1rem;
-    transform: translateY(10px);
     transition: var(--transition);
 }
 
@@ -369,13 +364,11 @@ section#categories {
 /* Animation classes */
 .animate-on-scroll {
     opacity: 0;
-    transform: translateY(30px);
     transition: var(--transition-slow);
 }
 
 .animate-on-scroll.animated {
     opacity: 1;
-    transform: translateY(0);
 }
 
 /* Category Cards */
@@ -388,7 +381,6 @@ section#categories {
 }
 
 .category-card:hover {
-    transform: translateY(-3px);
     box-shadow: var(--card-shadow-hover);
 }
 
@@ -425,7 +417,6 @@ section#categories {
 }
 
 .proposition-card:hover {
-    transform: translateY(-3px);
     box-shadow: var(--card-shadow-hover);
 }
 
@@ -466,7 +457,6 @@ section#categories {
 }
 
 .city-card:hover {
-    transform: translateY(-5px);
     box-shadow: var(--shadow-card-xl);
 }
 
@@ -498,7 +488,6 @@ section#categories {
 }
 
 .list-card:hover {
-    transform: translateY(-3px);
     box-shadow: var(--card-shadow-hover);
 }
 
@@ -806,7 +795,6 @@ section#categories {
     margin-bottom: 1.5rem;
 }
 .commitment-card:hover {
-    transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(0,0,0,0.15);
 }
 .commitment-card .city-header {
@@ -869,7 +857,6 @@ section#categories {
 }
 
 .list-item:hover {
-    transform: translateY(-1px);
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
