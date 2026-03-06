@@ -130,7 +130,9 @@ class StatisticsService
         }
 
         return [
-            'totalCommitments' => $commitments->count(),
+            'totalCommitments' => $commitments->filter(function ($commitment) {
+                return $commitment->isAccepted();
+            })->count(),
             'categoriesCount' => count($categoriesCount),
             'commitmentsByCategory' => $categoriesCount
         ];
